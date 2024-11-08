@@ -57,9 +57,20 @@ const DynamicCodeEditor: React.FC<DynamicCodeEditorProps> = ({
   const handleEditorDidMount: OnMount = (editor) => {
     editorRef.current = editor;
 
+    const editorElement = editor.getDomNode();
+    if (editorElement) {
+      editorElement.setAttribute('tabindex', '0');
+      
+      editorElement.addEventListener('click', () => {
+        editor.focus();
+      });
+    }
+
     editor.onDidContentSizeChange(() => {
       window.requestAnimationFrame(updateEditorHeight);
     });
+
+    editor.focus();
   };
 
   useEffect(() => {
@@ -79,7 +90,16 @@ const DynamicCodeEditor: React.FC<DynamicCodeEditorProps> = ({
   }, [code]);
 
   return (
-    <div ref={containerRef} className="overflow-hidden rounded-lg">
+    <div 
+      ref={containerRef} 
+      className="overflow-hidden rounded-lg"
+      onMouseDown={(e) => {
+        if (editorRef.current && e.target === containerRef.current) {
+          e.preventDefault();
+          editorRef.current.focus();
+        }
+      }}
+    >
       <Editor
         height={editorHeight}
         value={code}
