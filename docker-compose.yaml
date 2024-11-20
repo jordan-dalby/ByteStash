@@ -17,6 +17,21 @@ services:
       - ALLOW_NEW_ACCOUNTS=true
       # Should debug mode be enabled? Essentially enables logging, in most cases leave this as false
       - DEBUG=false
+
+      # Optional: Enable OIDC for Single Sign On
+      - OIDC_ENABLED=true
+      # Optional: Display name for users signing in with SSO, will default to Single Sign-on
+      - OIDC_DISPLAY_NAME="Authentik"
+      # Your OIDC issuer url, e.g. https://authentik.mydomain.com/application/o/bytestash/ for authentik
+      - OIDC_ISSUER_URL=
+      # Your OIDC client ID, you can find it in your app provider
+      - OIDC_CLIENT_ID=
+      # Your OIDC client secret, again, found in the app provider
+      - OIDC_CLIENT_SECRET=
+      # The URL to callback to when authentication is complete, e.g. https://bytestash.mydomain.com/
+      - OIDC_CALLBACK_URL=
+      # The OIDC scopes to request, e.g. "openid profile email groups"
+      - OIDC_SCOPES=
     volumes:
       - ./data:/data/snippets
 # Uncomment to use docker secrets

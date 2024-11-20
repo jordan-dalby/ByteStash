@@ -1,5 +1,5 @@
-const fs = require('fs');
-const jwt = require('jsonwebtoken');
+import fs from 'fs';
+import jwt from 'jsonwebtoken';
 
 function getJwtSecret() {
   if (process.env.JWT_SECRET_FILE) {
@@ -34,9 +34,4 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-module.exports = { 
-  authenticateToken, 
-  JWT_SECRET,
-  TOKEN_EXPIRY,
-  ALLOW_NEW_ACCOUNTS
-};
+export { authenticateToken, JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS };

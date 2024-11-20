@@ -1,4 +1,4 @@
-const Logger = require("../../logger");
+import Logger from '../../logger.js';
 
 function needsMigration(db) {
   try {
@@ -93,7 +93,4 @@ async function up_v1_5_0_snippets(db, userId) {
   }
 }
 
-module.exports = {
-  up_v1_5_0,
-  up_v1_5_0_snippets
-};
+export { up_v1_5_0, up_v1_5_0_snippets };

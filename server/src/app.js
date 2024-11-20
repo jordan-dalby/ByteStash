@@ -1,19 +1,23 @@
-const express = require('express');
-const { initializeDatabase } = require('./config/database');
-const snippetRoutes = require('./routes/snippetRoutes');
-const authRoutes = require('./routes/authRoutes');
-const shareRoutes = require('./routes/shareRoutes');
-const publicRoutes = require('./routes/publicRoutes');
-const oidcRoutes = require('./routes/oidcRoutes');
-const { authenticateToken } = require('./middleware/auth');
-const { join } = require('path');
-const fs = require('fs');
-const Logger = require('./logger');
+import express from 'express';
+import { initializeDatabase } from './config/database.js';
+import snippetRoutes from './routes/snippetRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import shareRoutes from './routes/shareRoutes.js';
+import publicRoutes from './routes/publicRoutes.js';
+import oidcRoutes from './routes/oidcRoutes.js';
+import { authenticateToken } from './middleware/auth.js';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+import fs from 'fs';
+import Logger from './logger.js';
 
 const app = express();
 const PORT = 5000;
 
 app.use(express.json());
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const basePath = process.env.BASE_PATH || '';
 const buildPath = join(__dirname, '../../client/build');

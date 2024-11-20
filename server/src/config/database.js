@@ -1,21 +1,25 @@
-const Database = require('better-sqlite3');
-const path = require('path');
-const fs = require('fs');
-const { up_v1_4_0 } = require('./migrations/20241111-migration');
-const { up_v1_5_0 } = require('./migrations/20241117-migration');
-const Logger = require('../logger');
-const { up_v1_5_0_public } = require('./migrations/20241119-migration');
-const { up_v1_5_0_oidc } = require('./migrations/20241120-migration');
+import Database from 'better-sqlite3';
+import { dirname, join } from 'path';
+import fs from 'fs';
+import { up_v1_4_0 } from './migrations/20241111-migration.js';
+import { up_v1_5_0 } from './migrations/20241117-migration.js';
+import Logger from '../logger.js';
+import { up_v1_5_0_public } from './migrations/20241119-migration.js';
+import { up_v1_5_0_oidc } from './migrations/20241120-migration.js';
+import { fileURLToPath } from 'url';
 
 let db = null;
 let checkpointInterval = null;
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 function getDatabasePath() {
-  const dbPath = path.join(__dirname, '../../../data/snippets');
+  const dbPath = join(__dirname, '../../../data/snippets');
   if (!fs.existsSync(dbPath)) {
     fs.mkdirSync(dbPath, { recursive: true });
   }
-  return path.join(dbPath, 'snippets.db');
+  return join(dbPath, 'snippets.db');
 }
 
 function checkpointDatabase() {
@@ -188,9 +192,4 @@ function shutdownDatabase() {
   }
 }
 
-module.exports = {
-  initializeDatabase,
-  getDb,
-  shutdownDatabase,
-  checkpointDatabase
-};
+export { initializeDatabase, getDb, shutdownDatabase, checkpointDatabase };

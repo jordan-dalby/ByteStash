@@ -1,8 +1,9 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const { JWT_SECRET, authenticateToken } = require('../middleware/auth');
-const shareRepository = require('../repositories/shareRepository');
-const Logger = require('../logger');
+import express from 'express';
+import jwt from 'jsonwebtoken';
+import { JWT_SECRET, authenticateToken } from '../middleware/auth.js';
+import shareRepository from '../repositories/shareRepository.js';
+import Logger from '../logger.js';
+
 const router = express.Router();
 
 router.post('/', authenticateToken, async (req, res) => {
@@ -83,4 +84,4 @@ router.delete('/:id', authenticateToken, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

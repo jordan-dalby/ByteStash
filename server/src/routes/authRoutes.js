@@ -1,10 +1,10 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS } = require('../middleware/auth');
-const userService = require('../services/userService');
-const { getDb } = require('../config/database');
-const { up_v1_5_0_snippets } = require('../config/migrations/20241117-migration');
-const Logger = require('../logger');
+import express from 'express';
+import jwt from 'jsonwebtoken';
+import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS } from '../middleware/auth.js';
+import userService from '../services/userService.js';
+import { getDb } from '../config/database.js';
+import { up_v1_5_0_snippets } from '../config/migrations/20241117-migration.js';
+import Logger from '../logger.js';
 
 const router = express.Router();
 
@@ -115,4 +115,4 @@ router.get('/verify', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

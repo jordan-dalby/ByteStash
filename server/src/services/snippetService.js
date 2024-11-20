@@ -1,5 +1,5 @@
-const Logger = require('../logger');
-const snippetRepository = require('../repositories/snippetRepository');
+import Logger from '../logger.js';
+import snippetRepository from '../repositories/snippetRepository.js';
 
 class SnippetService {
   async getAllSnippets(userId) {
@@ -82,4 +82,4 @@ class SnippetService {
   }
 }
 
-module.exports = new SnippetService();
+export default new SnippetService();

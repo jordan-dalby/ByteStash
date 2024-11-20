@@ -1,6 +1,6 @@
-const express = require('express');
-const snippetService = require('../services/snippetService');
-const Logger = require('../logger');
+import express from 'express';
+import snippetService from '../services/snippetService.js';
+import Logger from '../logger.js';
 
 const router = express.Router();
 
@@ -71,4 +71,4 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -1,5 +1,6 @@
-const { getDb } = require('../config/database');
-const bcrypt = require('bcrypt');
+import { getDb } from '../config/database.js';
+import bcrypt from 'bcrypt';
+import Logger from '../logger.js';
 
 class UserRepository {
   constructor() {
@@ -131,4 +132,4 @@ class UserRepository {
   }
 }
 
-module.exports = new UserRepository();
+export default new UserRepository();

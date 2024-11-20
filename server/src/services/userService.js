@@ -1,5 +1,5 @@
-const Logger = require('../logger');
-const userRepository = require('../repositories/userRepository');
+import Logger from '../logger.js';
+import userRepository from '../repositories/userRepository.js';
 
 class UserService {
   async createUser(username, password) {
@@ -53,4 +53,4 @@ class UserService {
   }
 }
 
-module.exports = new UserService();
+export default new UserService();

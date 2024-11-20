@@ -1,9 +1,9 @@
-const express = require('express');
-const { OIDCConfig } = require('../oidc/oidcConfig');
-const userRepository = require('../repositories/userRepository');
-const { JWT_SECRET, TOKEN_EXPIRY } = require('../middleware/auth');
-const jwt = require('jsonwebtoken');
-const Logger = require('../logger');
+import express from 'express';
+import { OIDCConfig } from '../oidc/oidcConfig.js';
+import userRepository from '../repositories/userRepository.js';
+import { JWT_SECRET, TOKEN_EXPIRY } from '../middleware/auth.js';
+import jwt from 'jsonwebtoken';
+import Logger from '../logger.js';
 
 const router = express.Router();
 
@@ -24,11 +24,12 @@ router.get('/auth', async (req, res) => {
       return res.status(404).json({ error: 'OIDC not enabled' });
     }
 
-    const authUrl = oidc.client.authorizationUrl({
-      scope: oidc.getScopes().join(' '),
-      state: Math.random().toString(36).substring(7),
-    });
+    const authUrl = await oidc.getAuthorizationUrl(
+      process.env.OIDC_CALLBACK_URL,
+      oidc.getScopes().join(' ')
+    );
 
+    Logger.debug('Generated auth URL:', authUrl);
     res.redirect(authUrl);
   } catch (error) {
     Logger.error('OIDC auth error:', error);
@@ -39,16 +40,19 @@ router.get('/auth', async (req, res) => {
 router.get('/callback', async (req, res) => {
   try {
     const oidc = await OIDCConfig.getInstance();
-    const params = oidc.client.callbackParams(req);
-    const tokenSet = await oidc.client.callback(
-      process.env.OIDC_CALLBACK_URL,
-      params
-    );
+    if (!oidc.isEnabled()) {
+      return res.status(404).json({ error: 'OIDC not enabled' });
+    }
 
-    const userinfo = await oidc.client.userinfo(tokenSet.access_token);
+    const fullUrl = `${process.env.OIDC_CALLBACK_URL}?${new URLSearchParams(req.query).toString()}`;
+    Logger.debug('Full callback URL:', fullUrl);
+
+    const { tokens, userInfo } = await oidc.handleCallback(fullUrl);
+    Logger.debug('Authentication successful');
+
     const user = await userRepository.findOrCreateOIDCUser(
-      userinfo,
-      oidc.client.issuer.metadata.issuer
+      userInfo,
+      oidc.config.serverMetadata().issuer
     );
 
     const token = jwt.sign({ 
@@ -65,4 +69,4 @@ router.get('/callback', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

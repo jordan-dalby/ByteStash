@@ -1,5 +1,5 @@
-const { getDb } = require('../config/database');
-const Logger = require('../logger');
+import { getDb } from '../config/database.js';
+import Logger from '../logger.js';
 
 class SnippetRepository {
   constructor() {
@@ -304,4 +304,4 @@ class SnippetRepository {
   }
 }
 
-module.exports = new SnippetRepository();
+export default new SnippetRepository();

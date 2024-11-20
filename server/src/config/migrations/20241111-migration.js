@@ -1,4 +1,4 @@
-const Logger = require("../../logger");
+import Logger from '../../logger.js';
 
 function needsMigration(db) {
   const hasCodeColumn = db.prepare(`
@@ -81,6 +81,4 @@ async function up_v1_4_0(db) {
   }
 }
 
-module.exports = {
-  up_v1_4_0
-}
+export { up_v1_4_0 };

@@ -1,6 +1,6 @@
-const { getDb } = require('../config/database');
-const crypto = require('crypto');
-const Logger = require('../logger');
+import { getDb } from '../config/database.js';
+import crypto from 'crypto';
+import Logger from '../logger.js';
 
 class ShareRepository {
   constructor() {
@@ -168,4 +168,4 @@ class ShareRepository {
   }
 }
 
-module.exports = new ShareRepository();
+export default new ShareRepository();
