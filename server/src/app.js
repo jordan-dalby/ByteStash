@@ -4,6 +4,7 @@ const snippetRoutes = require('./routes/snippetRoutes');
 const authRoutes = require('./routes/authRoutes');
 const shareRoutes = require('./routes/shareRoutes');
 const publicRoutes = require('./routes/publicRoutes');
+const oidcRoutes = require('./routes/oidcRoutes');
 const { authenticateToken } = require('./middleware/auth');
 const { join } = require('path');
 const fs = require('fs');
@@ -19,6 +20,7 @@ const buildPath = join(__dirname, '../../client/build');
 const assetsPath = join(buildPath, 'assets');
 
 app.use(`${basePath}/api/auth`, authRoutes);
+app.use(`${basePath}/api/auth/oidc`, oidcRoutes);
 app.use(`${basePath}/api/snippets`, authenticateToken, snippetRoutes);
 app.use(`${basePath}/api/share`, shareRoutes);
 app.use(`${basePath}/api/public/snippets`, publicRoutes);
@@ -81,16 +83,16 @@ function handleShutdown() {
   process.exit(0);
 }
 
-process.on('SIGTERM', handleShutdown);
-process.on('SIGINT', handleShutdown);
-
 (async () => {
   await initializeDatabase();
-
+  
   return new Promise((resolve) => {
     app.listen(PORT, () => {
-        Logger.info(`Server running on port ${PORT}`);
-        resolve();
+      Logger.info(`Server running on port ${PORT}`);
+      resolve();
     });
   });
 })();
+
+process.on('SIGTERM', handleShutdown);
+process.on('SIGINT', handleShutdown);

@@ -4,5 +4,6 @@ export const ROUTES = {
   SNIPPET: '/snippets/:snippetId',
   LOGIN: '/login',
   REGISTER: '/register',
-  PUBLIC_SNIPPETS: '/public/snippets'
+  PUBLIC_SNIPPETS: '/public/snippets',
+  AUTH_CALLBACK: '/auth/callback'
 } as const;

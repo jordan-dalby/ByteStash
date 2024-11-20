@@ -5,6 +5,7 @@ const { up_v1_4_0 } = require('./migrations/20241111-migration');
 const { up_v1_5_0 } = require('./migrations/20241117-migration');
 const Logger = require('../logger');
 const { up_v1_5_0_public } = require('./migrations/20241119-migration');
+const { up_v1_5_0_oidc } = require('./migrations/20241120-migration');
 
 let db = null;
 let checkpointInterval = null;
@@ -149,6 +150,7 @@ function initializeDatabase() {
       up_v1_4_0(db);
       up_v1_5_0(db);
       up_v1_5_0_public(db);
+      up_v1_5_0_oidc(db);
     }
 
     startCheckpointInterval();

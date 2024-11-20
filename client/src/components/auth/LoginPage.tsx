@@ -1,17 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { PageContainer } from '../common/layout/PageContainer';
 import { login as loginApi } from '../../utils/api/auth';
 import { useToast } from '../../hooks/useToast';
 import { ROUTES } from '../../constants/routes';
+import { apiClient } from '../../utils/api/apiClient';
+import { AlertCircle } from 'lucide-react';
+
+interface OIDCConfig {
+  enabled: boolean;
+  displayName: string;
+}
 
 export const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [oidcConfig, setOIDCConfig] = useState<OIDCConfig | null>(null);
+  const [oidcError, setOidcError] = useState<string | null>(null);
   const { login, isAuthenticated, authConfig } = useAuth();
   const { addToast } = useToast();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('error') === 'auth_failed') {
+      setOidcError('Authentication failed. Please try again.');
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchOIDCConfig = async () => {
+      try {
+        const response = await apiClient.get<OIDCConfig>('/api/auth/oidc/config');
+        setOIDCConfig(response);
+      } catch (error) {
+        console.error('Failed to fetch OIDC config:', error);
+      }
+    };
+    
+    fetchOIDCConfig();
+  }, []);
 
   if (isAuthenticated) {
     return <Navigate to="/" replace />;
@@ -35,6 +64,10 @@ export const LoginPage: React.FC = () => {
     }
   };
 
+  const handleOIDCLogin = () => {
+    window.location.href = `${window.__BASE_PATH__}/api/auth/oidc/auth`;
+  };
+
   return (
     <PageContainer className="flex items-center justify-center min-h-screen">
       <div className="max-w-md w-full space-y-8">
@@ -43,9 +76,10 @@ export const LoginPage: React.FC = () => {
             ByteStash
           </h2>
           <p className="mt-2 text-center text-sm text-gray-400">
-            Please sign in to continue, {authConfig?.allowNewAccounts && (
+            Please sign in to continue
+            {authConfig?.allowNewAccounts && (
               <>
-                {' '}create an{' '}
+                , create an{' '}
                 <Link to="/register" className="text-blue-400 hover:text-blue-300">
                   account
                 </Link>
@@ -57,6 +91,37 @@ export const LoginPage: React.FC = () => {
             </Link>
           </p>
         </div>
+
+        {oidcError && (
+          <div className="rounded-md bg-red-900/50 p-4 border border-red-700">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="h-5 w-5 text-red-400" />
+              <p className="text-sm text-red-400">{oidcError}</p>
+            </div>
+          </div>
+        )}
+
+        {oidcConfig?.enabled && (
+          <>
+            <button
+              onClick={handleOIDCLogin}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 
+                bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+              Sign in with {oidcConfig.displayName}
+            </button>
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-700"></div>
+              </div>
+              <div className="relative flex justify-center">
+              <span className="px-2 bg-gray-900 text-gray-500 text-sm">
+                  Or continue with password
+                </span>
+              </div>
+            </div>
+          </>
+        )}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">

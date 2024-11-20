@@ -4,6 +4,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './hooks/useAuth';
 import { LoginPage } from './components/auth/LoginPage';
 import { RegisterPage } from './components/auth/RegisterPage';
+import { OIDCCallback } from './components/auth/oidc/OIDCCallback';
 import { ROUTES } from './constants/routes';
 import { PageContainer } from './components/common/layout/PageContainer';
 import { ToastProvider } from './contexts/ToastContext';
@@ -40,6 +41,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path={ROUTES.LOGIN} element={<LoginPage />} />
             <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
+            <Route path={ROUTES.AUTH_CALLBACK} element={<OIDCCallback />} />
             <Route path={ROUTES.SHARED_SNIPPET} element={<SharedSnippetView />} />
             <Route path={ROUTES.PUBLIC_SNIPPETS} element={<PublicSnippetStorage />} />
             <Route path={ROUTES.SNIPPET} element={<SnippetPage />} />

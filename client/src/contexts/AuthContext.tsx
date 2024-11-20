@@ -9,7 +9,7 @@ interface AuthContextType {
   isLoading: boolean;
   user: User | null;
   authConfig: AuthConfig | null;
-  login: (token: string, user: User) => void;
+  login: (token: string, user: User | null) => void;
   logout: () => void;
   refreshAuthConfig: () => Promise<void>;
 }
@@ -65,7 +65,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     initializeAuth();
   }, []);
 
-  const login = (token: string, userData: User) => {
+  const login = (token: string, userData: User | null) => {
     localStorage.setItem('token', token);
     setIsAuthenticated(true);
     setUser(userData);
