@@ -1,4 +1,5 @@
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
 
 function getJwtSecret() {
   if (process.env.JWT_SECRET_FILE) {
