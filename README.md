@@ -31,7 +31,7 @@ services:
       - BASE_PATH=
       # Either provide JWT_SECRET directly or use JWT_SECRET_FILE for Docker secrets
       #- JWT_SECRET_FILE=/run/secrets/jwt
-      - JWT_TOKEN=your-secret
+      - JWT_SECRET=your-secret
       # how long the token lasts, examples: "2 days", "10h", "7d", "1m", "60s"
       - TOKEN_EXPIRY=24h
       # is this bytestash instance open to new accounts being created?
@@ -40,10 +40,10 @@ services:
       - DEBUG=false
     volumes:
       - ./data:/data/snippets
-    secrets:
-      - jwt
-
 # Uncomment to use docker secrets
+#    secrets:
+#      - jwt
+
 #secrets:
 #  jwt:
 #    file: ./secrets/jwt.txt
