@@ -21,24 +21,32 @@ ByteStash can also be hosted manually via the docker-compose file:
 ```
 services:
   bytestash:
-    image: "ghcr.io/jordan-dalby/bytestash:latest"
-    container_name: bytestash
-    volumes:
-      - /path/to/data:/data/snippets
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - 5000:5000
+      - "5001:5000"
     environment:
+      # e.g. write /bytestash for a domain such as my.domain/bytestash, leave blank in every other case
       - BASE_PATH=
-      # if auth username or password are left blank then authorisation is disabled
-      # the username used for logging in
-      - AUTH_USERNAME=bytestash
-      # the password used for logging in
-      - AUTH_PASSWORD=password
-      # the jwt secret used by the server, make sure to generate your own secret token to replace this one
-      - JWT_SECRET=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.nhan23TF0qyO4l4rDMkJ8ebNLMgV62NGfBozt9huymA
+      # Either provide JWT_SECRET directly or use JWT_SECRET_FILE for Docker secrets
+      #- JWT_SECRET_FILE=/run/secrets/jwt
+      - JWT_TOKEN=your-secret
       # how long the token lasts, examples: "2 days", "10h", "7d", "1m", "60s"
       - TOKEN_EXPIRY=24h
-    restart: unless-stopped
+      # is this bytestash instance open to new accounts being created?
+      - ALLOW_NEW_ACCOUNTS=true
+      # Should debug mode be enabled? Essentially enables logging, in most cases leave this as false
+      - DEBUG=false
+    volumes:
+      - ./data:/data/snippets
+    secrets:
+      - jwt
+
+# Uncomment to use docker secrets
+#secrets:
+#  jwt:
+#    file: ./secrets/jwt.txt
 ```
 
 ## Tech Stack
