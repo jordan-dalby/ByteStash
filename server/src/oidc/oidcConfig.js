@@ -1,6 +1,7 @@
 import * as client from 'openid-client';
 import Logger from '../logger.js';
 import crypto from 'crypto';
+import { URL } from 'url';
 
 globalThis.crypto = crypto;
 
@@ -14,6 +15,12 @@ class OIDCConfig {
       await OIDCConfig.instance.initialize();
     }
     return OIDCConfig.instance;
+  }
+
+  getCallbackUrl(baseUrl) {
+    // Ensure baseUrl doesn't end with a slash
+    const normalizedBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+    return `${normalizedBaseUrl}/api/auth/oidc/callback`;
   }
 
   async initialize() {
@@ -94,11 +101,12 @@ class OIDCConfig {
     };
   }
 
-  async getAuthorizationUrl(redirect_uri, scope = 'openid profile email') {
+  async getAuthorizationUrl(baseUrl, scope = 'openid profile email') {
+    const callback_url = this.getCallbackUrl(baseUrl);
     const { code_challenge, state, nonce } = await this.generateAuthParameters();
 
     const parameters = {
-      redirect_uri,
+      redirect_uri: callback_url,
       scope,
       state,
       nonce,
@@ -116,7 +124,9 @@ class OIDCConfig {
     return client.buildAuthorizationUrl(this.config, parameters);
   }
 
-  async handleCallback(currentUrl) {
+  async handleCallback(currentUrl, callbackUrl) {
+    Logger.debug('Handling callback with:', { currentUrl, callbackUrl });
+    
     const urlParams = new URL(currentUrl).searchParams;
     const state = urlParams.get('state');
 
@@ -131,7 +141,8 @@ class OIDCConfig {
       pkceCodeVerifier: code_verifier,
       expectedState: state,
       expectedNonce: nonce,
-      idTokenExpected: true
+      idTokenExpected: true,
+      redirect_uri: callbackUrl
     };
 
     try {

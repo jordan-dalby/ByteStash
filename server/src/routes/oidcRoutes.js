@@ -7,6 +7,10 @@ import Logger from '../logger.js';
 
 const router = express.Router();
 
+function getBaseUrl(req) {
+  return `${req.protocol}://${req.get('host')}${process.env.BASE_PATH || ''}`;
+}
+
 router.get('/config', async (req, res) => {
   try {
     const oidc = await OIDCConfig.getInstance();
@@ -24,8 +28,9 @@ router.get('/auth', async (req, res) => {
       return res.status(404).json({ error: 'OIDC not enabled' });
     }
 
+    const baseUrl = getBaseUrl(req);
     const authUrl = await oidc.getAuthorizationUrl(
-      process.env.OIDC_CALLBACK_URL,
+      baseUrl,
       oidc.getScopes().join(' ')
     );
 
@@ -44,10 +49,14 @@ router.get('/callback', async (req, res) => {
       return res.status(404).json({ error: 'OIDC not enabled' });
     }
 
-    const fullUrl = `${process.env.OIDC_CALLBACK_URL}?${new URLSearchParams(req.query).toString()}`;
-    Logger.debug('Full callback URL:', fullUrl);
+    const baseUrl = getBaseUrl(req);
+    const callbackUrl = oidc.getCallbackUrl(baseUrl);
+    const queryString = new URLSearchParams(req.query).toString();
+    const currentUrl = queryString ? `${callbackUrl}?${queryString}` : callbackUrl;
+    
+    Logger.debug('Full callback URL:', currentUrl);
 
-    const { tokens, userInfo } = await oidc.handleCallback(fullUrl);
+    const { tokens, userInfo } = await oidc.handleCallback(currentUrl, callbackUrl);
     Logger.debug('Authentication successful');
 
     const user = await userRepository.findOrCreateOIDCUser(
