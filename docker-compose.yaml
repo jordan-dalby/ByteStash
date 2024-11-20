@@ -28,8 +28,6 @@ services:
       - OIDC_CLIENT_ID=
       # Your OIDC client secret, again, found in the app provider
       - OIDC_CLIENT_SECRET=
-      # The URL to callback to when authentication is complete, e.g. https://bytestash.mydomain.com/
-      - OIDC_CALLBACK_URL=
       # The OIDC scopes to request, e.g. "openid profile email groups"
       - OIDC_SCOPES=
     volumes:
