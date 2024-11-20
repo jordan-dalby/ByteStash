@@ -1,9 +1,10 @@
 import express from 'express';
 import { OIDCConfig } from '../oidc/oidcConfig.js';
 import userRepository from '../repositories/userRepository.js';
-import { JWT_SECRET, TOKEN_EXPIRY } from '../middleware/auth.js';
+import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS } from '../middleware/auth.js';
 import jwt from 'jsonwebtoken';
 import Logger from '../logger.js';
+import { getDb } from '../config/database.js';
 
 const router = express.Router();
 
@@ -58,6 +59,22 @@ router.get('/callback', async (req, res) => {
 
     const { tokens, userInfo } = await oidc.handleCallback(currentUrl, callbackUrl);
     Logger.debug('Authentication successful');
+
+    const existingUser = await userRepository.findByOIDCId(
+      userInfo.sub,
+      oidc.config.serverMetadata().issuer
+    );
+
+    if (!existingUser) {
+      const db = getDb();
+      const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
+      const hasUsers = userCount > 0;
+
+      if (hasUsers && !ALLOW_NEW_ACCOUNTS) {
+        Logger.error('OIDC registration blocked: New accounts not allowed');
+        return res.redirect('/login?error=registration_disabled');
+      }
+    }
 
     const user = await userRepository.findOrCreateOIDCUser(
       userInfo,

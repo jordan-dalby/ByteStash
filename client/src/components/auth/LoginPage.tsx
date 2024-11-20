@@ -6,7 +6,6 @@ import { login as loginApi } from '../../utils/api/auth';
 import { useToast } from '../../hooks/useToast';
 import { ROUTES } from '../../constants/routes';
 import { apiClient } from '../../utils/api/apiClient';
-import { AlertCircle } from 'lucide-react';
 
 interface OIDCConfig {
   enabled: boolean;
@@ -18,14 +17,15 @@ export const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [oidcConfig, setOIDCConfig] = useState<OIDCConfig | null>(null);
-  const [oidcError, setOidcError] = useState<string | null>(null);
   const { login, isAuthenticated, authConfig } = useAuth();
   const { addToast } = useToast();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('error') === 'auth_failed') {
-      setOidcError('Authentication failed. Please try again.');
+      addToast('Authentication failed. Please try again.', 'error');
+    } else if (params.get('error') === 'registration_disabled') {
+      addToast('Registration is disabled on this ByteStash instance.', 'error');
     }
   }, []);
 
@@ -77,7 +77,7 @@ export const LoginPage: React.FC = () => {
           </h2>
           <p className="mt-2 text-center text-sm text-gray-400">
             Please sign in to continue
-            {authConfig?.allowNewAccounts && (
+            {authConfig?.allowNewAccounts ? (
               <>
                 , create an{' '}
                 <Link to="/register" className="text-blue-400 hover:text-blue-300">
@@ -85,21 +85,14 @@ export const LoginPage: React.FC = () => {
                 </Link>
                 {' '}or{' '}
               </>
+            ) : (
+              ' or '
             )}
             <Link to={ROUTES.PUBLIC_SNIPPETS} className="text-blue-400 hover:text-blue-300">
               browse public snippets
             </Link>
           </p>
         </div>
-
-        {oidcError && (
-          <div className="rounded-md bg-red-900/50 p-4 border border-red-700">
-            <div className="flex items-center gap-3">
-              <AlertCircle className="h-5 w-5 text-red-400" />
-              <p className="text-sm text-red-400">{oidcError}</p>
-            </div>
-          </div>
-        )}
 
         {oidcConfig?.enabled && (
           <>

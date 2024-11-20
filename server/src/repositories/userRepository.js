@@ -130,6 +130,11 @@ class UserRepository {
       throw error;
     }
   }
+
+  async findByOIDCId(oidcId, provider) {
+    this.#initializeStatements();
+    return this.findByOIDCIdStmt.get(oidcId, provider);
+  }
 }
 
 export default new UserRepository();

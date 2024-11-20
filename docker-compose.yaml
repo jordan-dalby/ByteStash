@@ -21,7 +21,7 @@ services:
       # Optional: Enable OIDC for Single Sign On
       - OIDC_ENABLED=true
       # Optional: Display name for users signing in with SSO, will default to Single Sign-on
-      - OIDC_DISPLAY_NAME="Authentik"
+      - OIDC_DISPLAY_NAME=
       # Your OIDC issuer url, e.g. https://authentik.mydomain.com/application/o/bytestash/ for authentik
       - OIDC_ISSUER_URL=
       # Your OIDC client ID, you can find it in your app provider
