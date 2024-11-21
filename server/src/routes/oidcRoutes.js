@@ -5,6 +5,7 @@ import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS } from '../middleware/auth
 import jwt from 'jsonwebtoken';
 import Logger from '../logger.js';
 import { getDb } from '../config/database.js';
+import { up_v1_5_0_snippets } from '../config/migrations/20241117-migration.js';
 
 const router = express.Router();
 
@@ -50,6 +51,10 @@ router.get('/callback', async (req, res) => {
       return res.status(404).json({ error: 'OIDC not enabled' });
     }
 
+    const db = getDb();
+    const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
+    const hasUsers = userCount > 0;
+
     const baseUrl = getBaseUrl(req);
     const callbackUrl = oidc.getCallbackUrl(baseUrl);
     const queryString = new URLSearchParams(req.query).toString();
@@ -57,7 +62,7 @@ router.get('/callback', async (req, res) => {
     
     Logger.debug('Full callback URL:', currentUrl);
 
-    const { tokens, userInfo } = await oidc.handleCallback(currentUrl, callbackUrl);
+    const { _, userInfo } = await oidc.handleCallback(currentUrl, callbackUrl);
     Logger.debug('Authentication successful');
 
     const existingUser = await userRepository.findByOIDCId(
@@ -65,7 +70,7 @@ router.get('/callback', async (req, res) => {
       oidc.config.serverMetadata().issuer
     );
 
-    if (!existingUser) {
+    if (!hasUsers && !existingUser) {
       const db = getDb();
       const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
       const hasUsers = userCount > 0;
@@ -80,6 +85,10 @@ router.get('/callback', async (req, res) => {
       userInfo,
       oidc.config.serverMetadata().issuer
     );
+
+    if (!hasUsers) {
+      await up_v1_5_0_snippets(db, user.id);
+    }
 
     const token = jwt.sign({ 
       id: user.id,
