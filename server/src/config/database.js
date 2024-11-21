@@ -7,6 +7,7 @@ import Logger from '../logger.js';
 import { up_v1_5_0_public } from './migrations/20241119-migration.js';
 import { up_v1_5_0_oidc } from './migrations/20241120-migration.js';
 import { fileURLToPath } from 'url';
+import { up_v1_5_0_usernames } from './migrations/20241121-migration.js';
 
 let db = null;
 let checkpointInterval = null;
@@ -155,6 +156,7 @@ function initializeDatabase() {
       up_v1_5_0(db);
       up_v1_5_0_public(db);
       up_v1_5_0_oidc(db);
+      up_v1_5_0_usernames(db);
     }
 
     startCheckpointInterval();

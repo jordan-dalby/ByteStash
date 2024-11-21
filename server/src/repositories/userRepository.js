@@ -16,14 +16,14 @@ class UserRepository {
       const db = getDb();
 
       this.createUserStmt = db.prepare(`
-        INSERT INTO users (username, password_hash)
-        VALUES (?, ?)
+        INSERT INTO users (username, username_normalized, password_hash)
+        VALUES (?, ?, ?)
       `);
 
       this.findByUsernameStmt = db.prepare(`
         SELECT id, username, password_hash, created_at, email, name, oidc_id, oidc_provider
         FROM users
-        WHERE username = ?
+        WHERE username_normalized = ? COLLATE NOCASE
       `);
 
       this.findByIdStmt = db.prepare(`
@@ -41,16 +41,19 @@ class UserRepository {
       this.createUserWithOIDCStmt = db.prepare(`
         INSERT INTO users (
           username, 
+          username_normalized,
           password_hash, 
           oidc_id, 
           oidc_provider, 
           email, 
           name
-        ) VALUES (?, '', ?, ?, ?, ?)
+        ) VALUES (?, ?, '', ?, ?, ?, ?)
       `);
 
       this.findUsernameCountStmt = db.prepare(`
-        SELECT COUNT(*) as count FROM users WHERE username = ?
+        SELECT COUNT(*) as count 
+        FROM users 
+        WHERE username_normalized = ? COLLATE NOCASE
       `);
     }
   }
@@ -61,8 +64,13 @@ class UserRepository {
     try {
       const saltRounds = 10;
       const passwordHash = await bcrypt.hash(password, saltRounds);
+      const normalizedUsername = username.toLowerCase();
 
-      const result = this.createUserStmt.run(username, passwordHash);
+      const result = this.createUserStmt.run(
+        username,
+        normalizedUsername,
+        passwordHash
+      );
       
       return this.findById(result.lastInsertRowid);
     } catch (error) {
@@ -75,7 +83,7 @@ class UserRepository {
 
   async findByUsername(username) {
     this.#initializeStatements();
-    return this.findByUsernameStmt.get(username);
+    return this.findByUsernameStmt.get(username.toLowerCase());
   }
 
   async findById(id) {
@@ -95,7 +103,7 @@ class UserRepository {
     let username = baseUsername;
     let counter = 1;
     
-    while (this.findUsernameCountStmt.get(username).count > 0) {
+    while (this.findUsernameCountStmt.get(username.toLowerCase()).count > 0) {
       username = `${baseUsername}${counter}`;
       counter++;
     }
@@ -118,6 +126,7 @@ class UserRepository {
 
       const result = this.createUserWithOIDCStmt.run(
         username,
+        username.toLowerCase(),
         profile.sub,
         provider,
         profile.email,

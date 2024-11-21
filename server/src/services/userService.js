@@ -16,6 +16,11 @@ class UserService {
         throw new Error('Username can only contain letters, numbers, underscores, and hyphens');
       }
 
+      const existing = await userRepository.findByUsername(username);
+      if (existing) {
+        throw new Error('Username already exists');
+      }
+
       return await userRepository.create(username, password);
     } catch (error) {
       Logger.error('Service Error - createUser:', error);
