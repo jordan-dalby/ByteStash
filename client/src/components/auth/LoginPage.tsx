@@ -5,12 +5,8 @@ import { PageContainer } from '../common/layout/PageContainer';
 import { login as loginApi } from '../../utils/api/auth';
 import { useToast } from '../../hooks/useToast';
 import { ROUTES } from '../../constants/routes';
+import { OIDCConfig } from '../../types/auth';
 import { apiClient } from '../../utils/api/apiClient';
-
-interface OIDCConfig {
-  enabled: boolean;
-  displayName: string;
-}
 
 export const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
