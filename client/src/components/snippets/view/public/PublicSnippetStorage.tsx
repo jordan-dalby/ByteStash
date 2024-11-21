@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSettings } from '../../../../hooks/useSettings';
-import { useSnippets } from '../../../../hooks/useSnippets';
 import { useToast } from '../../../../hooks/useToast';
+import { useAuth } from '../../../../hooks/useAuth';
 import { initializeMonaco } from '../../../../utils/language/languageUtils';
 import SettingsModal from '../../../settings/SettingsModal';
 import BaseSnippetStorage from '../common/BaseSnippetStorage';
 import { fetchPublicSnippets } from '../../../../utils/api/snippets';
 import { Snippet } from '../../../../types/snippets';
 import { UserDropdown } from '../../../auth/UserDropdown';
+import { ROUTES } from '../../../../constants/routes';
 
 const PublicSnippetStorage: React.FC = () => {
   const { 
@@ -16,8 +18,9 @@ const PublicSnippetStorage: React.FC = () => {
     showCategories, expandCategories, showLineNumbers
   } = useSettings();
 
-  const { addSnippet } = useSnippets();
+  const { isAuthenticated } = useAuth();
   const { addToast } = useToast();
+  const navigate = useNavigate();
   const [snippets, setSnippets] = useState<Snippet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
@@ -33,12 +36,19 @@ const PublicSnippetStorage: React.FC = () => {
       setSnippets(fetchedSnippets);
     } catch (error) {
       console.error('Failed to load public snippets:', error);
+      addToast('Failed to load public snippets', 'error');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDuplicate = async (snippet: Snippet) => {
+    if (!isAuthenticated) {
+      addToast('Please sign in to add this snippet to your collection', 'info');
+      navigate(ROUTES.LOGIN);
+      return;
+    }
+
     try {
       const duplicatedSnippet: Omit<Snippet, 'id' | 'updated_at' | 'share_count' | 'username'> = {
         title: `${snippet.title}`,
@@ -48,10 +58,12 @@ const PublicSnippetStorage: React.FC = () => {
         is_public: 0
       };
       
-      await addSnippet(duplicatedSnippet);
+      const { createSnippet } = await import('../../../../utils/api/snippets');
+      await createSnippet(duplicatedSnippet);
+      addToast('Snippet added to your collection', 'success');
     } catch (error) {
       console.error('Failed to duplicate snippet:', error);
-      addToast('Failed to add snippet to your stash', 'error');
+      addToast('Failed to add snippet to your collection', 'error');
     }
   };
 
@@ -74,6 +86,7 @@ const PublicSnippetStorage: React.FC = () => {
         onDuplicate={handleDuplicate}
         headerRight={<UserDropdown />}
         isPublicView={true}
+        isAuthenticated={isAuthenticated}
       />
 
       <SettingsModal

@@ -9,6 +9,7 @@ import { ShareMenu } from '../share/ShareMenu';
 import { UserDropdown } from '../../auth/UserDropdown';
 import BaseSnippetStorage from './common/BaseSnippetStorage';
 import { Snippet } from '../../../types/snippets';
+import { useAuth } from '../../../hooks/useAuth';
 
 const SnippetStorage: React.FC = () => {
   const { 
@@ -27,6 +28,7 @@ const SnippetStorage: React.FC = () => {
   } = useSettings();
 
   const { addToast } = useToast();
+  const { isAuthenticated } = useAuth();
 
   const [isEditSnippetModalOpen, setIsEditSnippetModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
@@ -112,6 +114,7 @@ const SnippetStorage: React.FC = () => {
         onDuplicate={handleDuplicate}
         headerRight={<UserDropdown />}
         isPublicView={false}
+        isAuthenticated={isAuthenticated}
       />
 
       <EditSnippetModal

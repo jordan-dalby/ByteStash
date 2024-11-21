@@ -28,6 +28,7 @@ interface BaseSnippetStorageProps {
   onDuplicate?: (snippet: Snippet) => void;
   headerRight: React.ReactNode;
   isPublicView: boolean;
+  isAuthenticated: boolean;
 }
 
 const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
@@ -49,7 +50,8 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
   onShare,
   onDuplicate,
   headerRight,
-  isPublicView
+  isPublicView,
+  isAuthenticated
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState('');
@@ -199,6 +201,7 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
         expandCategories={expandCategories}
         showLineNumbers={showLineNumbers}
         isPublicView={isPublicView}
+        isAuthenticated={isAuthenticated}
       />
 
       <SnippetModal

@@ -26,6 +26,7 @@ interface SnippetCardProps {
   expandCategories: boolean;
   showLineNumbers: boolean;
   isPublicView?: boolean;
+  isAuthenticated: boolean;
 }
 
 export const SnippetCard: React.FC<SnippetCardProps> = ({
@@ -43,7 +44,8 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
   showCategories,
   expandCategories,
   showLineNumbers,
-  isPublicView = false
+  isPublicView = false,
+  isAuthenticated
 }) => {
   const [currentFragmentIndex, setCurrentFragmentIndex] = useState(0);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -166,6 +168,7 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
                 onOpenInNewTab={handleOpenInNewTab}
                 onDuplicate={handleDuplicate}
                 isPublicView={isPublicView}
+                isAuthenticated={isAuthenticated}
               />
             </div>
           </div>

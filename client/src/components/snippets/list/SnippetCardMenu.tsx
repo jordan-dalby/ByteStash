@@ -10,6 +10,7 @@ interface SnippetCardMenuProps {
   onOpenInNewTab: () => void;
   onDuplicate: (e: React.MouseEvent) => void;
   isPublicView: boolean;
+  isAuthenticated: boolean;
 }
 
 const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
@@ -18,7 +19,8 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
   onShare,
   onOpenInNewTab,
   onDuplicate,
-  isPublicView
+  isPublicView,
+  isAuthenticated
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -29,16 +31,18 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
   if (isPublicView) {
     return (
       <div className="top-4 right-4 flex items-center gap-1">
-        <IconButton
-          icon={<Copy size={16} />}
-          onClick={(e: React.MouseEvent) => {
-            e.stopPropagation();
-            onDuplicate(e);
-          }}
-          variant="custom"
-          size="sm"
-          className="bg-gray-700 hover:bg-gray-600"
-        />
+        {isAuthenticated && (
+          <IconButton
+            icon={<Copy size={16} />}
+            onClick={(e: React.MouseEvent) => {
+              e.stopPropagation();
+              onDuplicate(e);
+            }}
+            variant="custom"
+            size="sm"
+            className="bg-gray-700 hover:bg-gray-600"
+          />
+        )}
         <IconButton
           icon={<ExternalLink size={16} />}
           onClick={(e: React.MouseEvent) => {
