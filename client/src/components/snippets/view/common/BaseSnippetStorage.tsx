@@ -6,7 +6,7 @@ import { SearchAndFilter } from '../../../search/SearchAndFilter';
 import SnippetList from '../../list/SnippetList';
 import SnippetModal from '../SnippetModal';
 import { PageContainer } from '../../../common/layout/PageContainer';
-import { APP_VERSION } from '../../../../constants/settings';
+import StorageHeader from './StorageHeader';
 
 interface BaseSnippetStorageProps {
   snippets: Snippet[];
@@ -25,6 +25,7 @@ interface BaseSnippetStorageProps {
   onDelete?: (id: string) => Promise<void>;
   onEdit?: (snippet: Snippet) => void;
   onShare?: (snippet: Snippet) => void;
+  onDuplicate?: (snippet: Snippet) => void;
   headerRight: React.ReactNode;
   isPublicView: boolean;
 }
@@ -46,6 +47,7 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
   onDelete,
   onEdit,
   onShare,
+  onDuplicate,
   headerRight,
   isPublicView
 }) => {
@@ -128,7 +130,7 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
     return (
       <PageContainer>
         <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center justify-center">
-          <div className="relative">
+        <div className="relative">
             <h1 className="text-4xl font-bold mb-4">ByteStash</h1>
             <div className="flex items-center justify-center gap-3">
               <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />
@@ -143,10 +145,7 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 p-8">
       <div className="flex justify-between items-start mb-4">
-        <div className="flex items-end gap-2">
-          <h1 className="text-4xl font-bold text-gray-100">ByteStash</h1>
-          <span className="text-sm text-gray-400 mb-0">v{APP_VERSION}</span>
-        </div>
+        <StorageHeader isPublicView={isPublicView} />
         {headerRight}
       </div>
       
@@ -188,10 +187,11 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
         snippets={filteredSnippets}
         viewMode={viewMode}
         onOpen={openSnippet}
-        onDelete={onDelete || (() => {})}
+        onDelete={onDelete || (() => Promise.resolve())}
         onEdit={onEdit || (() => {})}
         onCategoryClick={handleCategoryClick}
         onShare={onShare || (() => {})}
+        onDuplicate={onDuplicate || (() => {})}
         compactView={compactView}
         showCodePreview={showCodePreview}
         previewLines={previewLines}

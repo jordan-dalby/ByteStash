@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSnippets } from '../../../hooks/useSnippets';
 import { useSettings } from '../../../hooks/useSettings';
+import { useToast } from '../../../hooks/useToast';
 import { initializeMonaco } from '../../../utils/language/languageUtils';
 import EditSnippetModal from '../edit/EditSnippetModal';
 import SettingsModal from '../../settings/SettingsModal';
@@ -10,12 +11,22 @@ import BaseSnippetStorage from './common/BaseSnippetStorage';
 import { Snippet } from '../../../types/snippets';
 
 const SnippetStorage: React.FC = () => {
-  const { snippets, isLoading, addSnippet, updateSnippet, removeSnippet, reloadSnippets } = useSnippets();
+  const { 
+    snippets, 
+    isLoading, 
+    addSnippet, 
+    updateSnippet, 
+    removeSnippet, 
+    reloadSnippets 
+  } = useSnippets();
+  
   const { 
     viewMode, setViewMode, compactView, showCodePreview, 
     previewLines, includeCodeInSearch, updateSettings,
     showCategories, expandCategories, showLineNumbers
   } = useSettings();
+
+  const { addToast } = useToast();
 
   const [isEditSnippetModalOpen, setIsEditSnippetModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
@@ -62,6 +73,23 @@ const SnippetStorage: React.FC = () => {
     setIsShareMenuOpen(false);
   };
 
+  const handleDuplicate = async (snippet: Snippet) => {
+    try {
+      const duplicatedSnippet: Omit<Snippet, 'id' | 'updated_at' | 'share_count'> = {
+        title: `${snippet.title}`,
+        description: snippet.description,
+        categories: [...snippet.categories],
+        fragments: snippet.fragments.map(f => ({ ...f })),
+        is_public: snippet.is_public
+      };
+      
+      await addSnippet(duplicatedSnippet);
+    } catch (error) {
+      console.error('Failed to duplicate snippet:', error);
+      addToast('Failed to duplicate snippet', 'error');
+    }
+  };
+
   return (
     <>
       <BaseSnippetStorage
@@ -81,6 +109,7 @@ const SnippetStorage: React.FC = () => {
         onDelete={removeSnippet}
         onEdit={openEditSnippetModal}
         onShare={openShareMenu}
+        onDuplicate={handleDuplicate}
         headerRight={<UserDropdown />}
         isPublicView={false}
       />

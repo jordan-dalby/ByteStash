@@ -54,6 +54,7 @@ export class ApiClient {
           window.dispatchEvent(new CustomEvent(EVENTS.AUTH_ERROR));
         }
         const error = await response.json().catch(() => ({}));
+        error.status = response.status;
         throw error;
       }
 

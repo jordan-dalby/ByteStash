@@ -17,6 +17,7 @@ interface SnippetCardProps {
   onDelete: (id: string) => void;
   onEdit: (snippet: Snippet) => void;
   onShare: (snippet: Snippet) => void;
+  onDuplicate: (snippet: Snippet) => void;
   onCategoryClick: (category: string) => void;
   compactView: boolean;
   showCodePreview: boolean;
@@ -34,6 +35,7 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
   onDelete,
   onEdit,
   onShare,
+  onDuplicate,
   onCategoryClick,
   compactView,
   showCodePreview,
@@ -56,7 +58,8 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
     }
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     onDelete(snippet.id);
     setIsDeleteModalOpen(false);
   };
@@ -81,6 +84,21 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
     window.open(`/snippets/${snippet.id}`, '_blank');
   };
 
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteModalClose = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setIsDeleteModalOpen(false);
+  };
+
+  const handleDuplicate = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDuplicate(snippet);
+  };
+
   const currentFragment = snippet.fragments[currentFragmentIndex];
 
   return (
@@ -98,7 +116,7 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
                 <span>Public</span>
               </div>
             )}
-            {!isPublicView && (snippet.share_count || 0 ) > 0 && (
+            {!isPublicView && (snippet.share_count || 0) > 0 && (
               <div className="flex items-center gap-1 text-blue-400 mr-4">
                 <Users size={12} />
                 <span>Shared</span>
@@ -136,10 +154,17 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
 
             <div className="opacity-0 group-hover:opacity-100 transition-opacity">
               <SnippetCardMenu
-                onEdit={() => onEdit(snippet)}
-                onDelete={() => setIsDeleteModalOpen(true)}
-                onShare={() => onShare(snippet)}
+                onEdit={(e: React.MouseEvent) => {
+                  e.stopPropagation();
+                  onEdit(snippet);
+                }}
+                onDelete={handleDelete}
+                onShare={(e: React.MouseEvent) => {
+                  e.stopPropagation();
+                  onShare(snippet);
+                }}
                 onOpenInNewTab={handleOpenInNewTab}
+                onDuplicate={handleDuplicate}
                 isPublicView={isPublicView}
               />
             </div>
@@ -205,18 +230,18 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
             </div>
           )}
         </div>
-
-        <ConfirmationModal
-          isOpen={isDeleteModalOpen}
-          onClose={() => setIsDeleteModalOpen(false)}
-          onConfirm={handleDeleteConfirm}
-          title="Confirm Deletion"
-          message={`Are you sure you want to delete "${snippet.title}"? This action cannot be undone.`}
-          confirmLabel="Delete"
-          cancelLabel="Cancel"
-          variant="danger"
-        />
       </div>
+
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleDeleteModalClose}
+        onConfirm={handleDeleteConfirm}
+        title="Confirm Deletion"
+        message={`Are you sure you want to delete "${snippet.title}"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="danger"
+      />
     </>
   );
 };

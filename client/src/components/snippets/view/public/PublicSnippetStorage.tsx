@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { User } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { useSettings } from '../../../../hooks/useSettings';
+import { useSnippets } from '../../../../hooks/useSnippets';
+import { useToast } from '../../../../hooks/useToast';
 import { initializeMonaco } from '../../../../utils/language/languageUtils';
 import SettingsModal from '../../../settings/SettingsModal';
 import BaseSnippetStorage from '../common/BaseSnippetStorage';
 import { fetchPublicSnippets } from '../../../../utils/api/snippets';
 import { Snippet } from '../../../../types/snippets';
+import { UserDropdown } from '../../../auth/UserDropdown';
 
 const PublicSnippetStorage: React.FC = () => {
   const { 
@@ -15,6 +16,8 @@ const PublicSnippetStorage: React.FC = () => {
     showCategories, expandCategories, showLineNumbers
   } = useSettings();
 
+  const { addSnippet } = useSnippets();
+  const { addToast } = useToast();
   const [snippets, setSnippets] = useState<Snippet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
@@ -35,15 +38,22 @@ const PublicSnippetStorage: React.FC = () => {
     }
   };
 
-  const signInButton = (
-    <Link
-      to="/login"
-      className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-md transition-colors text-sm"
-    >
-      <User size={16} />
-      <span>Sign in</span>
-    </Link>
-  );
+  const handleDuplicate = async (snippet: Snippet) => {
+    try {
+      const duplicatedSnippet: Omit<Snippet, 'id' | 'updated_at' | 'share_count' | 'username'> = {
+        title: `${snippet.title}`,
+        description: snippet.description,
+        categories: [...snippet.categories],
+        fragments: snippet.fragments.map(f => ({ ...f })),
+        is_public: 0
+      };
+      
+      await addSnippet(duplicatedSnippet);
+    } catch (error) {
+      console.error('Failed to duplicate snippet:', error);
+      addToast('Failed to add snippet to your stash', 'error');
+    }
+  };
 
   return (
     <>
@@ -61,7 +71,8 @@ const PublicSnippetStorage: React.FC = () => {
         showLineNumbers={showLineNumbers}
         onSettingsOpen={() => setIsSettingsModalOpen(true)}
         onNewSnippet={() => null}
-        headerRight={signInButton}
+        onDuplicate={handleDuplicate}
+        headerRight={<UserDropdown />}
         isPublicView={true}
       />
 

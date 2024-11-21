@@ -1,13 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { Share, Pencil, Trash2, ExternalLink, MoreVertical } from 'lucide-react';
+import { Share, Pencil, Trash2, ExternalLink, MoreVertical, Copy } from 'lucide-react';
 import { IconButton } from '../../common/buttons/IconButton';
 import { useOutsideClick } from '../../../hooks/useOutsideClick';
 
 interface SnippetCardMenuProps {
-  onEdit: () => void;
-  onDelete: () => void;
-  onShare: () => void;
+  onEdit: (e: React.MouseEvent) => void;
+  onDelete: (e: React.MouseEvent) => void;
+  onShare: (e: React.MouseEvent) => void;
   onOpenInNewTab: () => void;
+  onDuplicate: (e: React.MouseEvent) => void;
   isPublicView: boolean;
 }
 
@@ -16,6 +17,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
   onDelete,
   onShare,
   onOpenInNewTab,
+  onDuplicate,
   isPublicView
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -27,6 +29,16 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
   if (isPublicView) {
     return (
       <div className="top-4 right-4 flex items-center gap-1">
+        <IconButton
+          icon={<Copy size={16} />}
+          onClick={(e: React.MouseEvent) => {
+            e.stopPropagation();
+            onDuplicate(e);
+          }}
+          variant="custom"
+          size="sm"
+          className="bg-gray-700 hover:bg-gray-600"
+        />
         <IconButton
           icon={<ExternalLink size={16} />}
           onClick={(e: React.MouseEvent) => {
@@ -47,7 +59,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
         icon={<Pencil size={16} />}
         onClick={(e: React.MouseEvent) => {
           e.stopPropagation();
-          onEdit();
+          onEdit(e);
         }}
         variant="custom"
         size="sm"
@@ -57,14 +69,13 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
         icon={<Trash2 size={16} className="hover:text-red-500" />}
         onClick={(e: React.MouseEvent) => {
           e.stopPropagation();
-          onDelete();
+          onDelete(e);
         }}
         variant="custom"
         size="sm"
         className="bg-gray-700 hover:bg-gray-600"
       />
 
-      {/* More Actions Dropdown */}
       <div className="relative">
         <IconButton
           ref={buttonRef}
@@ -99,13 +110,24 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onShare();
+                onShare(e);
                 setIsDropdownOpen(false);
               }}
               className="w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 flex items-center gap-2"
             >
               <Share size={16} />
               Share snippet
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDuplicate(e);
+                setIsDropdownOpen(false);
+              }}
+              className="w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 flex items-center gap-2"
+            >
+              <Copy size={16} />
+              Duplicate snippet
             </button>
           </div>
         )}
