@@ -10,7 +10,25 @@ import { up_v1_5_0_snippets } from '../config/migrations/20241117-migration.js';
 const router = express.Router();
 
 function getBaseUrl(req) {
-  return `${req.protocol}://${req.get('host')}${process.env.BASE_PATH || ''}`;
+  const forwardedProto = req.get('X-Forwarded-Proto');
+  
+  const isSecure = req.secure || 
+                   forwardedProto === 'https' || 
+                   req.get('X-Forwarded-SSL') === 'on';
+
+  const protocol = isSecure ? 'https' : 'http';
+  
+  const host = req.get('X-Forwarded-Host') || req.get('Host');
+
+  Logger.debug('Protocol detection:', {
+    secure: req.secure,
+    forwardedProto,
+    resultingProtocol: protocol,
+    host
+  });
+
+  const baseUrl = `${protocol}://${host}${process.env.BASE_PATH || ''}`;
+  return baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
 }
 
 router.get('/config', async (req, res) => {
