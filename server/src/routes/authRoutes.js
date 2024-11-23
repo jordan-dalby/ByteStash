@@ -87,7 +87,7 @@ router.post('/login', async (req, res) => {
 });
 
 router.get('/verify', async (req, res) => {
-  const authHeader = req.headers['authorization'];
+  const authHeader = req.headers['bytestashauth'];
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {

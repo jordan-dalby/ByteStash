@@ -37,7 +37,7 @@ router.get('/:id', async (req, res) => {
     }
 
     if (share.share?.requiresAuth) {
-      const authHeader = req.headers['authorization'];
+      const authHeader = req.headers['bytestashauth'];
       const token = authHeader && authHeader.split(' ')[1];
 
       if (!token) {

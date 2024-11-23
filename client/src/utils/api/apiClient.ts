@@ -26,7 +26,7 @@ export class ApiClient {
     if (options.requiresAuth) {
       const token = localStorage.getItem('token');
       if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
+        headers.set('bytestashauth', `Bearer ${token}`);
       }
     }
 

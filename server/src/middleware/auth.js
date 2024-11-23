@@ -18,7 +18,7 @@ const ALLOW_NEW_ACCOUNTS = process.env.ALLOW_NEW_ACCOUNTS === 'true';
 const TOKEN_EXPIRY = process.env.TOKEN_EXPIRY || '24h';
 
 const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
+  const authHeader = req.headers['bytestashauth'];
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {

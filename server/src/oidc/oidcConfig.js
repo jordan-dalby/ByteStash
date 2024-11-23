@@ -171,7 +171,7 @@ class OIDCConfig {
           claims.sub,
           {
             headers: {
-              'Authorization': `Bearer ${tokens.access_token}`,
+              'bytestashauth': `Bearer ${tokens.access_token}`,
               'Accept': 'application/json'
             }
           }
