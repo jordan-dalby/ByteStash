@@ -35,11 +35,10 @@ class OIDCConfig {
         throw new Error('OIDC_ISSUER_URL environment variable is not set');
       }
 
-      const normalizedUrl = discoveryUrl.endsWith('/') ? discoveryUrl : `${discoveryUrl}/`;
-      Logger.debug(`Discovering OIDC configuration from ${normalizedUrl}`);
+      Logger.debug(`Discovering OIDC configuration from ${discoveryUrl}`);
 
       try {
-        const issuerUrl = new URL(normalizedUrl);
+        const issuerUrl = new URL(discoveryUrl);
         
         this.config = await client.discovery(
           issuerUrl, 
