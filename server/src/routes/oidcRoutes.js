@@ -45,7 +45,7 @@ router.get('/auth', async (req, res) => {
   try {
     const oidc = await OIDCConfig.getInstance();
     if (!oidc.isEnabled()) {
-      return res.status(404).json({ error: 'OIDC not enabled' });
+      return res.redirect('/login?error=config_error');
     }
 
     const baseUrl = getBaseUrl(req);
@@ -58,7 +58,8 @@ router.get('/auth', async (req, res) => {
     res.redirect(authUrl);
   } catch (error) {
     Logger.error('OIDC auth error:', error);
-    res.redirect('/login?error=auth_failed');
+    const errorMessage = encodeURIComponent(error.message || 'Unknown error');
+    res.redirect(`/login?error=provider_error&message=${errorMessage}`);
   }
 });
 
@@ -118,7 +119,23 @@ router.get('/callback', async (req, res) => {
     res.redirect(`/auth/callback?token=${token}`);
   } catch (error) {
     Logger.error('OIDC callback error:', error);
-    res.redirect('/login?error=auth_failed');
+    let errorType = 'auth_failed';
+    let errorDetails = '';
+
+    if (error.message?.includes('state parameter')) {
+      errorType = 'auth_failed';
+      errorDetails = 'Your authentication session has expired';
+    } else if (error.message?.includes('accounts disabled')) {
+      errorType = 'registration_disabled';
+    } else if (error.message?.includes('OIDC configuration')) {
+      errorType = 'config_error';
+    } else if (error.response?.status === 401 || error.response?.status === 403) {
+      errorType = 'provider_error';
+      errorDetails = 'Authorization denied by identity provider';
+    }
+
+    const messageParam = errorDetails ? `&message=${encodeURIComponent(errorDetails)}` : '';
+    res.redirect(`/login?error=${errorType}${messageParam}`);
   }
 });
 

@@ -7,6 +7,7 @@ import { useToast } from '../../hooks/useToast';
 import { ROUTES } from '../../constants/routes';
 import { OIDCConfig } from '../../types/auth';
 import { apiClient } from '../../utils/api/apiClient';
+import { handleOIDCError } from '../../utils/oidcErrorHandler';
 
 export const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -18,12 +19,13 @@ export const LoginPage: React.FC = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('error') === 'auth_failed') {
-      addToast('Authentication failed. Please try again.', 'error');
-    } else if (params.get('error') === 'registration_disabled') {
-      addToast('Registration is disabled on this ByteStash instance.', 'error');
+    const error = params.get('error');
+    const message = params.get('message');
+    
+    if (error) {
+      handleOIDCError(error, addToast, oidcConfig?.displayName, message || undefined);
     }
-  }, []);
+  }, [addToast, oidcConfig]);
 
   useEffect(() => {
     const fetchOIDCConfig = async () => {

@@ -1,5 +1,5 @@
 import express from 'express';
-import { initializeDatabase } from './config/database.js';
+import { initializeDatabase, shutdownDatabase } from './config/database.js';
 import snippetRoutes from './routes/snippetRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import shareRoutes from './routes/shareRoutes.js';

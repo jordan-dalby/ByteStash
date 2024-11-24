@@ -7,11 +7,11 @@ export interface Toast {
   id: number;
   message: string;
   type: ToastType;
-  duration: number;
+  duration: number | null;
 }
 
-interface ToastContextType {
-  addToast: (message: string, type?: ToastType, duration?: number) => void;
+export interface ToastContextType {
+  addToast: (message: string, type?: ToastType, duration?: number | null) => void;
   removeToast: (id: number) => void;
 }
 
@@ -65,7 +65,7 @@ const ToastComponent: React.FC<ToastProps> = ({
           clearInterval(interval);
           return 0;
         }
-        return prev - (100 / (duration / 100));
+        return prev - (100 / ((duration || 0) / 100));
       });
     }, 100);
 
@@ -106,11 +106,13 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const addToast = useCallback((
     message: string, 
     type: ToastType = 'info', 
-    duration = 3000
+    duration: number | null = 3000
   ) => {
     const id = Date.now();
     setToasts(prev => [...prev, { id, message, type, duration }]);
-    setTimeout(() => removeToast(id), duration);
+    if (duration !== null) {
+      setTimeout(() => removeToast(id), duration);
+    }
   }, [removeToast]);
 
   return (

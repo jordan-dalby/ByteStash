@@ -3,24 +3,31 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
 import { Loader2 } from 'lucide-react';
 import { PageContainer } from '../../common/layout/PageContainer';
+import { useToast } from '../../../hooks/useToast';
+import { handleOIDCError } from '../../../utils/oidcErrorHandler';
 
 export const OIDCCallback: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { addToast } = useToast();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
+    const error = params.get('error');
+    const message = params.get('message');
 
     if (token) {
-      // Store the token and redirect
       login(token, null);
       navigate('/', { replace: true });
+    } else if (error) {
+      handleOIDCError(error, addToast, undefined, message || undefined);
+      navigate('/login', { replace: true });
     } else {
-      // Handle error case
-      navigate('/login?error=auth_failed', { replace: true });
+      handleOIDCError('auth_failed', addToast);
+      navigate('/login', { replace: true });
     }
-  }, [login, navigate]);
+  }, [login, navigate, addToast]);
 
   return (
     <PageContainer>
