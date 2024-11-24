@@ -17,3 +17,7 @@ export const login = async (username: string, password: string): Promise<AuthRes
 export const register = async (username: string, password: string): Promise<AuthResponse> => {
   return apiClient.post<AuthResponse>(`${API_ENDPOINTS.AUTH}/register`, { username, password });
 };
+
+export const anonymous = async (): Promise<AuthResponse> => {
+  return apiClient.post<AuthResponse>(`${API_ENDPOINTS.AUTH}/anonymous`, {});
+}

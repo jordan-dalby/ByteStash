@@ -10,6 +10,10 @@ export const UserDropdown: React.FC = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
 
+  if (user?.id === 0) {
+    return (<></>)
+  }
+
   useOutsideClick(dropdownRef, () => setIsOpen(false));
 
   const isPublicView = location.pathname.startsWith('/public');

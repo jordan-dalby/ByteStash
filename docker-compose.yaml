@@ -17,6 +17,8 @@ services:
       - ALLOW_NEW_ACCOUNTS=true
       # Should debug mode be enabled? Essentially enables logging, in most cases leave this as false
       - DEBUG=false
+      # Should we use accounts at all? When enabled, it will be like starting a fresh account so export your snippets, no login required
+      - DISABLE_ACCOUNTS=false
 
       # Optional: Enable OIDC for Single Sign On
       - OIDC_ENABLED=true

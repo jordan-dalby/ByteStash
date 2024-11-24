@@ -1,6 +1,6 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS } from '../middleware/auth.js';
+import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS, DISABLE_ACCOUNTS, getOrCreateAnonymousUser } from '../middleware/auth.js';
 import userService from '../services/userService.js';
 import { getDb } from '../config/database.js';
 import { up_v1_5_0_snippets } from '../config/migrations/20241117-migration.js';
@@ -16,8 +16,9 @@ router.get('/config', async (req, res) => {
     
     res.json({ 
       authRequired: true,
-      allowNewAccounts: !hasUsers || ALLOW_NEW_ACCOUNTS,
-      hasUsers
+      allowNewAccounts: (!hasUsers || ALLOW_NEW_ACCOUNTS) && !DISABLE_ACCOUNTS,
+      hasUsers,
+      disableAccounts: DISABLE_ACCOUNTS
     });
   } catch (error) {
     Logger.error('Error getting auth config:', error);
@@ -112,6 +113,27 @@ router.get('/verify', async (req, res) => {
     });
   } catch (err) {
     res.status(401).json({ valid: false });
+  }
+});
+
+router.post('/anonymous', async (req, res) => {
+  if (!DISABLE_ACCOUNTS) {
+    return res.status(403).json({ error: 'Anonymous login not allowed' });
+  }
+
+  try {
+    const anonymousUser = await getOrCreateAnonymousUser();
+    const token = jwt.sign({ 
+      id: anonymousUser.id,
+      username: anonymousUser.username 
+    }, JWT_SECRET, {
+      expiresIn: TOKEN_EXPIRY
+    });
+
+    res.json({ token, user: anonymousUser });
+  } catch (error) {
+    Logger.error('Error in anonymous login:', error);
+    res.status(500).json({ error: 'Failed to create anonymous session' });
   }
 });
 

@@ -54,7 +54,7 @@ class SnippetRepository {
         FROM snippets s
         LEFT JOIN categories c ON s.id = c.snippet_id
         LEFT JOIN users u ON s.user_id = u.id
-        WHERE s.is_public = TRUE
+        WHERE s.is_public = 1
         GROUP BY s.id
         ORDER BY s.updated_at DESC
       `);
@@ -126,7 +126,7 @@ class SnippetRepository {
         FROM snippets s
         LEFT JOIN categories c ON s.id = c.snippet_id
         LEFT JOIN users u ON s.user_id = u.id
-        WHERE s.id = ? AND (s.user_id = ? OR s.is_public = TRUE)
+        WHERE s.id = ? AND (s.user_id = ? OR s.is_public = 1)
         GROUP BY s.id
       `);
 
@@ -197,7 +197,7 @@ class SnippetRepository {
     }
   }
 
-  create({ title, description, categories = [], fragments = [], userId, isPublic = false }) {
+  create({ title, description, categories = [], fragments = [], userId, isPublic = 0 }) {
     this.#initializeStatements();
     try {
       const db = getDb();
@@ -290,7 +290,7 @@ class SnippetRepository {
   findById(id, userId = null) {
     this.#initializeStatements();
     try {
-      if (userId) {
+      if (userId != null) {
         const snippet = this.selectByIdStmt.get(id, userId);
         return this.#processSnippet(snippet);
       }

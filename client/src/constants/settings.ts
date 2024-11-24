@@ -9,4 +9,4 @@ export const DEFAULT_SETTINGS = {
   showLineNumbers: true,
 } as const;
 
-export const APP_VERSION = '1.5.2';
+export const APP_VERSION = '1.5.3';

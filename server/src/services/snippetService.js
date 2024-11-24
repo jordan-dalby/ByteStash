@@ -71,7 +71,7 @@ class SnippetService {
 
   async findById(id, userId = null) {
     try {
-      Logger.debug('Service: Getting snippet:', id, userId ? `for user: ${userId}` : '(public access)');
+      Logger.debug('Service: Getting snippet:', id, userId != null ? `for user: ${userId}` : '(public access)');
       const result = await snippetRepository.findById(id, userId);
       Logger.debug('Service: Find by ID result:', result ? 'Found' : 'Not Found');
       return result;

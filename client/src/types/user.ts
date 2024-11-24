@@ -14,4 +14,5 @@ export interface AuthConfig {
   authRequired: boolean;
   allowNewAccounts: boolean;
   hasUsers: boolean;
+  disableAccounts: boolean;
 }

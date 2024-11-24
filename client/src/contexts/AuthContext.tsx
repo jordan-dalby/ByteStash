@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { useToast } from '../hooks/useToast';
 import { EVENTS } from '../constants/events';
-import { getAuthConfig, verifyToken } from '../utils/api/auth';
+import { anonymous, getAuthConfig, verifyToken } from '../utils/api/auth';
 import type { User, AuthConfig } from '../types/user';
 
 interface AuthContextType {
@@ -44,14 +44,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const config = await getAuthConfig();
         setAuthConfig(config);
 
-        const token = localStorage.getItem('token');
-        if (token) {
-          const response = await verifyToken();
-          if (response.valid && response.user) {
-            setIsAuthenticated(true);
-            setUser(response.user);
-          } else {
-            localStorage.removeItem('token');
+        if (config.disableAccounts) {
+          try {
+            const response = await anonymous();
+            if (response.token && response.user) {
+              login(response.token, response.user);
+            }
+          } catch (error) {
+            console.error('Failed to create anonymous session:', error);
+            addToast('Failed to initialize anonymous session', 'error');
+          }
+        } else {
+          const token = localStorage.getItem('token');
+          if (token) {
+            const response = await verifyToken();
+            if (response.valid && response.user) {
+              setIsAuthenticated(true);
+              setUser(response.user);
+            } else {
+              localStorage.removeItem('token');
+            }
           }
         }
       } catch (error) {

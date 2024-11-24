@@ -55,6 +55,17 @@ class UserRepository {
         FROM users 
         WHERE username_normalized = ? COLLATE NOCASE
       `);
+
+      this.createAnonymousUserStmt = db.prepare(`
+        INSERT INTO users (
+          id,
+          username, 
+          username_normalized,
+          password_hash,
+          created_at
+        ) VALUES (0, ?, ?, '', datetime('now'))
+        ON CONFLICT(id) DO NOTHING
+      `);
     }
   }
 
@@ -143,6 +154,26 @@ class UserRepository {
   async findByOIDCId(oidcId, provider) {
     this.#initializeStatements();
     return this.findByOIDCIdStmt.get(oidcId, provider);
+  }
+
+  async createAnonymousUser(username) {
+    this.#initializeStatements();
+    
+    try {
+      this.createAnonymousUserStmt.run(
+        username,
+        username.toLowerCase()
+      );
+      
+      return {
+        id: 0,
+        username,
+        created_at: new Date().toISOString()
+      };
+    } catch (error) {
+      Logger.error('Error creating anonymous user:', error);
+      throw error;
+    }
   }
 }
 
