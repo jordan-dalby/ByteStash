@@ -69,7 +69,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
         }}
         variant="custom"
         size="sm"
-        className="bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
+        className="bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more"
         label="Edit snippet"
       />
       <IconButton
@@ -80,7 +80,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
         }}
         variant="custom"
         size="sm"
-        className="bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
+        className="bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more"
         label="Delete snippet"
       />
 
@@ -94,7 +94,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
           }}
           variant="custom"
           size="sm"
-          className="bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
+          className="bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more"
           label="More options"
         />
         
