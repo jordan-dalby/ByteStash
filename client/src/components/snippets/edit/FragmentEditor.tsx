@@ -61,6 +61,7 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
               variant="custom"
               size="sm"
               className="disabled:opacity-50 w-9 h-9 bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
+              label="Move fragment up"
             />
             <IconButton
               icon={<ChevronDown size={16} />}
@@ -69,6 +70,7 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
               variant="custom"
               size="sm"
               className="disabled:opacity-50 w-9 h-9 bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
+              label="Move fragment down"
             />
           </div>
   
@@ -114,6 +116,7 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
               variant="custom"
               size="sm"
               className="w-9 h-9 bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
+              label={isCollapsed ? "Expand fragment" : "Collapse fragment"}
             />
             <IconButton
               icon={<Trash2 size={16} className="hover:text-red-500" />}
@@ -121,6 +124,7 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
               variant="custom"
               size="sm"
               className="w-9 h-9 bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
+              label="Delete fragment"
             />
           </div>
         </div>

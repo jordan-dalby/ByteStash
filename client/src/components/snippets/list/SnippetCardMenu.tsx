@@ -41,6 +41,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
             variant="custom"
             size="sm"
             className="bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
+            label="Duplicate snippet"
           />
         )}
         <IconButton
@@ -52,6 +53,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
           variant="custom"
           size="sm"
           className="bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
+          label="Open in new tab"
         />
       </div>
     );
@@ -68,6 +70,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
         variant="custom"
         size="sm"
         className="bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
+        label="Edit snippet"
       />
       <IconButton
         icon={<Trash2 size={16} className="hover:text-red-500" />}
@@ -78,6 +81,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
         variant="custom"
         size="sm"
         className="bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
+        label="Delete snippet"
       />
 
       <div className="relative">
@@ -91,6 +95,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
           variant="custom"
           size="sm"
           className="bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
+          label="More options"
         />
         
         {isDropdownOpen && (

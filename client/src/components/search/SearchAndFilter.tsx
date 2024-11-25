@@ -98,18 +98,21 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
           onClick={() => setViewMode('grid')}
           variant={viewMode === 'grid' ? 'primary' : 'secondary'}
           className="h-10 px-4"
+          label="Grid view"
         />
         <IconButton
           icon={<List size={20} />}
           onClick={() => setViewMode('list')}
           variant={viewMode === 'list' ? 'primary' : 'secondary'}
           className="h-10 px-4"
+          label="List view"
         />
         <IconButton
           icon={<Settings size={20} />}
           onClick={openSettingsModal}
           variant="secondary"
           className="h-10 px-4"
+          label="Open settings"
         />
         {!hideNewSnippet && (
           <IconButton

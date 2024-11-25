@@ -9,6 +9,7 @@ export interface IconButtonProps {
   disabled?: boolean;
   className?: string;
   type?: 'button' | 'submit' | 'reset';
+  showLabel?: boolean;
 }
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(({
@@ -19,7 +20,8 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(({
   size = 'md',
   disabled = false,
   className = '',
-  type = 'button'
+  type = 'button',
+  showLabel = false
 }, ref) => {
   const baseClasses = 'flex items-center justify-center gap-2 rounded-md transition-colors';
   const variantClasses = {
@@ -50,9 +52,10 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(({
         disabled ? 'opacity-50 cursor-not-allowed' : ''
       }`}
       title={label}
+      aria-label={label}
     >
       {icon}
-      {label && <span>{label}</span>}
+      {(label && showLabel) && <span>{label}</span>}
     </button>
   );
 });
