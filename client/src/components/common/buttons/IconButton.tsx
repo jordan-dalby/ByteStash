@@ -23,10 +23,10 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(({
 }, ref) => {
   const baseClasses = 'flex items-center justify-center gap-2 rounded-md transition-colors';
   const variantClasses = {
-    primary: 'bg-gray-700 hover:bg-gray-700 text-white hover:bg-gray-700',
-    secondary: 'bg-gray-800 hover:bg-gray-700 text-gray-200 hover:bg-gray-700',
-    danger: 'bg-red-600 hover:bg-red-700 text-white',
-    action: 'bg-blue-600 hover:bg-blue-700 text-white',
+    primary: 'bg-light-surface dark:bg-dark-surface hover:bg-light-hover dark:hover:bg-dark-hover text-light-text dark:text-dark-text',
+    secondary: 'bg-light-surface dark:bg-dark-surface hover:bg-light-hover dark:hover:bg-dark-hover text-light-text dark:text-dark-text',
+    danger: 'bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 text-white',
+    action: 'bg-light-primary dark:bg-dark-primary hover:opacity-90 text-white',
     custom: ''
   };
   const sizeClasses = {

@@ -33,8 +33,8 @@ export const OIDCCallback: React.FC = () => {
     <PageContainer>
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex items-center gap-3">
-          <Loader2 className="w-6 h-6 text-gray-400 animate-spin" />
-          <span className="text-gray-200 text-lg">Completing sign in...</span>
+          <Loader2 className="w-6 h-6 text-light-text-secondary dark:text-dark-text-secondary animate-spin" />
+          <span className="text-light-text dark:text-dark-text text-lg">Completing sign in...</span>
         </div>
       </div>
     </PageContainer>

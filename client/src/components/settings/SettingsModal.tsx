@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { AlertCircle, BookOpen, Clock, Download, Upload } from 'lucide-react';
+import { AlertCircle, BookOpen, Clock, Download, Upload, Sun, Moon, Monitor } from 'lucide-react';
 import Modal from '../common/modals/Modal';
 import ChangelogModal from '../common/modals/ChangelogModal';
 import { useToast } from '../../hooks/useToast';
@@ -36,6 +36,7 @@ export interface SettingsModalProps {
     showCategories: boolean;
     expandCategories: boolean;
     showLineNumbers: boolean;
+    theme: 'light' | 'dark' | 'system';
   };
   onSettingsChange: (newSettings: SettingsModalProps['settings']) => void;
   snippets: Snippet[];
@@ -61,6 +62,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   const [showCategories, setShowCategories] = useState(settings.showCategories);
   const [expandCategories, setExpandCategories] = useState(settings.expandCategories);
   const [showLineNumbers, setShowLineNumbers] = useState(settings.showLineNumbers);
+  const [themePreference, setThemePreference] = useState(settings.theme);
   const [showChangelog, setShowChangelog] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importProgress, setImportProgress] = useState<ImportProgress | null>(null);
@@ -75,7 +77,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
       includeCodeInSearch,
       showCategories,
       expandCategories,
-      showLineNumbers
+      showLineNumbers,
+      theme: themePreference
     });
     onClose();
   };
@@ -187,8 +190,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   };
 
   const SettingsGroup: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
-    <div className="space-y-3 p-4 pt-0 gpl-0 bg-gray-800 rounded-lg">
-      <h3 className="text-sm font-medium text-gray-200 mb-3">{title}</h3>
+    <div className="space-y-3 p-4 pt-0 gpl-0 bg-light-surface dark:bg-dark-surface rounded-lg">
+      <h3 className="text-sm font-medium text-light-text dark:text-dark-text mb-3">{title}</h3>
       {children}
     </div>
   );
@@ -203,11 +206,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     <div className={`${indent ? 'ml-4' : ''}`}>
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <label htmlFor={htmlFor} className="text-gray-300 text-sm">
+          <label htmlFor={htmlFor} className="text-light-text dark:text-dark-text text-sm">
             {label}
           </label>
           {description && (
-            <p className="text-gray-400 text-xs">
+            <p className="text-light-text-secondary dark:text-dark-text-secondary text-xs">
               {description}
             </p>
           )}
@@ -221,10 +224,48 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={<h2 className="text-xl font-bold text-gray-100">Settings</h2>}
+      title={<h2 className="text-xl font-bold text-light-text dark:text-dark-text">Settings</h2>}
     >
       <div className="pb-4">
         <div className="space-y-4">
+          <SettingsGroup title="Theme Settings">
+            <div className="flex gap-2 justify-start">
+              <button
+                onClick={() => setThemePreference('light')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors text-sm
+                  ${themePreference === 'light' 
+                    ? 'bg-light-primary dark:bg-dark-primary text-white' 
+                    : 'bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover'
+                  }`}
+              >
+                <Sun size={16} />
+                Light
+              </button>
+              <button
+                onClick={() => setThemePreference('dark')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors text-sm
+                  ${themePreference === 'dark'
+                    ? 'bg-light-primary dark:bg-dark-primary text-white'
+                    : 'bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover'
+                  }`}
+              >
+                <Moon size={16} />
+                Dark
+              </button>
+              <button
+                onClick={() => setThemePreference('system')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors text-sm
+                  ${themePreference === 'system'
+                    ? 'bg-light-primary dark:bg-dark-primary text-white'
+                    : 'bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover'
+                  }`}
+              >
+                <Monitor size={16} />
+                System
+              </button>
+            </div>
+          </SettingsGroup>
+
           <SettingsGroup title="View Settings">
             <SettingRow 
               label="Compact View" 
@@ -265,7 +306,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                     onChange={(e) => setPreviewLines(Math.max(1, Math.min(20, parseInt(e.target.value) || 1)))}
                     min="1"
                     max="20"
-                    className="form-input w-20 rounded-md bg-gray-700 border border-gray-600 text-white p-1 text-sm"
+                    className="form-input w-20 rounded-md bg-light-surface dark:bg-dark-surface border border-light-border dark:border-dark-border text-light-text dark:text-dark-text p-1 text-sm"
                   />
                 </SettingRow>
               )}
@@ -332,13 +373,13 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
               <div className="flex gap-2">
                 <button
                   onClick={handleExport}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors text-sm text-gray-300"
+                  className="flex items-center gap-2 px-4 py-2 bg-light-surface dark:bg-dark-surface hover:bg-light-hover dark:hover:bg-dark-hover rounded-md transition-colors text-sm text-light-text dark:text-dark-text"
                 >
                   <Download size={16} />
                   Export Snippets
                 </button>
                 <label
-                  className={`flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors text-sm cursor-pointer text-gray-300 ${
+                  className={`flex items-center gap-2 px-4 py-2 bg-light-surface dark:bg-dark-surface hover:bg-light-hover dark:hover:bg-dark-hover rounded-md transition-colors text-sm cursor-pointer text-light-text dark:text-dark-text ${
                     importing ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
                 >
@@ -357,14 +398,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
               {importProgress && (
                 <div className="mt-4 space-y-2">
-                  <div className="flex justify-between text-sm text-gray-300">
+                  <div className="flex justify-between text-sm text-light-text dark:text-dark-text">
                     <span>Importing snippets...</span>
                     <span>{importProgress.current} / {importProgress.total}</span>
                   </div>
                   
-                  <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+                  <div className="w-full h-2 bg-light-surface dark:bg-dark-surface rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-blue-600 transition-all duration-200"
+                      className="h-full bg-light-primary dark:bg-dark-primary transition-all duration-200"
                       style={{
                         width: `${(importProgress.current / importProgress.total) * 100}%`
                       }}
@@ -391,14 +432,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             </SettingsGroup>
           )}
 
-          <div className="border-t border-gray-700 pt-4 mt-4">
+          <div className="border-t border-light-border dark:border-dark-border pt-4 mt-4">
             <div className="flex gap-4 justify-center">
               <button
                 onClick={() => setShowChangelog(true)}
                 className="opacity-60 hover:opacity-100 transition-opacity"
                 title="Changelog"
               >
-                <Clock className="w-6 h-6 text-white" />
+                <Clock className="w-6 h-6 text-light-text dark:text-dark-text" />
               </button>
               <a 
                 href={GITHUB_URL}
@@ -434,7 +475,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 className="opacity-60 hover:opacity-100 transition-opacity"
                 title="Documentation"
               >
-                <BookOpen className="w-6 h-6 text-white" />
+                <BookOpen className="w-6 h-6 text-light-text dark:text-dark-text" />
               </a>
             </div>
           </div>
@@ -443,13 +484,13 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         <div className="mt-6 flex justify-end">
           <button
             onClick={onClose}
-            className="mr-2 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 text-sm"
+            className="mr-2 px-4 py-2 bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text rounded-md hover:bg-light-hover dark:hover:bg-dark-hover text-sm"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
+            className="px-4 py-2 bg-light-primary dark:bg-dark-primary text-white rounded-md hover:opacity-90 text-sm"
           >
             Save
           </button>

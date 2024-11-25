@@ -65,7 +65,7 @@ const CategoryList: React.FC<CategoryListProps> = ({
     return (
       <div className={`relative ${className}`}>
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-500/20 text-gray-400">
+          <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-light-hover/50 dark:bg-dark-hover/50 text-light-text-secondary dark:text-dark-text-secondary">
             No categories
           </span>
         </div>
@@ -106,7 +106,8 @@ const CategoryList: React.FC<CategoryListProps> = ({
           <button
             onClick={handleExpandClick}
             className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs 
-              font-medium bg-gray-500/20 text-gray-300 hover:bg-gray-500/30 
+              font-medium bg-light-surface/20 dark:bg-dark-surface/20 text-light-text dark:text-dark-text 
+              hover:bg-light-surface/30 dark:hover:bg-dark-surface/30 
               transition-colors duration-200"
           >
             <span>{moreCount} more</span>
@@ -118,7 +119,8 @@ const CategoryList: React.FC<CategoryListProps> = ({
           <button
             onClick={handleCollapseClick}
             className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs 
-              font-medium bg-gray-500/20 text-gray-300 hover:bg-gray-500/30 
+              font-medium bg-light-surface/20 dark:bg-dark-surface/20 text-light-text dark:text-dark-text 
+              hover:bg-light-surface/30 dark:hover:bg-dark-surface/30 
               transition-colors duration-200"
           >
             <span>Show less</span>
@@ -144,7 +146,7 @@ const CategoryList: React.FC<CategoryListProps> = ({
           ))}
           <button
             className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs 
-              font-medium bg-gray-500/20 text-gray-300"
+              font-medium bg-light-surface/20 dark:bg-dark-surface/20 text-light-text dark:text-dark-text"
           >
             <span>99 more</span>
             <ChevronDown size={12} />

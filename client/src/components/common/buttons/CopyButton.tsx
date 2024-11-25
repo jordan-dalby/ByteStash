@@ -40,10 +40,15 @@ const CopyButton: React.FC<CopyButtonProps> = ({ text }) => {
   return (
     <button
       onClick={handleCopy}
-      className="absolute top-2 right-2 p-1 bg-gray-700 rounded-md hover:bg-gray-600 transition-colors"
+      className="absolute top-2 right-2 p-1 bg-light-surface dark:bg-dark-surface rounded-md 
+        hover:bg-light-hover dark:hover:bg-dark-hover transition-colors text-light-text dark:text-dark-text"
       title="Copy to clipboard"
     >
-      {isCopied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+      {isCopied ? (
+        <Check size={16} className="text-light-primary dark:text-dark-primary" />
+      ) : (
+        <Copy size={16} className="text-light-text dark:text-dark-text" />
+      )}
     </button>
   );
 };

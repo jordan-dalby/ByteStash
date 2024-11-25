@@ -122,13 +122,13 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ snippetId, isOpen, onClose
       isOpen={isOpen}
       onClose={onClose}
       title={
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-light-text dark:text-dark-text">
           <ShareIcon size={20} />
           <h2 className="text-xl font-bold">Share Snippet</h2>
         </div>
       }
     >
-      <div className="space-y-6 text-gray-100">
+      <div className="space-y-6 text-light-text dark:text-dark-text">
         <div className="space-y-4">
           <h3 className="text-lg font-medium">Create New Share Link</h3>
           
@@ -151,7 +151,7 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ snippetId, isOpen, onClose
                   setDurationError('');
                 }}
                 placeholder="Never"
-                className="w-full px-3 py-2 bg-gray-700 rounded-md"
+                className="w-full px-3 py-2 bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text rounded-md border border-light-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary"
               />
               {durationError && (
                 <p className="text-red-400 text-sm mt-1">{durationError}</p>
@@ -160,7 +160,7 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ snippetId, isOpen, onClose
 
             <button
               onClick={handleCreateShare}
-              className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
+              className="w-full py-2 bg-light-primary dark:bg-dark-primary text-white rounded-md hover:opacity-90 transition-colors"
             >
               Create Share Link
             </button>
@@ -171,40 +171,40 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ snippetId, isOpen, onClose
           <h3 className="text-lg font-medium">Active Share Links</h3>
           
           {shares.length === 0 ? (
-            <p className="text-gray-400">No active share links</p>
+            <p className="text-light-text-secondary dark:text-dark-text-secondary">No active share links</p>
           ) : (
             <div className="space-y-2">
               {shares.map(share => (
                 <div
                   key={share.id}
-                  className="flex items-center justify-between p-3 bg-gray-700 rounded-md"
+                  className="flex items-center justify-between p-3 bg-light-surface dark:bg-dark-surface rounded-md border border-light-border dark:border-dark-border"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="truncate">/{share.id}</span>
+                      <span className="truncate">{share.id}</span>
                       {share.requires_auth === 1 && (
-                        <span className="text-emerald-400" title="Protected - Authentication required">
+                        <span className="text-emerald-500 dark:text-emerald-400" title="Protected - Authentication required">
                           <ShieldCheck size={15} className="stroke-[2.5]" />
                         </span>
                       )}
                       {share.requires_auth === 0 && (
-                        <span className="text-gray-500/70" title="Public access">
+                        <span className="text-light-text-secondary dark:text-dark-text-secondary" title="Public access">
                           <ShieldOff size={15} className="stroke-[2.5]" />
                         </span>
                       )}
                       <div className="flex items-center">
                         {share.expired === 1 && (
-                          <span className="px-2 py-0.5 bg-red-900/50 text-red-200 border border-red-700/50 rounded text-xs">
+                          <span className="px-2 py-0.5 bg-red-500/10 dark:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/20 dark:border-red-500/30 rounded text-xs">
                             Expired
                           </span>
                         )}
                         {share.expires_at && share.expired === 0 && (
-                          <span className="px-2 py-0.5 bg-blue-900/50 text-blue-200 border border-blue-700/50 rounded text-xs">
+                          <span className="px-2 py-0.5 bg-light-primary/10 dark:bg-dark-primary/20 text-light-primary dark:text-dark-primary border border-light-primary/20 dark:border-dark-primary/30 rounded text-xs">
                             {getRelativeExpiryTime(share.expires_at)}
                           </span>
                         )}
                         {share.expires_at === null && (
-                          <span className="px-2 py-0.5 bg-blue-900/50 text-blue-200 border border-blue-700/50 rounded text-xs">
+                          <span className="px-2 py-0.5 bg-light-primary/10 dark:bg-dark-primary/20 text-light-primary dark:text-dark-primary border border-light-primary/20 dark:border-dark-primary/30 rounded text-xs">
                             Never Expires
                           </span>
                         )}
@@ -214,18 +214,18 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ snippetId, isOpen, onClose
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => copyShareLink(share.id)}
-                      className="p-2 hover:bg-gray-600 rounded-md transition-colors"
+                      className="p-2 hover:bg-light-hover dark:hover:bg-dark-hover rounded-md transition-colors"
                       title="Copy link"
                     >
                       {copiedStates[share.id] ? (
-                        <Check size={16} className="text-green-500" />
+                        <Check size={16} className="text-green-500 dark:text-green-400" />
                       ) : (
-                        <LinkIcon size={16} />
+                        <LinkIcon size={16} className="text-light-text dark:text-dark-text" />
                       )}
                     </button>
                     <button
                       onClick={() => handleDeleteShare(share.id)}
-                      className="p-2 hover:bg-gray-600 rounded-md transition-colors text-red-400"
+                      className="p-2 hover:bg-light-hover dark:hover:bg-dark-hover rounded-md transition-colors text-red-500 dark:text-red-400"
                       title="Delete share link"
                     >
                       <Trash2 size={16} />

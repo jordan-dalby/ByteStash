@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { vscDarkPlus, oneLight } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { getLanguageLabel, getMonacoLanguage } from '../../utils/language/languageUtils';
 import CopyButton from '../common/buttons/CopyButton';
+import { useTheme } from '../../contexts/ThemeContext';
 
 export interface FullCodeBlockProps {
   code: string;
@@ -16,6 +17,8 @@ export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({
   language = 'plaintext',
   showLineNumbers = true
 }) => {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
   const isMarkdown = getLanguageLabel(language) === 'markdown';
   const [highlighterHeight, setHighlighterHeight] = useState<string>("100px");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -39,19 +42,21 @@ export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({
     setHighlighterHeight(`${newHeight}px`);
   };
 
+  const baseTheme = isDark ? vscDarkPlus : oneLight;
+  const backgroundColor = isDark ? '#1E1E1E' : '#ffffff';
   const customStyle = {
-    ...vscDarkPlus,
+    ...baseTheme,
     'pre[class*="language-"]': {
-      ...vscDarkPlus['pre[class*="language-"]'],
+      ...baseTheme['pre[class*="language-"]'],
       margin: 0,
       fontSize: '13px',
-      background: '#1E1E1E',
+      background: backgroundColor,
       padding: '1rem',
     },
     'code[class*="language-"]': {
-      ...vscDarkPlus['code[class*="language-"]'],
+      ...baseTheme['code[class*="language-"]'],
       fontSize: '13px',
-      background: '#1E1E1E',
+      background: backgroundColor,
       display: 'block',
       textIndent: 0,
     }
@@ -59,10 +64,24 @@ export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({
 
   return (
     <div className="relative">
+      <style>
+        {`
+          .markdown-content-full {
+            color: var(--text-color);
+            background-color: ${backgroundColor};
+            padding: 1rem;
+            border-radius: 0.5rem;
+            position: relative;
+          }
+          :root {
+            --text-color: ${isDark ? '#ffffff' : '#000000'};
+          }
+        `}
+      </style>
       <div className="relative">
         {isMarkdown ? (
-          <div className="markdown-content bg-gray-800 rounded-lg">
-            <ReactMarkdown className="markdown prose prose-invert max-w-none">
+          <div className="markdown-content markdown-content-full rounded-lg" style={{ backgroundColor }}>
+            <ReactMarkdown className={`markdown prose ${isDark ? 'prose-invert' : ''} max-w-none`}>
               {code}
             </ReactMarkdown>
           </div>
@@ -90,7 +109,8 @@ export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({
                 marginTop: 0,
                 textIndent: 0,
                 paddingLeft: showLineNumbers ? 10 : 20,
-                borderRadius: '0.5rem'
+                borderRadius: '0.5rem',
+                background: backgroundColor
               }}
             >
               {code}
@@ -102,4 +122,4 @@ export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({
       </div>
     </div>
   );
-};
+}

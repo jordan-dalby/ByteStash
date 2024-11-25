@@ -164,7 +164,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       title={
-        <h2 className="text-xl font-bold text-gray-100">
+        <h2 className="text-xl font-bold text-light-text dark:text-dark-text">
           {snippetToEdit ? 'Edit Snippet' : 'Add New Snippet'}
         </h2>
     }>
@@ -172,8 +172,8 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
         {`
           .modal-footer {
             position: sticky;
-            background: rgb(31, 41, 55);
-            border-top: 1px solid rgb(75, 85, 99);
+            background: var(--footer-bg);
+            border-top: 1px solid var(--footer-border);
             margin-top: 1rem;
             z-index: 100;
           }
@@ -185,7 +185,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
             left: 0;
             right: 0;
             height: 20px;
-            background: linear-gradient(to top, rgb(31, 41, 55), transparent);
+            background: linear-gradient(to top, var(--footer-bg), transparent);
             pointer-events: none;
           }
 
@@ -196,40 +196,54 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
           .add-fragment-button:hover {
             transform: translateY(-1px);
           }
+
+          :root {
+            --footer-bg: var(--light-surface);
+            --footer-border: var(--light-border);
+          }
+
+          .dark {
+            --footer-bg: var(--dark-surface);
+            --footer-border: var(--dark-border);
+          }
         `}
       </style>
       <div className="flex flex-col h-full max-h-full relative isolate">
         <form onSubmit={handleSubmit} className="flex flex-col h-full">
           <div className="flex-none">
-            {error && <p className="text-red-500 mb-4">{error}</p>}
+            {error && <p className="text-red-500 dark:text-red-400 mb-4">{error}</p>}
           </div>
 
           <div className="flex-1 overflow-y-auto min-h-0">
             <div className="space-y-4 pr-2">
               {/* Title input */}
               <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-300">Title</label>
+                <label htmlFor="title" className="block text-sm font-medium text-light-text dark:text-dark-text">Title</label>
                 <input
                   type="text"
                   id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value.slice(0, 100))}
-                  className="mt-1 block w-full rounded-md bg-gray-700 text-white p-2 text-sm"
+                  className="mt-1 block w-full rounded-md bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text p-2 text-sm
+                    border border-light-border dark:border-dark-border
+                    focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary focus:border-light-primary dark:focus:border-dark-primary"
                   required
                   placeholder="Enter the title of the snippet (max 100 characters)"
                   maxLength={100}
                 />
-                <p className="text-sm text-gray-400 mt-1">{title.length}/100 characters</p>
+                <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary mt-1">{title.length}/100 characters</p>
               </div>
               
               {/* Description input */}
               <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-300">Description</label>
+                <label htmlFor="description" className="block text-sm font-medium text-light-text dark:text-dark-text">Description</label>
                 <textarea
                   id="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="mt-1 block w-full rounded-md bg-gray-700 text-white p-2 text-sm"
+                  className="mt-1 block w-full rounded-md bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text p-2 text-sm
+                    border border-light-border dark:border-dark-border
+                    focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary focus:border-light-primary dark:focus:border-dark-primary"
                   rows={3}
                   placeholder="Write a short description of the snippet"
                 />
@@ -237,7 +251,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
               
               {/* Categories section */}
               <div>
-                <label htmlFor="categories" className="block text-sm font-medium text-gray-300">
+                <label htmlFor="categories" className="block text-sm font-medium text-light-text dark:text-dark-text">
                   Categories (max 20)
                 </label>
                 <CategorySuggestions
@@ -251,7 +265,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
                   showAddText={true}
                   handleHashtag={false}
                 />
-                <p className="text-sm text-gray-400 mt-1">
+                <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary mt-1">
                   {categories.length}/20 categories
                 </p>
                 <CategoryList
@@ -270,16 +284,16 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
                     checked={!!isPublic}
                     onChange={setIsPublic}
                   />
-                  <span className="text-sm font-medium text-gray-300">Make snippet public</span>
+                  <span className="text-sm font-medium text-light-text dark:text-dark-text">Make snippet public</span>
                 </label>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
                   Public snippets can be viewed by anyone without authentication
                 </p>
               </div>
 
               {/* Code Fragments section */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-4">
+                <label className="block text-sm font-medium text-light-text dark:text-dark-text mb-4">
                   Code Fragments ({fragments.length})
                 </label>
 
@@ -302,9 +316,9 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
                   <button
                     type="button"
                     onClick={handleAddFragment}
-                    className="add-fragment-button w-full py-3 px-4 border-2 border-dashed border-gray-600 rounded-lg 
-                             hover:border-blue-500 hover:bg-gray-800/50 transition-all duration-200
-                             flex items-center justify-center gap-2 text-gray-400 hover:text-blue-400 group"
+                    className="add-fragment-button w-full py-3 px-4 border-2 border-dashed border-light-border dark:border-dark-border rounded-lg 
+                             hover:border-light-primary dark:hover:border-dark-primary hover:bg-light-hover dark:hover:bg-dark-hover transition-all duration-200
+                             flex items-center justify-center gap-2 text-light-text-secondary dark:text-dark-text-secondary hover:text-light-primary dark:hover:text-dark-primary group"
                   >
                     <Plus size={20} className="transition-transform group-hover:scale-110" />
                     <span className="text-sm font-medium">Add New Fragment</span>
@@ -315,18 +329,20 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="modal-footer -bottom-5 inset-x-0 bg-gray-800 border-t border-gray-600 mt-4 z-10">
+          <div className="modal-footer -bottom-5 inset-x-0 mt-4 z-10">
             <div className="flex justify-end gap-2 py-4">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 text-sm"
+                className="px-4 py-2 bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text rounded-md 
+                  hover:bg-light-hover dark:hover:bg-dark-hover text-sm border border-light-border dark:border-dark-border"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm disabled:bg-blue-400"
+                className="px-4 py-2 bg-light-primary dark:bg-dark-primary text-white rounded-md hover:opacity-90 text-sm 
+                  disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Saving...' : (snippetToEdit ? 'Save Changes' : 'Add Snippet')}

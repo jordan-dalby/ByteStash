@@ -40,7 +40,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
             }}
             variant="custom"
             size="sm"
-            className="bg-gray-700 hover:bg-gray-600"
+            className="bg-light-surface dark:bg-dark-surface hover:bg-light-hover dark:hover:bg-dark-hover"
           />
         )}
         <IconButton
@@ -51,7 +51,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
           }}
           variant="custom"
           size="sm"
-          className="bg-gray-700 hover:bg-gray-600"
+          className="bg-light-surface dark:bg-dark-surface hover:bg-light-hover dark:hover:bg-dark-hover"
         />
       </div>
     );
@@ -67,7 +67,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
         }}
         variant="custom"
         size="sm"
-        className="bg-gray-700 hover:bg-gray-600"
+        className="bg-light-surface dark:bg-dark-surface hover:bg-light-hover dark:hover:bg-dark-hover"
       />
       <IconButton
         icon={<Trash2 size={16} className="hover:text-red-500" />}
@@ -77,7 +77,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
         }}
         variant="custom"
         size="sm"
-        className="bg-gray-700 hover:bg-gray-600"
+        className="bg-light-surface dark:bg-dark-surface hover:bg-light-hover dark:hover:bg-dark-hover"
       />
 
       <div className="relative">
@@ -90,15 +90,15 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
           }}
           variant="custom"
           size="sm"
-          className="bg-gray-700 hover:bg-gray-600"
+          className="bg-light-surface dark:bg-dark-surface hover:bg-light-hover dark:hover:bg-dark-hover"
         />
         
         {isDropdownOpen && (
           <div 
             ref={dropdownRef}
             onMouseLeave={() => setIsDropdownOpen(false)}
-            className="absolute right-0 top-full mt-1 w-48 bg-gray-800 rounded-md shadow-lg 
-              border border-gray-700 py-1 z-50"
+            className="absolute right-0 top-full mt-1 w-48 bg-light-surface dark:bg-dark-surface rounded-md shadow-lg 
+              border border-light-border dark:border-dark-border py-1 z-50"
           >
             <button
               onClick={(e) => {
@@ -106,7 +106,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
                 onOpenInNewTab();
                 setIsDropdownOpen(false);
               }}
-              className="w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 flex items-center gap-2"
+              className="w-full px-4 py-2 text-sm text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover flex items-center gap-2"
             >
               <ExternalLink size={16} />
               Open in new tab
@@ -117,7 +117,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
                 onShare(e);
                 setIsDropdownOpen(false);
               }}
-              className="w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 flex items-center gap-2"
+              className="w-full px-4 py-2 text-sm text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover flex items-center gap-2"
             >
               <Share size={16} />
               Share snippet
@@ -128,7 +128,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
                 onDuplicate(e);
                 setIsDropdownOpen(false);
               }}
-              className="w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 flex items-center gap-2"
+              className="w-full px-4 py-2 text-sm text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover flex items-center gap-2"
             >
               <Copy size={16} />
               Duplicate snippet

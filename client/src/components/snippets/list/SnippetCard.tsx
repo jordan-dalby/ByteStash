@@ -106,25 +106,25 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
   return (
     <>
       <div
-        className={`bg-gray-800 rounded-lg overflow-hidden ${viewMode === 'grid' ? 'h-full' : 'mb-4'} 
-          cursor-pointer hover:bg-gray-700 transition-colors relative group`}
+        className={`bg-light-surface dark:bg-dark-surface rounded-lg overflow-hidden ${viewMode === 'grid' ? 'h-full' : 'mb-4'} 
+          cursor-pointer hover:bg-light-hover dark:hover:bg-dark-hover transition-colors relative group`}
         onClick={() => onOpen(snippet)}
       >
         {(snippet.is_public === 1 || snippet.updated_at) && (
-          <div className="bg-gray-900/50 px-3 py-1 text-xs flex items-center justify-between">
+          <div className="bg-light-hover/50 dark:bg-dark-hover/50 px-3 py-1 text-xs flex items-center justify-between">
             {snippet.is_public === 1 && (
-              <div className="flex items-center gap-1 text-blue-400 mr-4">
+              <div className="flex items-center gap-1 text-light-primary dark:text-dark-primary mr-4">
                 <Globe size={12} />
                 <span>Public</span>
               </div>
             )}
             {!isPublicView && (snippet.share_count || 0) > 0 && (
-              <div className="flex items-center gap-1 text-blue-400 mr-4">
+              <div className="flex items-center gap-1 text-light-primary dark:text-dark-primary mr-4">
                 <Users size={12} />
                 <span>Shared</span>
               </div>
             )}
-            <div className="flex items-center gap-1 text-gray-500 ml-auto">
+            <div className="flex items-center gap-1 text-light-text-secondary dark:text-dark-text-secondary ml-auto">
               <Clock size={12} />
               <span>{getRelativeUpdateTime(snippet.updated_at)} ago</span>
             </div>
@@ -134,19 +134,19 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
         <div className="p-4 pt-2">
           <div className="flex justify-between items-start gap-4 mb-3">
             <div className="min-w-0 flex-1">
-              <h3 className={`${compactView ? 'text-lg' : 'text-xl'} font-bold text-gray-200 
+              <h3 className={`${compactView ? 'text-lg' : 'text-xl'} font-bold text-light-text dark:text-dark-text 
                 truncate leading-normal mb-2`}>
                 {snippet.title}
               </h3>
 
               <div className="flex flex-wrap items-center gap-3 text-sm">
-                <div className="flex items-center gap-1 text-gray-400">
-                  <FileCode size={14} className="text-gray-500" />
+                <div className="flex items-center gap-1 text-light-text-secondary dark:text-dark-text-secondary">
+                  <FileCode size={14} className="text-light-text-secondary dark:text-dark-text-secondary" />
                   <span>{getUniqueLanguages(snippet.fragments)}</span>
                 </div>
 
                 {snippet.username && isPublicView && (
-                  <div className="flex items-center gap-1 text-gray-400">
+                  <div className="flex items-center gap-1 text-light-text-secondary dark:text-dark-text-secondary">
                     <Users size={14} />
                     <span>{snippet.username}</span>
                   </div>
@@ -174,7 +174,7 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
           </div>
 
           {!compactView && (
-            <p className="text-sm text-gray-300 mb-3 line-clamp-2">
+            <p className="text-sm text-light-text dark:text-dark-text mb-3 line-clamp-2">
               <Linkify options={linkifyOptions}>
                 {snippet.description || 'No description available'}
               </Linkify>
@@ -194,9 +194,9 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
 
           {showCodePreview && currentFragment && (
             <div>
-              <div className="flex items-center justify-between text-xs text-gray-400 mb-1 bg-gray-900/50 rounded px-2 h-7">
+              <div className="flex items-center justify-between text-xs text-light-text-secondary dark:text-dark-text-secondary mb-1 bg-light-hover/50 dark:bg-dark-hover/50 rounded px-2 h-7">
                 <div className="flex items-center gap-1 min-w-0 flex-1">
-                  <FileCode size={12} className="text-gray-500 shrink-0" />
+                  <FileCode size={12} className="text-light-text-secondary dark:text-dark-text-secondary shrink-0" />
                   <span className="truncate">{currentFragment.file_name}</span>
                 </div>
                 <div className="flex items-center gap-0.5 ml-2">
@@ -204,16 +204,16 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
                     <>
                       <button
                         onClick={handlePrevFragment}
-                        className="p-0.5 hover:bg-gray-700 rounded transition-colors"
+                        className="p-0.5 hover:bg-light-hover dark:hover:bg-dark-hover rounded transition-colors"
                       >
                         <ChevronLeft size={14} />
                       </button>
-                      <span className="mx-1 text-gray-500">
+                      <span className="mx-1 text-light-text-secondary dark:text-dark-text-secondary">
                         {currentFragmentIndex + 1}/{snippet.fragments.length}
                       </span>
                       <button
                         onClick={handleNextFragment}
-                        className="p-0.5 hover:bg-gray-700 rounded transition-colors"
+                        className="p-0.5 hover:bg-light-hover dark:hover:bg-dark-hover rounded transition-colors"
                       >
                         <ChevronRight size={14} />
                       </button>

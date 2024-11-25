@@ -42,7 +42,9 @@ const SnippetList: React.FC<SnippetListProps> = ({
   if (snippets.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-xl text-gray-400 mb-4">No snippets match your search criteria.</p>
+        <p className="text-xl text-light-text-secondary dark:text-dark-text-secondary mb-4">
+          No snippets match your search criteria.
+        </p>
       </div>
     );
   }

@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { vscDarkPlus, oneLight } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { getLanguageLabel, getMonacoLanguage } from '../../utils/language/languageUtils';
 import CopyButton from '../common/buttons/CopyButton';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface PreviewCodeBlockProps {
   code: string;
@@ -18,25 +19,30 @@ export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
   previewLines = 4,
   showLineNumbers = true
 }) => {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  
   const isMarkdown = getLanguageLabel(language) === 'markdown';
   const LINE_HEIGHT = 19;
   const visibleHeight = (previewLines + 2) * LINE_HEIGHT;
 
   const truncatedCode = code.split('\n').slice(0, previewLines + 5).join('\n');
 
+  const baseTheme = isDark ? vscDarkPlus : oneLight;
+  const backgroundColor = isDark ? '#1E1E1E' : '#ffffff';
   const customStyle = {
-    ...vscDarkPlus,
+    ...baseTheme,
     'pre[class*="language-"]': {
-      ...vscDarkPlus['pre[class*="language-"]'],
+      ...baseTheme['pre[class*="language-"]'],
       margin: 0,
       fontSize: '13px',
-      background: '#1E1E1E',
+      background: backgroundColor,
       padding: '1rem',
     },
     'code[class*="language-"]': {
-      ...vscDarkPlus['code[class*="language-"]'],
+      ...baseTheme['code[class*="language-"]'],
       fontSize: '13px',
-      background: '#1E1E1E',
+      background: backgroundColor,
       display: 'block',
       textIndent: 0,
     }
@@ -47,8 +53,8 @@ export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
       <style>
         {`
           .markdown-content-preview {
-            color: white;
-            background-color: #1E1E1E;
+            color: var(--text-color);
+            background-color: ${backgroundColor};
             padding: 1rem;
             border-radius: 0.5rem;
             position: relative;
@@ -61,13 +67,16 @@ export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
           .react-syntax-highlighter-line-number:nth-child(n+${previewLines + 1}) {
             visibility: hidden;
           }
+          :root {
+            --text-color: ${isDark ? '#ffffff' : '#000000'};
+          }
         `}
       </style>
 
       <div className="relative">
         {isMarkdown ? (
-          <div className="markdown-content markdown-content-preview bg-gray-800 rounded-lg overflow-hidden">
-            <ReactMarkdown className="markdown prose prose-invert max-w-none">
+          <div className="markdown-content markdown-content-preview rounded-lg overflow-hidden" style={{ backgroundColor }}>
+            <ReactMarkdown className={`markdown prose ${isDark ? 'prose-invert' : ''} max-w-none`}>
               {truncatedCode}
             </ReactMarkdown>
           </div>
@@ -93,7 +102,8 @@ export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
                 textIndent: 0,
                 paddingLeft: showLineNumbers ? 10 : 20,
                 borderRadius: '0.5rem',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                background: backgroundColor,
               }}
             >
               {truncatedCode}
@@ -102,7 +112,7 @@ export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
         )}
 
         <div 
-          className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#1e1e1e] to-transparent pointer-events-none rounded-b-lg"
+          className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-light-surface dark:from-dark-surface to-transparent pointer-events-none rounded-b-lg"
           style={{ height: `${LINE_HEIGHT * 2}px` }}
         />
 
@@ -110,4 +120,4 @@ export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
       </div>
     </div>
   );
-};
+}

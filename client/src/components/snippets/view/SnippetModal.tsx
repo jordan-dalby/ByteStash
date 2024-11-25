@@ -30,7 +30,7 @@ const SnippetModal: React.FC<SnippetModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       title={
-        <h2 className="text-2xl font-bold text-gray-100">{snippet.title}</h2>
+        <h2 className="text-2xl font-bold text-light-text dark:text-dark-text">{snippet.title}</h2>
       }
     >
       <FullCodeView

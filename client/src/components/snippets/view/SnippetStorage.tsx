@@ -24,7 +24,8 @@ const SnippetStorage: React.FC = () => {
   const { 
     viewMode, setViewMode, compactView, showCodePreview, 
     previewLines, includeCodeInSearch, updateSettings,
-    showCategories, expandCategories, showLineNumbers
+    showCategories, expandCategories, showLineNumbers,
+    theme
   } = useSettings();
 
   const { addToast } = useToast();
@@ -136,7 +137,8 @@ const SnippetStorage: React.FC = () => {
           includeCodeInSearch, 
           showCategories, 
           expandCategories, 
-          showLineNumbers 
+          showLineNumbers,
+          theme
         }}
         onSettingsChange={updateSettings}
         snippets={snippets}

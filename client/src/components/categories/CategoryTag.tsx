@@ -24,12 +24,12 @@ const CategoryTag: React.FC<CategoryTagProps> = ({
     return (
       <button
         onClick={handleClick}
-        className={`flex items-center gap-1 px-2 py-1 rounded-md bg-gray-700 text-sm hover:bg-gray-600 
-          transition-colors group ${className}`}
+        className={`flex items-center gap-1 px-2 py-1 rounded-md bg-light-surface dark:bg-dark-surface text-sm 
+          hover:bg-light-hover dark:hover:bg-dark-hover transition-colors group ${className}`}
         type="button"
       >
-        <span className='text-gray-300'>{category}</span>
-        <span className="text-gray-400 group-hover:text-white">×</span>
+        <span className='text-light-text dark:text-dark-text'>{category}</span>
+        <span className="text-light-text-secondary dark:text-dark-text-secondary group-hover:text-light-text dark:group-hover:text-dark-text">×</span>
       </button>
     );
   }
@@ -49,44 +49,44 @@ const CategoryTag: React.FC<CategoryTagProps> = ({
 const getCategoryColor = (name: string) => {
   const colorSchemes = [
     {
-      bg: 'bg-blue-500/30',
-      text: 'text-blue-100',
-      hover: 'hover:bg-blue-500/40'
+      bg: 'bg-blue-500/20 dark:bg-blue-500/30',
+      text: 'text-blue-700 dark:text-blue-200',
+      hover: 'hover:bg-blue-500/30 dark:hover:bg-blue-500/40'
     },
     {
-      bg: 'bg-emerald-500/30',
-      text: 'text-emerald-100',
-      hover: 'hover:bg-emerald-500/40'
+      bg: 'bg-emerald-500/20 dark:bg-emerald-500/30',
+      text: 'text-emerald-700 dark:text-emerald-200',
+      hover: 'hover:bg-emerald-500/30 dark:hover:bg-emerald-500/40'
     },
     {
-      bg: 'bg-purple-500/30',
-      text: 'text-purple-100',
-      hover: 'hover:bg-purple-500/40'
+      bg: 'bg-purple-500/20 dark:bg-purple-500/30',
+      text: 'text-purple-700 dark:text-purple-200',
+      hover: 'hover:bg-purple-500/30 dark:hover:bg-purple-500/40'
     },
     {
-      bg: 'bg-amber-500/30',
-      text: 'text-amber-100',
-      hover: 'hover:bg-amber-500/40'
+      bg: 'bg-amber-500/20 dark:bg-amber-500/30',
+      text: 'text-amber-700 dark:text-amber-200',
+      hover: 'hover:bg-amber-500/30 dark:hover:bg-amber-500/40'
     },
     {
-      bg: 'bg-rose-500/30',
-      text: 'text-rose-100',
-      hover: 'hover:bg-rose-500/40'
+      bg: 'bg-rose-500/20 dark:bg-rose-500/30',
+      text: 'text-rose-700 dark:text-rose-200',
+      hover: 'hover:bg-rose-500/30 dark:hover:bg-rose-500/40'
     },
     {
-      bg: 'bg-cyan-500/30',
-      text: 'text-cyan-100',
-      hover: 'hover:bg-cyan-500/40'
+      bg: 'bg-cyan-500/20 dark:bg-cyan-500/30',
+      text: 'text-cyan-700 dark:text-cyan-200',
+      hover: 'hover:bg-cyan-500/30 dark:hover:bg-cyan-500/40'
     },
     {
-      bg: 'bg-indigo-500/30',
-      text: 'text-indigo-100',
-      hover: 'hover:bg-indigo-500/40'
+      bg: 'bg-indigo-500/20 dark:bg-indigo-500/30',
+      text: 'text-indigo-700 dark:text-indigo-200',
+      hover: 'hover:bg-indigo-500/30 dark:hover:bg-indigo-500/40'
     },
     {
-      bg: 'bg-teal-500/30',
-      text: 'text-teal-100',
-      hover: 'hover:bg-teal-500/40'
+      bg: 'bg-teal-500/20 dark:bg-teal-500/30',
+      text: 'text-teal-700 dark:text-teal-200',
+      hover: 'hover:bg-teal-500/30 dark:hover:bg-teal-500/40'
     }
   ];
   

@@ -7,6 +7,7 @@ export const DEFAULT_SETTINGS = {
   showCategories: true,
   expandCategories: false,
   showLineNumbers: true,
+  theme: 'system',
 } as const;
 
 export const APP_VERSION = '1.5.3';

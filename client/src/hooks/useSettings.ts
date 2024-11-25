@@ -1,5 +1,18 @@
 import { useState, useEffect } from 'react';
 
+type Theme = 'light' | 'dark' | 'system';
+
+interface Settings {
+  compactView: boolean;
+  showCodePreview: boolean;
+  previewLines: number;
+  includeCodeInSearch: boolean;
+  showCategories: boolean;
+  expandCategories: boolean;
+  showLineNumbers: boolean;
+  theme: Theme;
+}
+
 export const useSettings = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => 
     (localStorage.getItem('viewMode') as 'grid' | 'list') || 'grid'
@@ -10,7 +23,13 @@ export const useSettings = () => {
   const [includeCodeInSearch, setIncludeCodeInSearch] = useState(() => localStorage.getItem('includeCodeInSearch') === 'true');
   const [showCategories, setShowCategories] = useState(() => localStorage.getItem('showCategories') !== 'false');
   const [expandCategories, setExpandCategories] = useState(() => localStorage.getItem('expandCategories') === 'true');
-  const [showLineNumbers, setShowLineNumbers] = useState(() => localStorage.getItem('showLineNumbers') === 'true')
+  const [showLineNumbers, setShowLineNumbers] = useState(() => localStorage.getItem('showLineNumbers') === 'true');
+  const [theme, setTheme] = useState<Theme>(() => {
+    const savedTheme = localStorage.getItem('theme');
+    return (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system') 
+      ? savedTheme 
+      : 'system';
+  });
 
   useEffect(() => {
     localStorage.setItem('viewMode', viewMode);
@@ -44,15 +63,11 @@ export const useSettings = () => {
     localStorage.setItem('showLineNumbers', showLineNumbers.toString());
   }, [showLineNumbers]);
 
-  const updateSettings = (newSettings: {
-    compactView: boolean;
-    showCodePreview: boolean;
-    previewLines: number;
-    includeCodeInSearch: boolean;
-    showCategories: boolean;
-    expandCategories: boolean;
-    showLineNumbers: boolean;
-  }) => {
+  useEffect(() => {
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const updateSettings = (newSettings: Settings) => {
     setCompactView(newSettings.compactView);
     setShowCodePreview(newSettings.showCodePreview);
     setPreviewLines(newSettings.previewLines);
@@ -60,6 +75,7 @@ export const useSettings = () => {
     setShowCategories(newSettings.showCategories);
     setExpandCategories(newSettings.expandCategories);
     setShowLineNumbers(newSettings.showLineNumbers);
+    setTheme(newSettings.theme);
   };
 
   return {
@@ -72,6 +88,7 @@ export const useSettings = () => {
     showCategories,
     expandCategories,
     updateSettings,
-    showLineNumbers
+    showLineNumbers,
+    theme
   };
 };

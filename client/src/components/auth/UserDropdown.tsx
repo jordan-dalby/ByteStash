@@ -34,8 +34,8 @@ export const UserDropdown: React.FC = () => {
       <div ref={dropdownRef} className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 
-            rounded-md transition-colors text-sm"
+          className="flex items-center gap-2 px-3 py-1.5 bg-light-surface dark:bg-dark-surface hover:bg-light-hover 
+            dark:hover:bg-dark-hover rounded-md transition-colors text-sm text-light-text dark:text-dark-text"
         >
           <User size={16} />
           <span>{user?.username}</span>
@@ -43,14 +43,14 @@ export const UserDropdown: React.FC = () => {
   
         {isOpen && (
           <div 
-            className="absolute right-0 mt-1 w-48 bg-gray-800 rounded-md shadow-lg 
-              border border-gray-700 py-1 z-50"
+            className="absolute right-0 mt-1 w-48 bg-light-surface dark:bg-dark-surface rounded-md shadow-lg 
+              border border-light-border dark:border-dark-border py-1 z-50"
           >
             <Link
               to={switchViewProps.to}
               onClick={() => setIsOpen(false)}
-              className="w-full px-4 py-2 text-sm text-left text-gray-300 hover:bg-gray-700 
-                flex items-center gap-2"
+              className="w-full px-4 py-2 text-sm text-left text-light-text dark:text-dark-text hover:bg-light-hover 
+                dark:hover:bg-dark-hover flex items-center gap-2"
             >
               {switchViewProps.icon}
               <span>{switchViewProps.text}</span>
@@ -60,8 +60,8 @@ export const UserDropdown: React.FC = () => {
                 setIsOpen(false);
                 logout();
               }}
-              className="w-full px-4 py-2 text-sm text-left text-gray-300 hover:bg-gray-700 
-                flex items-center gap-2"
+              className="w-full px-4 py-2 text-sm text-left text-light-text dark:text-dark-text hover:bg-light-hover 
+                dark:hover:bg-dark-hover flex items-center gap-2"
             >
               <LogOut size={16} />
               <span>Sign out</span>
@@ -76,11 +76,12 @@ export const UserDropdown: React.FC = () => {
     <div ref={dropdownRef} className="relative">
       <Link
         to="/login"
-        className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-md transition-colors text-sm"
+        className="flex items-center gap-2 px-3 py-1.5 bg-light-surface dark:bg-dark-surface hover:bg-light-hover 
+          dark:hover:bg-dark-hover rounded-md transition-colors text-sm text-light-text dark:text-dark-text"
       >
         <User size={16} />
         <span>Sign in</span>
       </Link>
     </div>
-  )
+  );
 };

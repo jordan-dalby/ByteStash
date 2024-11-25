@@ -131,12 +131,12 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
   if (isLoading) {
     return (
       <PageContainer>
-        <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center justify-center">
-        <div className="relative">
+        <div className="min-h-screen bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text flex flex-col items-center justify-center">
+          <div className="relative">
             <h1 className="text-4xl font-bold mb-4">ByteStash</h1>
             <div className="flex items-center justify-center gap-3">
-              <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />
-              <span className="text-gray-400">Loading snippets...</span>
+              <Loader2 className="w-5 h-5 text-light-text-secondary dark:text-dark-text-secondary animate-spin" />
+              <span className="text-light-text-secondary dark:text-dark-text-secondary">Loading snippets...</span>
             </div>
           </div>
         </div>
@@ -145,7 +145,7 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 p-8">
+    <div className="min-h-screen bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text p-8">
       <div className="flex justify-between items-start mb-4">
         <StorageHeader isPublicView={isPublicView} />
         {headerRight}
@@ -171,15 +171,15 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
       
       {selectedCategories.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-4 items-center">
-          <span className="text-sm text-gray-400">Filtered by categories:</span>
+          <span className="text-sm text-light-text-secondary dark:text-dark-text-secondary">Filtered by categories:</span>
           {selectedCategories.map((category, index) => (
             <button
               key={index}
               onClick={() => handleCategoryClick(category)}
-              className="flex items-center gap-1 px-2 py-1 rounded-md bg-blue-500/20 text-blue-200 hover:bg-blue-500/30 text-sm"
+              className="flex items-center gap-1 px-2 py-1 rounded-md bg-light-primary/20 dark:bg-dark-primary/20 text-light-primary dark:text-dark-primary hover:bg-light-primary/30 dark:hover:bg-dark-primary/30 text-sm"
             >
               <span>{category}</span>
-              <span className="text-gray-400 hover:text-white">×</span>
+              <span className="text-light-text-secondary dark:text-dark-text-secondary hover:text-light-text dark:hover:text-dark-text">×</span>
             </button>
           ))}
         </div>

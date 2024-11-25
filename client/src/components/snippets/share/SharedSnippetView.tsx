@@ -44,10 +44,10 @@ const SharedSnippetView: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-light-bg dark:bg-dark-bg flex items-center justify-center">
         <div className="flex items-center gap-3">
-          <Loader2 className="w-6 h-6 text-gray-400 animate-spin" />
-          <span className="text-gray-200 text-lg">Loading snippet...</span>
+          <Loader2 className="w-6 h-6 text-light-text-secondary dark:text-dark-text-secondary animate-spin" />
+          <span className="text-light-text dark:text-dark-text text-lg">Loading snippet...</span>
         </div>
       </div>
     );
@@ -55,11 +55,11 @@ const SharedSnippetView: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center gap-4">
-        <div className="text-red-400 text-xl">{error}</div>
+      <div className="min-h-screen bg-light-bg dark:bg-dark-bg flex flex-col items-center justify-center gap-4">
+        <div className="text-red-500 dark:text-red-400 text-xl">{error}</div>
         <Link 
           to={ROUTES.PUBLIC_SNIPPETS}
-          className="text-blue-400 hover:text-blue-300"
+          className="text-light-primary dark:text-dark-primary hover:opacity-80"
         >
           Browse public snippets
         </Link>
@@ -69,11 +69,11 @@ const SharedSnippetView: React.FC = () => {
 
   if (errorCode === 410) {
     return (
-      <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center gap-4">
-        <div className="text-white text-xl">This shared snippet has expired</div>
+      <div className="min-h-screen bg-light-bg dark:bg-dark-bg flex flex-col items-center justify-center gap-4">
+        <div className="text-light-text dark:text-dark-text text-xl">This shared snippet has expired</div>
         <Link 
           to={ROUTES.PUBLIC_SNIPPETS}
-          className="text-blue-400 hover:text-blue-300"
+          className="text-light-primary dark:text-dark-primary hover:opacity-80"
         >
           Browse public snippets
         </Link>
@@ -83,11 +83,11 @@ const SharedSnippetView: React.FC = () => {
 
   if (!snippet) {
     return (
-      <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center gap-4">
-        <div className="text-white text-xl">Snippet not found</div>
+      <div className="min-h-screen bg-light-bg dark:bg-dark-bg flex flex-col items-center justify-center gap-4">
+        <div className="text-light-text dark:text-dark-text text-xl">Snippet not found</div>
         <Link 
           to={ROUTES.PUBLIC_SNIPPETS}
-          className="text-blue-400 hover:text-blue-300"
+          className="text-light-primary dark:text-dark-primary hover:opacity-80"
         >
           Browse public snippets
         </Link>
@@ -96,7 +96,7 @@ const SharedSnippetView: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 p-8">
+    <div className="min-h-screen bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text p-8">
       <div className="max-w-4xl mx-auto">
         <FullCodeView snippet={snippet} />
       </div>

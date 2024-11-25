@@ -39,15 +39,15 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
     >
       <div 
         ref={modalRef} 
-        className={`bg-gray-800 rounded-lg max-w-3xl w-full max-h-[80vh] flex flex-col transition-all duration-300 ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+        className={`bg-light-surface dark:bg-dark-surface rounded-lg max-w-3xl w-full max-h-[80vh] flex flex-col transition-all duration-300 ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
       >
-        <div className="px-4 pt-4 pb-4 flex items-center justify-between border-b border-gray-700">
-          <div className="text-lg font-semibold text-white">
+        <div className="px-4 pt-4 pb-4 flex items-center justify-between border-b border-light-border dark:border-dark-border">
+          <div className="text-lg font-semibold text-light-text dark:text-dark-text">
             {title}
           </div>
           <button 
             onClick={onClose}
-            className="text-gray-400 hover:text-white"
+            className="text-light-text-secondary dark:text-dark-text-secondary hover:text-light-text dark:hover:text-dark-text"
           >
             <X size={24} />
           </button>

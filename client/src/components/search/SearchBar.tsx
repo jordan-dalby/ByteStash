@@ -86,11 +86,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         onSelect={handleSelect}
         getSections={getSections}
         placeholder={placeholder}
-        className="h-10 mt-0 bg-gray-800"
+        className="h-10 mt-0 bg-light-surface dark:bg-dark-surface"
         showChevron={false}
       />
       <Search 
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" 
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-light-text-secondary dark:text-dark-text-secondary pointer-events-none" 
         size={20} 
       />
     </div>

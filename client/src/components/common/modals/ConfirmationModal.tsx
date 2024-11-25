@@ -23,19 +23,19 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   variant = 'danger'
 }) => {
   const variantClasses = {
-    danger: 'bg-red-600 hover:bg-red-700',
-    warning: 'bg-yellow-600 hover:bg-yellow-700',
-    info: 'bg-blue-600 hover:bg-blue-700'
+    danger: 'bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800',
+    warning: 'bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-700 dark:hover:bg-yellow-800',
+    info: 'bg-light-primary hover:opacity-90 dark:bg-dark-primary dark:hover:opacity-90'
   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title}>
       <div className="px-0.5 pt-1 pb-3">
-        <p className="text-gray-300 mb-4">{message}</p>
+        <p className="text-light-text dark:text-dark-text mb-4">{message}</p>
         <div className="flex justify-end gap-2">
           <button
             onClick={onClose}
-            className="px-3 py-1.5 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors"
+            className="px-3 py-1.5 bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text rounded-md hover:bg-light-hover dark:hover:bg-dark-hover transition-colors"
           >
             {cancelLabel}
           </button>

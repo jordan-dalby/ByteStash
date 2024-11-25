@@ -140,13 +140,13 @@ const BaseDropdown: React.FC<BaseDropdownProps> = ({
         e.preventDefault();
         setIsOpen(false);
         setHighlightedIndex(-1);
-        setInternalValue(value); // Reset to selected value
+        setInternalValue(value);
         break;
 
       case 'Tab':
         setIsOpen(false);
         setHighlightedIndex(-1);
-        setInternalValue(value); // Reset to selected value
+        setInternalValue(value);
         break;
     }
   };
@@ -160,7 +160,7 @@ const BaseDropdown: React.FC<BaseDropdownProps> = ({
         <input
           ref={inputRef}
           type="text"
-          className={`block w-full rounded-md bg-gray-700 text-white p-2 pr-8 text-sm ${className}`}
+          className={`block w-full rounded-md bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text p-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary ${className}`}
           value={internalValue}
           onChange={handleInputChange}
           onFocus={() => setIsOpen(true)}
@@ -174,7 +174,7 @@ const BaseDropdown: React.FC<BaseDropdownProps> = ({
         />
         {showChevron && (
           <ChevronDown 
-            className={`absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+            className={`absolute right-2 top-1/2 -translate-y-1/2 text-light-text-secondary dark:text-dark-text-secondary transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
             size={16}
           />
         )}
@@ -182,15 +182,15 @@ const BaseDropdown: React.FC<BaseDropdownProps> = ({
       {isOpen && sections.length > 0 && (
         <ul 
           ref={listRef}
-          className="absolute z-10 mt-1 w-full bg-gray-700 border border-gray-600 rounded-md shadow-lg max-h-60 overflow-auto"
+          className="absolute z-10 mt-1 w-full bg-light-surface dark:bg-dark-surface border border-light-border dark:border-dark-border rounded-md shadow-lg max-h-60 overflow-auto"
           role="listbox"
         >
           {sections.map((section, sectionIndex) => (
             <React.Fragment key={section.title}>
               {sectionIndex > 0 && (
-                <li className="border-t border-gray-600" role="separator" />
+                <li className="border-t border-light-border dark:border-dark-border" role="separator" />
               )}
-              <li className="px-3 py-1 text-xs font-medium text-gray-400 bg-gray-800">
+              <li className="px-3 py-1 text-xs font-medium text-light-text-secondary dark:text-dark-text-secondary bg-light-hover dark:bg-dark-hover">
                 {section.title}
               </li>
               {section.items.map((item) => {
@@ -198,8 +198,10 @@ const BaseDropdown: React.FC<BaseDropdownProps> = ({
                 return (
                   <li
                     key={`${section.title}-${item}`}
-                    className={`px-4 py-2 cursor-pointer text-white text-sm ${
-                      highlightedIndex === currentIndex ? 'bg-gray-600' : 'hover:bg-gray-600'
+                    className={`px-4 py-2 cursor-pointer text-light-text dark:text-dark-text text-sm ${
+                      highlightedIndex === currentIndex 
+                        ? 'bg-light-primary/20 dark:bg-dark-primary/20' 
+                        : 'hover:bg-light-hover dark:hover:bg-dark-hover'
                     }`}
                     onClick={() => handleOptionClick(item)}
                     onMouseDown={(e) => e.preventDefault()}

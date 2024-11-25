@@ -51,8 +51,8 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
     };
   
     return (
-      <div className="bg-gray-800 rounded-lg border border-gray-700 shadow-lg">
-        <div className="flex items-center gap-2 p-3 bg-gray-850">
+      <div className="bg-light-surface dark:bg-dark-surface rounded-lg border border-light-border dark:border-dark-border shadow-lg">
+        <div className="flex items-center gap-2 p-3 bg-light-hover dark:bg-dark-hover">
           <div className="flex items-center gap-0.5">
             <IconButton
               icon={<ChevronUp size={16} />}
@@ -60,7 +60,7 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
               disabled={!canMoveUp}
               variant="secondary"
               size="sm"
-              className="disabled:opacity-50 w-9 h-9 hover:bg-gray-700 bg-transparent"
+              className="disabled:opacity-50 w-9 h-9 hover:bg-light-hover dark:hover:bg-dark-hover bg-transparent"
             />
             <IconButton
               icon={<ChevronDown size={16} />}
@@ -68,7 +68,7 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
               disabled={!canMoveDown}
               variant="secondary"
               size="sm"
-              className="disabled:opacity-50 w-9 h-9 hover:bg-gray-700 bg-transparent"
+              className="disabled:opacity-50 w-9 h-9 hover:bg-light-hover dark:hover:bg-dark-hover bg-transparent"
             />
           </div>
   
@@ -78,7 +78,10 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
                 type="text"
                 value={fragment.file_name}
                 onChange={handleFileNameChange}
-                className="w-full bg-gray-700 text-white px-3 py-2 rounded text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                className="w-full bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text px-3 py-2 rounded text-sm 
+                  border border-light-border dark:border-dark-border
+                  focus:border-light-primary dark:focus:border-dark-primary focus:ring-1 focus:ring-light-primary dark:focus:ring-dark-primary 
+                  transition-colors"
                 placeholder="File name"
                 required
               />
@@ -110,14 +113,14 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
               onClick={() => setIsCollapsed(!isCollapsed)}
               variant="secondary"
               size="sm"
-              className="w-9 h-9 hover:bg-gray-700 bg-transparent"
+              className="w-9 h-9 hover:bg-light-hover dark:hover:bg-dark-hover bg-transparent"
             />
             <IconButton
               icon={<Trash2 size={16} />}
               onClick={onDelete}
               variant="secondary"
               size="sm"
-              className="group-hover:text-red-400 w-9 h-9 hover:bg-gray-700 bg-transparent"
+              className="group-hover:text-red-500 dark:group-hover:text-red-400 w-9 h-9 hover:bg-light-hover dark:hover:bg-dark-hover bg-transparent"
             />
           </div>
         </div>
@@ -142,4 +145,3 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
       </div>
     );
   };
-  

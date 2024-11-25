@@ -42,14 +42,14 @@ export const FullCodeView: React.FC<FullCodeViewProps> = ({
 
   const containerClasses = isModal
     ? `overflow-hidden ${className}`
-    : `bg-gray-800 rounded-lg overflow-hidden ${className}`;
+    : `bg-light-surface dark:bg-dark-surface rounded-lg overflow-hidden ${className}`;
 
   return (
     <div className={containerClasses}>
       {/* Status Bar with Update Time */}
       {!isModal && snippet.updated_at && (
-        <div className="bg-gray-900/50 px-3 py-1.5 text-xs flex items-center justify-end">
-          <div className="flex items-center gap-1 text-gray-500">
+        <div className="bg-light-hover/50 dark:bg-dark-hover/50 px-3 py-1.5 text-xs flex items-center justify-end">
+          <div className="flex items-center gap-1 text-light-text-secondary dark:text-dark-text-secondary">
             <Clock size={12} />
             <span>{getRelativeUpdateTime(snippet.updated_at)} ago</span>
           </div>
@@ -60,19 +60,19 @@ export const FullCodeView: React.FC<FullCodeViewProps> = ({
         {/* Header Section */}
         <div>
           {showTitle && (
-            <h1 className={`text-xl md:text-2xl font-bold text-gray-200 ${isModal ? '' : 'mt-2'}`}>
+            <h1 className={`text-xl md:text-2xl font-bold text-light-text dark:text-dark-text ${isModal ? '' : 'mt-2'}`}>
               {snippet.title}
             </h1>
           )}
 
           {/* Language Info */}
-          <div className={`flex items-center gap-1 text-sm text-gray-400 mt-${showTitle ? '2' : '0'}`}>
-            <FileCode size={14} className="text-gray-500" />
+          <div className={`flex items-center gap-1 text-sm text-light-text-secondary dark:text-dark-text-secondary mt-${showTitle ? '2' : '0'}`}>
+            <FileCode size={14} className="text-light-text-secondary dark:text-dark-text-secondary" />
             <span>{getUniqueLanguages(snippet.fragments)}</span>
           </div>
 
           {/* Description */}
-          <div className="text-sm text-gray-300 mt-3">
+          <div className="text-sm text-light-text dark:text-dark-text mt-3">
             <Linkify options={linkifyOptions}>
               {snippet.description || 'No description available'}
             </Linkify>
@@ -94,12 +94,14 @@ export const FullCodeView: React.FC<FullCodeViewProps> = ({
           {snippet.fragments.map((fragment, index) => (
             <div key={index}>
               {/* File Header */}
-              <div className="flex items-center justify-between text-xs text-gray-400 mb-1 bg-gray-900/50 rounded px-3 h-7">
+              <div className="flex items-center justify-between text-xs text-light-text-secondary dark:text-dark-text-secondary mb-1 bg-light-hover/50 dark:bg-dark-hover/50 rounded px-3 h-7">
                 <div className="flex items-center gap-1 min-w-0 flex-1">
-                  <FileCode size={12} className="text-gray-500 shrink-0" />
+                  <FileCode size={12} className="text-light-text-secondary dark:text-dark-text-secondary shrink-0" />
                   <span className="truncate">{fragment.file_name}</span>
                 </div>
-                <span className="text-gray-500 ml-2">{getLanguageLabel(fragment.language)}</span>
+                <span className="text-light-text-secondary dark:text-dark-text-secondary ml-2">
+                  {getLanguageLabel(fragment.language)}
+                </span>
               </div>
 
               {/* Code Block */}
