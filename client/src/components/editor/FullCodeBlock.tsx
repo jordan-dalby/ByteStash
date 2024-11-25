@@ -18,7 +18,26 @@ export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({
   showLineNumbers = true
 }) => {
   const { theme } = useTheme();
-  const isDark = theme === 'dark';
+  const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark'>(
+    theme === 'system' 
+      ? window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      : theme
+  );
+  
+  useEffect(() => {
+    if (theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleChange = () => {
+        setEffectiveTheme(mediaQuery.matches ? 'dark' : 'light');
+      };
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    } else {
+      setEffectiveTheme(theme);
+    }
+  }, [theme]);
+
+  const isDark = effectiveTheme === 'dark';
   const isMarkdown = getLanguageLabel(language) === 'markdown';
   const [highlighterHeight, setHighlighterHeight] = useState<string>("100px");
   const containerRef = useRef<HTMLDivElement>(null);

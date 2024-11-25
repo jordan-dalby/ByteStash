@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, oneLight } from 'react-syntax-highlighter/dist/cjs/styles/prism';
@@ -20,8 +20,26 @@ export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
   showLineNumbers = true
 }) => {
   const { theme } = useTheme();
-  const isDark = theme === 'dark';
+  const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark'>(
+    theme === 'system' 
+      ? window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      : theme
+  );
   
+  useEffect(() => {
+    if (theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleChange = () => {
+        setEffectiveTheme(mediaQuery.matches ? 'dark' : 'light');
+      };
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    } else {
+      setEffectiveTheme(theme);
+    }
+  }, [theme]);
+
+  const isDark = effectiveTheme === 'dark';
   const isMarkdown = getLanguageLabel(language) === 'markdown';
   const LINE_HEIGHT = 19;
   const visibleHeight = (previewLines + 2) * LINE_HEIGHT;

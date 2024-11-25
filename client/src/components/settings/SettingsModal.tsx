@@ -448,7 +448,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 className="opacity-60 hover:opacity-100 transition-opacity"
                 title="GitHub Repository"
               >
-                <img src="/github-mark-white.svg" alt="GitHub" className="w-6 h-6" />
+                <img src="/github-mark-white.svg" alt="GitHub" className="w-6 h-6 dark:brightness-100 brightness-0" />
               </a>
               <a 
                 href={DOCKER_URL}
@@ -457,7 +457,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 className="opacity-60 hover:opacity-100 transition-opacity"
                 title="GitHub Packages"
               >
-                <img src="/docker-mark-white.svg" alt="Docker" className="w-6 h-6" />
+                <img src="/docker-mark-white.svg" alt="Docker" className="w-6 h-6 dark:brightness-100 brightness-0" />
               </a>
               <a 
                 href={REDDIT_URL}
@@ -466,7 +466,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 className="opacity-60 hover:opacity-100 transition-opacity"
                 title="Reddit Post"
               >
-                <img src="/reddit-mark-white.svg" alt="Reddit" className="w-6 h-6" />
+                <img src="/reddit-mark-white.svg" alt="Reddit" className="w-6 h-6 dark:brightness-100 brightness-0" />
               </a>
               <a 
                 href={WIKI_URL}
