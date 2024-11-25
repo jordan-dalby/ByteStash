@@ -235,7 +235,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors text-sm
                   ${themePreference === 'light' 
                     ? 'bg-light-primary dark:bg-dark-primary text-white' 
-                    : 'bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover'
+                    : 'bg-light-hover dark:bg-dark-hover text-light-text dark:text-dark-text hover:bg-light-hover-more dark:hover:bg-dark-hover-more'
                   }`}
               >
                 <Sun size={16} />
@@ -246,7 +246,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors text-sm
                   ${themePreference === 'dark'
                     ? 'bg-light-primary dark:bg-dark-primary text-white'
-                    : 'bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover'
+                    : 'bg-light-hover dark:bg-dark-hover text-light-text dark:text-dark-text hover:bg-light-hover-more dark:hover:bg-dark-hover-more'
                   }`}
               >
                 <Moon size={16} />
@@ -257,7 +257,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors text-sm
                   ${themePreference === 'system'
                     ? 'bg-light-primary dark:bg-dark-primary text-white'
-                    : 'bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover'
+                    : 'bg-light-hover dark:bg-dark-hover text-light-text dark:text-dark-text hover:bg-light-hover-more dark:hover:bg-dark-hover-more'
                   }`}
               >
                 <Monitor size={16} />
@@ -373,13 +373,13 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
               <div className="flex gap-2">
                 <button
                   onClick={handleExport}
-                  className="flex items-center gap-2 px-4 py-2 bg-light-surface dark:bg-dark-surface hover:bg-light-hover dark:hover:bg-dark-hover rounded-md transition-colors text-sm text-light-text dark:text-dark-text"
+                  className="flex items-center gap-2 px-4 py-2 bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more rounded-md transition-colors text-sm text-light-text dark:text-dark-text"
                 >
                   <Download size={16} />
                   Export Snippets
                 </button>
                 <label
-                  className={`flex items-center gap-2 px-4 py-2 bg-light-surface dark:bg-dark-surface hover:bg-light-hover dark:hover:bg-dark-hover rounded-md transition-colors text-sm cursor-pointer text-light-text dark:text-dark-text ${
+                  className={`flex items-center gap-2 px-4 py-2 bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more rounded-md transition-colors text-sm cursor-pointer text-light-text dark:text-dark-text ${
                     importing ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
                 >

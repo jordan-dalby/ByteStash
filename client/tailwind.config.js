@@ -15,6 +15,7 @@ module.exports = {
         'light-text-secondary': '#475569',
         'light-primary': '#2563eb',
         'light-hover': '#cbd5e1',
+        'light-hover-more': '#eff2f6',
 
         'dark-bg': '#0f172a',
         'dark-surface': '#1e293b',
@@ -23,6 +24,7 @@ module.exports = {
         'dark-text-secondary': '#94a3b8',
         'dark-primary': '#2563eb',
         'dark-hover': '#334155',
+        'dark-hover-more': '#4d6280',
       },
     },
   },

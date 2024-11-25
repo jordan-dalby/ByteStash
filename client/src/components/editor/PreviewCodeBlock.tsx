@@ -27,15 +27,20 @@ export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
   );
   
   useEffect(() => {
+    const updateEffectiveTheme = () => {
+      if (theme === 'system') {
+        setEffectiveTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      } else {
+        setEffectiveTheme(theme);
+      }
+    };
+
+    updateEffectiveTheme();
+
     if (theme === 'system') {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const handleChange = () => {
-        setEffectiveTheme(mediaQuery.matches ? 'dark' : 'light');
-      };
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
-    } else {
-      setEffectiveTheme(theme);
+      mediaQuery.addEventListener('change', updateEffectiveTheme);
+      return () => mediaQuery.removeEventListener('change', updateEffectiveTheme);
     }
   }, [theme]);
 
