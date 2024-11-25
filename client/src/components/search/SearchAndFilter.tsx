@@ -121,6 +121,7 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
             onClick={openNewSnippetModal}
             variant="action"
             className="h-10 pl-2 pr-4"
+            showLabel={true}
           />
         )}
       </div>
