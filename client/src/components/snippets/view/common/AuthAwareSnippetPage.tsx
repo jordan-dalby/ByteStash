@@ -65,10 +65,10 @@ const AuthAwareSnippetView: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
         <div className="flex items-center gap-3">
-          <Loader2 className="w-6 h-6 text-gray-400 animate-spin" />
-          <span className="text-gray-200 text-lg">Loading snippet...</span>
+          <Loader2 className="w-6 h-6 text-gray-600 dark:text-gray-400 animate-spin" />
+          <span className="text-gray-800 dark:text-gray-200 text-lg">Loading snippet...</span>
         </div>
       </div>
     );
@@ -76,20 +76,20 @@ const AuthAwareSnippetView: React.FC = () => {
 
   if (requiresAuth && !isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center gap-4">
-        <div className="text-red-400 text-xl mb-4">
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col items-center justify-center gap-4">
+        <div className="text-red-600 dark:text-red-400 text-xl mb-4">
           This snippet requires authentication to view
         </div>
         <div className="flex gap-4">
           <Link 
             to={ROUTES.LOGIN} 
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white transition-colors"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
           >
             Sign in
           </Link>
           <Link 
             to={ROUTES.PUBLIC_SNIPPETS}
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-white transition-colors"
+            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-md transition-colors"
           >
             Browse public snippets
           </Link>
@@ -100,11 +100,11 @@ const AuthAwareSnippetView: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center gap-4">
-        <div className="text-red-400 text-xl">{error}</div>
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col items-center justify-center gap-4">
+        <div className="text-red-600 dark:text-red-400 text-xl">{error}</div>
         <Link 
           to={ROUTES.PUBLIC_SNIPPETS}
-          className="text-blue-400 hover:text-blue-300"
+          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
         >
           Browse public snippets
         </Link>
@@ -114,11 +114,11 @@ const AuthAwareSnippetView: React.FC = () => {
 
   if (!snippet) {
     return (
-      <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center gap-4">
-        <div className="text-white text-xl">Snippet not found</div>
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col items-center justify-center gap-4">
+        <div className="text-gray-900 dark:text-white text-xl">Snippet not found</div>
         <Link 
           to={ROUTES.PUBLIC_SNIPPETS}
-          className="text-blue-400 hover:text-blue-300"
+          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
         >
           Browse public snippets
         </Link>
@@ -127,7 +127,7 @@ const AuthAwareSnippetView: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 p-8">
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-8">
       <div className="max-w-4xl mx-auto">
         <FullCodeView snippet={snippet} />
       </div>
