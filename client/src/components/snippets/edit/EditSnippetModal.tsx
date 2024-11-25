@@ -264,6 +264,9 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
                   maxCategories={20}
                   showAddText={true}
                   handleHashtag={false}
+                  className="mt-1 block w-full rounded-md bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text p-2 text-sm
+                    border border-light-border dark:border-dark-border
+                    focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary focus:border-light-primary dark:focus:border-dark-primary"
                 />
                 <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary mt-1">
                   {categories.length}/20 categories
