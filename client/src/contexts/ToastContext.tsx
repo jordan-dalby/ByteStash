@@ -24,27 +24,31 @@ interface ToastProps extends Toast {
 const toastConfig = {
   info: {
     icon: Info,
-    bgColor: 'bg-blue-500',
-    borderColor: 'border-blue-600',
-    textColor: 'text-blue-50',
+    bgColor: 'bg-light-primary dark:bg-dark-primary',
+    borderColor: 'border-light-primary dark:border-dark-primary',
+    textColor: 'text-white',
+    hoverColor: 'hover:bg-light-hover dark:hover:bg-dark-hover'
   },
   success: {
     icon: CheckCircle,
-    bgColor: 'bg-green-500',
-    borderColor: 'border-green-600',
-    textColor: 'text-green-50',
+    bgColor: 'bg-green-500 dark:bg-green-600',
+    borderColor: 'border-green-600 dark:border-green-700',
+    textColor: 'text-white',
+    hoverColor: 'hover:bg-green-600 dark:hover:bg-green-700'
   },
   error: {
     icon: AlertCircle,
-    bgColor: 'bg-red-500',
-    borderColor: 'border-red-600',
-    textColor: 'text-red-50',
+    bgColor: 'bg-red-500 dark:bg-red-600',
+    borderColor: 'border-red-600 dark:border-red-700',
+    textColor: 'text-white',
+    hoverColor: 'hover:bg-red-600 dark:hover:bg-red-700'
   },
   warning: {
     icon: AlertTriangle,
-    bgColor: 'bg-yellow-500',
-    borderColor: 'border-yellow-600',
-    textColor: 'text-yellow-50',
+    bgColor: 'bg-yellow-500 dark:bg-yellow-600',
+    borderColor: 'border-yellow-600 dark:border-yellow-700',
+    textColor: 'text-white',
+    hoverColor: 'hover:bg-yellow-600 dark:hover:bg-yellow-700'
   },
 } as const;
 
@@ -74,7 +78,8 @@ const ToastComponent: React.FC<ToastProps> = ({
 
   return (
     <div className={`${config.bgColor} ${config.textColor} p-4 rounded-lg shadow-lg relative 
-      overflow-hidden border-l-4 ${config.borderColor} flex items-center max-w-md`}>
+      overflow-hidden border-l-4 ${config.borderColor} flex items-center max-w-md 
+      backdrop-blur-sm bg-opacity-95 dark:bg-opacity-95`}>
       <div className="mr-3">
         <Icon size={24} />
       </div>
@@ -83,8 +88,8 @@ const ToastComponent: React.FC<ToastProps> = ({
       </div>
       <button 
         onClick={onClose}
-        className="absolute top-0 right-0 h-full px-4 flex items-center justify-center 
-          hover:bg-black hover:bg-opacity-10 transition-colors duration-200"
+        className={`absolute top-0 right-0 h-full px-4 flex items-center justify-center 
+          transition-colors duration-200 ${config.hoverColor}`}
       >
         <X size={16} />
       </button>

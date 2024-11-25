@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTheme } from '../contexts/ThemeContext';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -14,6 +15,7 @@ interface Settings {
 }
 
 export const useSettings = () => {
+  const { setTheme: setThemeContext } = useTheme();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => 
     (localStorage.getItem('viewMode') as 'grid' | 'list') || 'grid'
   );
@@ -24,7 +26,7 @@ export const useSettings = () => {
   const [showCategories, setShowCategories] = useState(() => localStorage.getItem('showCategories') !== 'false');
   const [expandCategories, setExpandCategories] = useState(() => localStorage.getItem('expandCategories') === 'true');
   const [showLineNumbers, setShowLineNumbers] = useState(() => localStorage.getItem('showLineNumbers') === 'true');
-  const [theme, setTheme] = useState<Theme>(() => {
+  const [theme, setThemeState] = useState<Theme>(() => {
     const savedTheme = localStorage.getItem('theme');
     return (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system') 
       ? savedTheme 
@@ -65,7 +67,8 @@ export const useSettings = () => {
 
   useEffect(() => {
     localStorage.setItem('theme', theme);
-  }, [theme]);
+    setThemeContext(theme);
+  }, [theme, setThemeContext]);
 
   const updateSettings = (newSettings: Settings) => {
     setCompactView(newSettings.compactView);
@@ -75,7 +78,7 @@ export const useSettings = () => {
     setShowCategories(newSettings.showCategories);
     setExpandCategories(newSettings.expandCategories);
     setShowLineNumbers(newSettings.showLineNumbers);
-    setTheme(newSettings.theme);
+    setThemeState(newSettings.theme);
   };
 
   return {

@@ -218,17 +218,17 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ snippetId, isOpen, onClose
                       title="Copy link"
                     >
                       {copiedStates[share.id] ? (
-                        <Check size={16} className="text-green-500 dark:text-green-400" />
+                        <Check size={16} className="text-light-primary dark:text-dark-primary" />
                       ) : (
                         <LinkIcon size={16} className="text-light-text dark:text-dark-text" />
                       )}
                     </button>
                     <button
                       onClick={() => handleDeleteShare(share.id)}
-                      className="p-2 hover:bg-light-hover dark:hover:bg-dark-hover rounded-md transition-colors text-red-500 dark:text-red-400"
+                      className="p-2 hover:bg-light-hover dark:hover:bg-dark-hover rounded-md transition-colors"
                       title="Delete share link"
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={16} className="hover:text-red-500" />
                     </button>
                   </div>
                 </div>

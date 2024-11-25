@@ -40,7 +40,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
             }}
             variant="custom"
             size="sm"
-            className="bg-light-surface dark:bg-dark-surface hover:bg-light-hover dark:hover:bg-dark-hover"
+            className="bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
           />
         )}
         <IconButton
@@ -51,7 +51,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
           }}
           variant="custom"
           size="sm"
-          className="bg-light-surface dark:bg-dark-surface hover:bg-light-hover dark:hover:bg-dark-hover"
+          className="bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
         />
       </div>
     );
@@ -67,7 +67,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
         }}
         variant="custom"
         size="sm"
-        className="bg-light-surface dark:bg-dark-surface hover:bg-light-hover dark:hover:bg-dark-hover"
+        className="bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
       />
       <IconButton
         icon={<Trash2 size={16} className="hover:text-red-500" />}
@@ -77,7 +77,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
         }}
         variant="custom"
         size="sm"
-        className="bg-light-surface dark:bg-dark-surface hover:bg-light-hover dark:hover:bg-dark-hover"
+        className="bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
       />
 
       <div className="relative">
@@ -90,7 +90,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
           }}
           variant="custom"
           size="sm"
-          className="bg-light-surface dark:bg-dark-surface hover:bg-light-hover dark:hover:bg-dark-hover"
+          className="bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
         />
         
         {isDropdownOpen && (

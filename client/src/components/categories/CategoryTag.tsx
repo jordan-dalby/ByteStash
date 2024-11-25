@@ -24,7 +24,7 @@ const CategoryTag: React.FC<CategoryTagProps> = ({
     return (
       <button
         onClick={handleClick}
-        className={`flex items-center gap-1 px-2 py-1 rounded-md bg-light-surface dark:bg-dark-surface text-sm 
+        className={`flex items-center gap-1 px-2 py-1 rounded-md bg-light-hover/50 dark:bg-dark-hover/50 text-sm 
           hover:bg-light-hover dark:hover:bg-dark-hover transition-colors group ${className}`}
         type="button"
       >

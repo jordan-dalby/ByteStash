@@ -58,17 +58,17 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
               icon={<ChevronUp size={16} />}
               onClick={onMoveUp}
               disabled={!canMoveUp}
-              variant="secondary"
+              variant="custom"
               size="sm"
-              className="disabled:opacity-50 w-9 h-9 hover:bg-light-hover dark:hover:bg-dark-hover bg-transparent"
+              className="disabled:opacity-50 w-9 h-9 bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
             />
             <IconButton
               icon={<ChevronDown size={16} />}
               onClick={onMoveDown}
               disabled={!canMoveDown}
-              variant="secondary"
+              variant="custom"
               size="sm"
-              className="disabled:opacity-50 w-9 h-9 hover:bg-light-hover dark:hover:bg-dark-hover bg-transparent"
+              className="disabled:opacity-50 w-9 h-9 bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
             />
           </div>
   
@@ -111,16 +111,16 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
             <IconButton
               icon={isCollapsed ? <ChevronRight size={16} /> : <CollapseIcon size={16} />}
               onClick={() => setIsCollapsed(!isCollapsed)}
-              variant="secondary"
+              variant="custom"
               size="sm"
-              className="w-9 h-9 hover:bg-light-hover dark:hover:bg-dark-hover bg-transparent"
+              className="w-9 h-9 bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
             />
             <IconButton
-              icon={<Trash2 size={16} />}
+              icon={<Trash2 size={16} className="hover:text-red-500" />}
               onClick={onDelete}
-              variant="secondary"
+              variant="custom"
               size="sm"
-              className="group-hover:text-red-500 dark:group-hover:text-red-400 w-9 h-9 hover:bg-light-hover dark:hover:bg-dark-hover bg-transparent"
+              className="w-9 h-9 bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
             />
           </div>
         </div>

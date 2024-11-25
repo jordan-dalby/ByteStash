@@ -21,7 +21,7 @@ module.exports = {
         'dark-border': '#334155',
         'dark-text': '#e2e8f0',
         'dark-text-secondary': '#94a3b8',
-        'dark-primary': '#60a5fa',
+        'dark-primary': '#2563eb',
         'dark-hover': '#334155',
       },
     },
