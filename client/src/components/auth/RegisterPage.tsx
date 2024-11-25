@@ -91,6 +91,8 @@ export const RegisterPage: React.FC = () => {
     window.location.href = `${window.__BASE_PATH__}/api/auth/oidc/auth`;
   };
 
+  const showInternalRegistration = !authConfig?.disableInternalAccounts;
+
   return (
     <PageContainer className="flex items-center justify-center min-h-screen">
       <div className="max-w-md w-full space-y-6">
@@ -137,91 +139,111 @@ export const RegisterPage: React.FC = () => {
             >
               Sign in with {oidcConfig.displayName}
             </button>
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-700"></div>
+            {showInternalRegistration && (
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-700"></div>
+                </div>
+                <div className="relative flex justify-center">
+                  <span className="px-2 bg-gray-900 text-gray-500 text-sm">
+                    Or continue with password
+                  </span>
+                </div>
               </div>
-              <div className="relative flex justify-center">
-              <span className="px-2 bg-gray-900 text-gray-500 text-sm">
-                  Or continue with password
-                </span>
-              </div>
-            </div>
+            )}
           </>
         )}
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="username" className="sr-only">Username</label>
-              <input
-                id="username"
-                type="text"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border 
-                  border-gray-700 placeholder-gray-500 text-white bg-gray-800 rounded-t-md 
-                  focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                disabled={isLoading}
-              />
+        {showInternalRegistration && (
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+            <div className="rounded-md shadow-sm -space-y-px">
+              <div>
+                <label htmlFor="username" className="sr-only">Username</label>
+                <input
+                  id="username"
+                  type="text"
+                  required
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border 
+                    border-gray-700 placeholder-gray-500 text-white bg-gray-800 rounded-t-md 
+                    focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  disabled={isLoading}
+                />
+              </div>
+              <div>
+                <label htmlFor="password" className="sr-only">Password</label>
+                <input
+                  id="password"
+                  type="password"
+                  required
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border 
+                    border-gray-700 placeholder-gray-500 text-white bg-gray-800
+                    focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLoading}
+                />
+              </div>
+              <div>
+                <label htmlFor="confirm-password" className="sr-only">Confirm Password</label>
+                <input
+                  id="confirm-password"
+                  type="password"
+                  required
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border 
+                    border-gray-700 placeholder-gray-500 text-white bg-gray-800 rounded-b-md
+                    focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={isLoading}
+                />
+              </div>
             </div>
-            <div>
-              <label htmlFor="password" className="sr-only">Password</label>
-              <input
-                id="password"
-                type="password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border 
-                  border-gray-700 placeholder-gray-500 text-white bg-gray-800
-                  focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={isLoading}
-              />
-            </div>
-            <div>
-              <label htmlFor="confirm-password" className="sr-only">Confirm Password</label>
-              <input
-                id="confirm-password"
-                type="password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border 
-                  border-gray-700 placeholder-gray-500 text-white bg-gray-800 rounded-b-md
-                  focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                disabled={isLoading}
-              />
-            </div>
-          </div>
 
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent 
-                text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 
-                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
-                disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={isLoading}
+            <div>
+              <button
+                type="submit"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent 
+                  text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
+                  disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <span className="flex items-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Creating Account...
+                  </span>
+                ) : (
+                  'Create Account'
+                )}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {!showInternalRegistration && !oidcConfig?.enabled && (
+          <div className="text-center">
+            <h2 className="text-xl font-bold text-red-400 mb-4">Registration Not Available</h2>
+            <p className="text-gray-400 mb-4">
+              Internal account registration is disabled and no SSO providers are configured.
+              Please contact your administrator.
+            </p>
+            <Link 
+              to={ROUTES.PUBLIC_SNIPPETS}
+              className="text-blue-400 hover:text-blue-300"
             >
-              {isLoading ? (
-                <span className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Creating Account...
-                </span>
-              ) : (
-                'Create Account'
-              )}
-            </button>
+              Browse public snippets
+            </Link>
           </div>
-        </form>
+        )}
       </div>
     </PageContainer>
   );

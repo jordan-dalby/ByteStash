@@ -15,4 +15,5 @@ export interface AuthConfig {
   allowNewAccounts: boolean;
   hasUsers: boolean;
   disableAccounts: boolean;
+  disableInternalAccounts: boolean;
 }

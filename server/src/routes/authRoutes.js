@@ -1,6 +1,6 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS, DISABLE_ACCOUNTS, getOrCreateAnonymousUser } from '../middleware/auth.js';
+import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS, DISABLE_ACCOUNTS, DISABLE_INTERNAL_ACCOUNTS, getOrCreateAnonymousUser } from '../middleware/auth.js';
 import userService from '../services/userService.js';
 import { getDb } from '../config/database.js';
 import { up_v1_5_0_snippets } from '../config/migrations/20241117-migration.js';
@@ -16,9 +16,10 @@ router.get('/config', async (req, res) => {
     
     res.json({ 
       authRequired: true,
-      allowNewAccounts: (!hasUsers || ALLOW_NEW_ACCOUNTS) && !DISABLE_ACCOUNTS,
+      allowNewAccounts: !hasUsers || (ALLOW_NEW_ACCOUNTS && !DISABLE_ACCOUNTS),
       hasUsers,
-      disableAccounts: DISABLE_ACCOUNTS
+      disableAccounts: DISABLE_ACCOUNTS,
+      disableInternalAccounts: DISABLE_INTERNAL_ACCOUNTS
     });
   } catch (error) {
     Logger.error('Error getting auth config:', error);
@@ -28,6 +29,10 @@ router.get('/config', async (req, res) => {
 
 router.post('/register', async (req, res) => {
   try {
+    if (DISABLE_INTERNAL_ACCOUNTS) {
+      return res.status(403).json({ error: 'Internal account registration is disabled' });
+    }
+
     const db = getDb();
     const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
     const hasUsers = userCount > 0;
@@ -66,6 +71,10 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
+    if (DISABLE_INTERNAL_ACCOUNTS) {
+      return res.status(403).json({ error: 'Internal accounts are disabled' });
+    }
+
     const { username, password } = req.body;
     const user = await userService.validateUser(username, password);
 

@@ -19,6 +19,8 @@ services:
       - DEBUG=false
       # Should we use accounts at all? When enabled, it will be like starting a fresh account so export your snippets, no login required
       - DISABLE_ACCOUNTS=false
+      # Should internal accounts be disabled?
+      - DISABLE_INTERNAL_ACCOUNTS=false
 
       # Optional: Enable OIDC for Single Sign On
       - OIDC_ENABLED=true

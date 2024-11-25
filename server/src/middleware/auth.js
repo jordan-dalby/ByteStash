@@ -20,6 +20,7 @@ const JWT_SECRET = getJwtSecret();
 const ALLOW_NEW_ACCOUNTS = process.env.ALLOW_NEW_ACCOUNTS === 'true';
 const TOKEN_EXPIRY = process.env.TOKEN_EXPIRY || '24h';
 const DISABLE_ACCOUNTS = process.env.DISABLE_ACCOUNTS === 'true';
+const DISABLE_INTERNAL_ACCOUNTS = process.env.DISABLE_INTERNAL_ACCOUNTS === 'true';
 
 function generateAnonymousUsername() {
   return `anon-${crypto.randomBytes(8).toString('hex')}`;
@@ -74,5 +75,6 @@ export {
   TOKEN_EXPIRY, 
   ALLOW_NEW_ACCOUNTS, 
   DISABLE_ACCOUNTS,
+  DISABLE_INTERNAL_ACCOUNTS,
   getOrCreateAnonymousUser 
 };
