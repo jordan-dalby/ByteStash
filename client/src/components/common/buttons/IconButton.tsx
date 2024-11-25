@@ -25,7 +25,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(({
 }, ref) => {
   const baseClasses = 'flex items-center justify-center gap-2 rounded-md transition-colors';
   const variantClasses = {
-    primary: 'bg-light-surface dark:bg-dark-surface hover:bg-light-hover dark:hover:bg-dark-hover text-light-text dark:text-dark-text',
+    primary: 'bg-light-hover dark:bg-dark-hover hover:bg-light-hover dark:hover:bg-dark-hover text-light-text dark:text-dark-text',
     secondary: 'bg-light-surface dark:bg-dark-surface hover:bg-light-hover dark:hover:bg-dark-hover text-light-text dark:text-dark-text',
     danger: 'bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 text-white',
     action: 'bg-light-primary dark:bg-dark-primary hover:opacity-90 text-white',
