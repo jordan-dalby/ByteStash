@@ -16,7 +16,6 @@ module.exports = {
         'light-primary': '#2563eb',
         'light-hover': '#cbd5e1',
         'light-hover-more': '#eff2f6',
-        'light-secondary': '#cbd5e1',
 
         'dark-bg': '#0f172a',
         'dark-surface': '#1e293b',
@@ -26,7 +25,6 @@ module.exports = {
         'dark-primary': '#2563eb',
         'dark-hover': '#334155',
         'dark-hover-more': '#4d6280',
-        'dark-secondary': '#1a2436',
       },
     },
   },
