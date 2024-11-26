@@ -10,7 +10,7 @@ const ViewSwitch: React.FC<ViewSwitchProps> = ({ checked, onChange }) => {
   return (
     <div className="flex items-center gap-3 text-sm text-light-text dark:text-dark-text w-full">
       <div
-        className="flex gap-0.5 rounded-lg bg-light-secondary dark:bg-dark-secondary px-0.5 py-0.5 w-full"
+        className="flex gap-0.5 rounded-lg bg-light-surface dark:bg-dark-surface px-0.5 py-0.5 w-full"
         role="group"
       >
         <button
