@@ -42,7 +42,7 @@ code {
 
 /* Markdown styles */
 .markdown pre {
-  @apply bg-white dark:bg-black;
+  @apply bg-slate-200 dark:bg-slate-600;
   padding: 0.75rem;
   border-radius: 0.5rem;
   overflow-x: auto;
@@ -51,7 +51,7 @@ code {
 }
 
 .markdown code {
-  @apply bg-white dark:bg-black;
+  @apply bg-slate-200 dark:bg-slate-600;
   padding: 0.2rem 0.4rem;
   border-radius: 0.25rem;
   @apply text-light-text dark:text-dark-text;
@@ -62,6 +62,7 @@ code {
   padding: 0;
   background-color: transparent;
   border: none;
+  box-shadow: none;
 }
 
 /* Light theme scrollbars */
@@ -146,8 +147,5 @@ code {
 }
 
 :root {
-  --light-scrollbar: rgb(148, 163, 184);  /* slate-400 */
-  --light-scrollbar-track: rgb(226, 232, 240);  /* slate-200 */
-  --dark-scrollbar: rgb(71, 85, 105);  /* slate-600 */
   --dark-scrollbar-track: rgb(30, 41, 59);  /* slate-800 */
 }
