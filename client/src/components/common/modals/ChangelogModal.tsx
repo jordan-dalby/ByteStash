@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Modal from './Modal';
 import { Loader2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import { useTheme } from '../../../contexts/ThemeContext';
 
 interface GitHubRelease {
   tag_name: string;
@@ -19,6 +20,27 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose }) => {
   const [releases, setReleases] = useState<GitHubRelease[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { theme } = useTheme();
+  const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark'>(
+    theme === 'system' 
+      ? window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      : theme
+  );
+  
+  useEffect(() => {
+    if (theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleChange = () => {
+        setEffectiveTheme(mediaQuery.matches ? 'dark' : 'light');
+      };
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    } else {
+      setEffectiveTheme(theme);
+    }
+  }, [theme]);
+
+  const isDark = effectiveTheme === 'dark';
 
   useEffect(() => {
     const fetchReleases = async () => {
@@ -53,12 +75,28 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose }) => {
     });
   };
 
+  const backgroundColor = isDark ? '#1E1E1E' : '#ffffff';
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       title={<h2 className="text-xl font-bold text-light-text dark:text-dark-text">Changelog</h2>}
     >
+      <style>
+        {`
+          .markdown-content-changelog {
+            color: var(--text-color);
+            background-color: ${backgroundColor};
+            padding: 1rem;
+            border-radius: 0.5rem;
+            position: relative;
+          }
+          :root {
+            --text-color: ${isDark ? '#ffffff' : '#000000'};
+          }
+        `}
+      </style>
       <div className="pb-4">
         <div className="space-y-8">
           {isLoading ? (
@@ -87,7 +125,7 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose }) => {
                     {formatDate(release.published_at)}
                   </span>
                 </div>
-                <div className="markdown-content bg-light-surface dark:bg-dark-surface rounded-lg">
+                <div className="markdown-content markdown-content-changelog rounded-lg" style={{ backgroundColor }}>
                   <ReactMarkdown className="markdown prose dark:prose-invert max-w-none">
                     {release.body}
                   </ReactMarkdown>
