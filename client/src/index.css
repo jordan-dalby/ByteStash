@@ -42,13 +42,13 @@ code {
 
 /* Markdown styles */
 .markdown pre {
-  @apply bg-light-hover/50 dark:bg-dark-hover/50;
+  @apply bg-[#ebebeb] dark:bg-[#2d2d2d];
   padding: 0.2rem 0.4rem;
   border-radius: 0.25rem;
   @apply text-light-text dark:text-dark-text;
 }
 .markdown code {
-  @apply bg-light-hover/50 dark:bg-dark-hover/50;
+  @apply bg-[#ebebeb] dark:bg-[#2d2d2d];
   padding: 0.2rem 0.4rem;
   border-radius: 0.25rem;
   @apply text-light-text dark:text-dark-text;
