@@ -32,6 +32,7 @@ const SnippetModal: React.FC<SnippetModalProps> = ({
       title={
         <h2 className="text-2xl font-bold text-light-text dark:text-dark-text">{snippet.title}</h2>
       }
+      expandable={true}
     >
       <FullCodeView
         showTitle={false}

@@ -163,11 +163,13 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
+      expandable={true}
       title={
         <h2 className="text-xl font-bold text-light-text dark:text-dark-text">
           {snippetToEdit ? 'Edit Snippet' : 'Add New Snippet'}
         </h2>
-    }>
+      }
+    >
       <style>
         {`
           .modal-footer {
