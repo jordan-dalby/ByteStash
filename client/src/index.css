@@ -42,20 +42,17 @@ code {
 
 /* Markdown styles */
 .markdown pre {
-  @apply bg-slate-200 dark:bg-slate-600;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  overflow-x: auto;
-  @apply text-light-text dark:text-dark-text;
-  @apply border border-light-border dark:border-dark-border;
-}
-
-.markdown code {
-  @apply bg-slate-200 dark:bg-slate-600;
+  @apply bg-slate-200 dark:bg-slate-800;
   padding: 0.2rem 0.4rem;
   border-radius: 0.25rem;
   @apply text-light-text dark:text-dark-text;
-  @apply border border-light-border dark:border-dark-border;
+}
+
+.markdown code {
+  @apply bg-slate-200 dark:bg-slate-800;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  @apply text-light-text dark:text-dark-text;
 }
 
 .markdown pre code {

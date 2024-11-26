@@ -135,8 +135,11 @@ export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
         )}
 
         <div 
-          className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-light-surface dark:from-dark-surface to-transparent pointer-events-none rounded-b-lg"
-          style={{ height: `${LINE_HEIGHT * 2}px` }}
+          className="absolute inset-x-0 bottom-0 bg-gradient-to-t to-transparent pointer-events-none rounded-b-lg"
+          style={{ 
+            height: `${LINE_HEIGHT * 2}px`,
+            background: `linear-gradient(to top, ${backgroundColor}, transparent)`
+          }}
         />
 
         <CopyButton text={code} />
