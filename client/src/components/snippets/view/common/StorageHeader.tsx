@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Globe, Lock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { APP_VERSION } from '../../../../constants/settings';
+import ViewSwitch from './ViewSwitch';
+import { ROUTES } from '../../../../constants/routes';
 
 interface StorageHeaderProps {
   isPublicView: boolean;
@@ -8,44 +10,38 @@ interface StorageHeaderProps {
 
 const StorageHeader: React.FC<StorageHeaderProps> = ({ isPublicView }) => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const navigate = useNavigate();
 
   const tooltipText = isPublicView 
     ? "You're viewing publicly shared snippets. These snippets are read-only and visible to everyone."
     : "You're viewing your private snippets. Only you can see and modify these snippets.";
 
+  const handleViewToggle = (checked: boolean) => {
+    navigate(checked ? ROUTES.PUBLIC_SNIPPETS : ROUTES.HOME);
+  };
+
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       <h1 className="text-4xl font-bold text-light-text dark:text-dark-text flex items-baseline gap-2">
+        <img src="/logo512.png" alt="ByteStash Logo" className="w-7 h-7" />
         ByteStash
         <span className="text-sm text-light-text-secondary dark:text-dark-text-secondary">v{APP_VERSION}</span>
       </h1>
+      
       <div 
-        className="relative mt-1"
+        className="relative inline-block"
         onMouseEnter={() => setIsTooltipVisible(true)}
         onMouseLeave={() => setIsTooltipVisible(false)}
       >
-        <div className="flex items-center gap-1.5">
-          {isPublicView ? (
-            <Globe className="w-3.5 h-3.5 text-light-primary dark:text-dark-primary" aria-label="Public View" />
-          ) : (
-            <Lock className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" aria-label="Private View" />
-          )}
-          <span className={`text-sm ${
-            isPublicView 
-              ? 'text-light-primary dark:text-dark-primary' 
-              : 'text-emerald-600 dark:text-emerald-400'
-          }`}>
-            {isPublicView ? 'Viewing public snippets' : 'Viewing private snippets'}
-          </span>
-        </div>
+        <ViewSwitch checked={isPublicView} onChange={handleViewToggle} />
         
         {isTooltipVisible && (
           <div 
-            className={`absolute left-0 top-full mt-2 w-64 rounded-lg border p-3 text-sm z-50 shadow-lg ${
-              isPublicView 
-                ? 'border-light-primary/20 dark:border-dark-primary/20 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200' 
-                : 'border-emerald-600/20 dark:border-emerald-400/20 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200'
-            }`}
+            className="absolute left-1/2 top-full mt-3 w-64 -translate-x-1/2 rounded-lg border border-light-border 
+              dark:border-dark-border bg-light-surface dark:bg-dark-surface p-3 text-sm z-50 shadow-lg
+              text-light-text dark:text-dark-text before:content-[''] before:absolute before:-top-2 before:left-1/2 
+              before:-translate-x-1/2 before:border-8 before:border-transparent before:border-b-light-surface 
+              dark:before:border-b-dark-surface"
             role="tooltip"
           >
             {tooltipText}
