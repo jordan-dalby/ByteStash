@@ -2,42 +2,44 @@ import React, { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, oneLight } from 'react-syntax-highlighter/dist/cjs/styles/prism';
-import { getLanguageLabel, getMonacoLanguage } from '../../utils/language/languageUtils';
-import CopyButton from '../common/buttons/CopyButton';
-import { useTheme } from '../../contexts/ThemeContext';
+import { getLanguageLabel, getMonacoLanguage } from '../../../utils/language/languageUtils';
+import EmbedCopyButton from './EmbedCopyButton';
 
-export interface FullCodeBlockProps {
+export interface EmbedCodeBlockProps {
   code: string;
   language?: string;
   showLineNumbers?: boolean;
+  theme?: 'light' | 'dark' | 'blue' | 'system';
 }
 
-export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({ 
+export const EmbedCodeView: React.FC<EmbedCodeBlockProps> = ({ 
   code, 
   language = 'plaintext',
-  showLineNumbers = true
+  showLineNumbers = true,
+  theme = 'system'
 }) => {
-  const { theme } = useTheme();
-  const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark'>(
-    theme === 'system' 
-      ? window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-      : theme
-  );
+  const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark' | 'blue'>(() => {
+    if (theme === 'system') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return theme;
+  });
   
   useEffect(() => {
-    if (theme === 'system') {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const handleChange = () => {
-        setEffectiveTheme(mediaQuery.matches ? 'dark' : 'light');
-      };
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
-    } else {
+    if (theme !== 'system') {
       setEffectiveTheme(theme);
+      return;
     }
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = () => {
+      setEffectiveTheme(mediaQuery.matches ? 'dark' : 'light');
+    };
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, [theme]);
 
-  const isDark = effectiveTheme === 'dark';
+  const isDark = effectiveTheme === 'dark' || effectiveTheme === 'blue';
   const isMarkdown = getLanguageLabel(language) === 'markdown';
   const [highlighterHeight, setHighlighterHeight] = useState<string>("100px");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -62,7 +64,17 @@ export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({
   };
 
   const baseTheme = isDark ? vscDarkPlus : oneLight;
-  const backgroundColor = isDark ? '#1E1E1E' : '#ffffff';
+  const getBackgroundColor = () => {
+    switch (effectiveTheme) {
+      case 'blue':
+      case 'dark':
+        return '#1E1E1E';
+      case 'light':
+        return '#ffffff';
+    }
+  };
+
+  const backgroundColor = getBackgroundColor();
   const customStyle = {
     ...baseTheme,
     'pre[class*="language-"]': {
@@ -91,6 +103,17 @@ export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({
             padding: 1rem;
             border-radius: 0.5rem;
             position: relative;
+          }
+          .markdown-content-full pre,
+          .markdown-content-full code {
+            background-color: ${isDark ? '#2d2d2d' : '#ebebeb'} !important;
+            color: ${isDark ? '#e5e7eb' : '#1f2937'} !important;
+          }
+          .markdown-content-full pre code {
+            background-color: transparent !important;
+            padding: 0;
+            border: none;
+            box-shadow: none;
           }
           :root {
             --text-color: ${isDark ? '#ffffff' : '#000000'};
@@ -137,8 +160,8 @@ export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({
           </div>
         )}
 
-        <CopyButton text={code} />
+        <EmbedCopyButton text={code} theme={theme} />
       </div>
     </div>
   );
-}
+};

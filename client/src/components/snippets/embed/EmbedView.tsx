@@ -2,9 +2,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import { FileCode } from 'lucide-react';
 import { Snippet } from '../../../types/snippets';
 import { getLanguageLabel } from '../../../utils/language/languageUtils';
-import { FullCodeBlock } from '../../editor/FullCodeBlock';
 import { basePath } from '../../../utils/api/basePath';
 import { generateEmbedId } from '../../../utils/helpers/embedUtils';
+import { EmbedCodeView } from './EmbedCodeView';
 
 interface EmbedViewProps {
   shareId: string;
@@ -12,7 +12,7 @@ interface EmbedViewProps {
   showDescription?: boolean;
   showFileHeaders?: boolean;
   showPoweredBy?: boolean;
-  theme?: 'light' | 'dark' | 'system';
+  theme?: 'light' | 'dark' | 'blue' | 'system';
   fragmentIndex?: number;
 }
 
@@ -27,9 +27,13 @@ export const EmbedView: React.FC<EmbedViewProps> = ({
 }) => {
   const [snippet, setSnippet] = useState<Snippet | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [activeTheme, setActiveTheme] = useState<'light' | 'dark'>(theme === 'system' ? 'light' : theme);
   const containerRef = useRef<HTMLDivElement>(null);
-  const isDark = activeTheme === 'dark';
+  const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark' | 'blue'>(() => {
+    if (theme === 'system') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return theme;
+  });
 
   const embedId = generateEmbedId({
     shareId,
@@ -42,24 +46,17 @@ export const EmbedView: React.FC<EmbedViewProps> = ({
   });
 
   useEffect(() => {
-    const updateTheme = (isDark: boolean) => {
-      const newTheme = isDark ? 'dark' : 'light';
-      setActiveTheme(newTheme);
-    };
-
-    if (theme === 'system') {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      
-      const handleChange = (e: MediaQueryListEvent | MediaQueryList) => {
-        updateTheme(e.matches);
-      };
-
-      handleChange(mediaQuery);
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
-    } else {
-      updateTheme(theme === 'dark');
+    if (theme !== 'system') {
+      setEffectiveTheme(theme);
+      return;
     }
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = () => {
+      setEffectiveTheme(mediaQuery.matches ? 'dark' : 'light');
+    };
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, [theme]);
 
   useEffect(() => {
@@ -72,7 +69,7 @@ export const EmbedView: React.FC<EmbedViewProps> = ({
             showDescription: showDescription.toString(),
             showFileHeaders: showFileHeaders.toString(),
             showPoweredBy: showPoweredBy.toString(),
-            theme: activeTheme,
+            theme: theme,
             ...(fragmentIndex !== undefined && { fragmentIndex: fragmentIndex.toString() })
           })
         );
@@ -90,7 +87,7 @@ export const EmbedView: React.FC<EmbedViewProps> = ({
     };
 
     fetchSnippet();
-  }, [shareId, showTitle, showDescription, showFileHeaders, showPoweredBy, activeTheme, fragmentIndex]);
+  }, [shareId, showTitle, showDescription, showFileHeaders, showPoweredBy, theme, fragmentIndex]);
 
   useEffect(() => {
     const updateHeight = () => {
@@ -112,7 +109,7 @@ export const EmbedView: React.FC<EmbedViewProps> = ({
 
   if (error) {
     return (
-      <div ref={containerRef} className={`theme-${activeTheme} flex items-center justify-center p-4`}>
+      <div ref={containerRef} className={`theme-${theme} flex items-center justify-center p-4`}>
         <div className="text-center">
           <p className="text-red-500">{error}</p>
         </div>
@@ -122,27 +119,63 @@ export const EmbedView: React.FC<EmbedViewProps> = ({
 
   if (!snippet) {
     return (
-      <div ref={containerRef} className={`theme-${activeTheme} flex items-center justify-center p-4`}>
+      <div ref={containerRef} className={`theme-${theme} flex items-center justify-center p-4`}>
         <div className="text-center">
-          <p className={isDark ? "text-dark-text" : "text-light-text"}>Loading...</p>
+          <p className={effectiveTheme === 'light' ? "text-light-text" : "text-dark-text"}>Loading...</p>
         </div>
       </div>
     );
   }
 
+  const getBackgroundColor = () => {
+    switch (effectiveTheme) {
+      case 'blue':
+        return 'bg-dark-surface';
+      case 'dark':
+        return 'bg-neutral-800';
+      case 'light':
+        return 'bg-light-surface';
+    }
+  };
+
+  const getHoverColor = () => {
+    switch (effectiveTheme) {
+      case 'blue':
+        return 'bg-dark-hover/50';
+      case 'dark':
+        return 'bg-neutral-700/50';
+      case 'light':
+        return 'bg-light-hover/50';
+    }
+  };
+
+  const getTextColor = () => {
+    if (effectiveTheme === 'light') {
+      return 'text-light-text';
+    }
+    return 'text-dark-text';
+  };
+
+  const getSecondaryTextColor = () => {
+    if (effectiveTheme === 'light') {
+      return 'text-light-text-secondary';
+    }
+    return 'text-dark-text-secondary';
+  };
+
   return (
-    <div ref={containerRef} className={`theme-${activeTheme} max-w-5xl mx-auto p-0`}>
-      <div className={`${isDark ? "bg-dark-surface" : "bg-light-surface"} rounded-lg overflow-hidden`}>
+    <div ref={containerRef} className={`theme-${theme} max-w-5xl mx-auto p-0`}>
+      <div className={`${getBackgroundColor()} rounded-lg overflow-hidden`}>
         <div className="p-4">
           {(showTitle || showDescription) && (
             <div className="mb-4">
               {showTitle && snippet.title && (
-                <h1 className={`text-xl font-bold mb-2 ${isDark ? "text-dark-text" : "text-light-text"}`}>
+                <h1 className={`text-xl font-bold mb-2 ${getTextColor()}`}>
                   {snippet.title}
                 </h1>
               )}
               {showDescription && snippet.description && (
-                <p className={`text-sm ${isDark ? "text-dark-text" : "text-light-text"}`}>
+                <p className={`text-sm ${getTextColor()}`}>
                   {snippet.description}
                 </p>
               )}
@@ -153,13 +186,11 @@ export const EmbedView: React.FC<EmbedViewProps> = ({
             {snippet.fragments.map((fragment, index) => (
               <div key={index}>
                 {showFileHeaders && (
-                  <div className={`flex items-center justify-between text-xs mb-1 h-7 px-3 rounded ${
-                    isDark ? "text-dark-text-secondary bg-dark-hover/50" : "text-light-text-secondary bg-light-hover/50"
-                  }`}>
+                  <div className={`flex items-center justify-between text-xs mb-1 h-7 px-3 rounded ${getHoverColor()}`}>
                     <div className="flex items-center gap-1 min-w-0 flex-1">
                       <FileCode 
                         size={12} 
-                        className={`${isDark ? "text-dark-text-secondary" : "text-light-text-secondary"} shrink-0`} 
+                        className={`${getSecondaryTextColor()} shrink-0`} 
                       />
                       <span className="truncate">{fragment.file_name}</span>
                     </div>
@@ -169,11 +200,11 @@ export const EmbedView: React.FC<EmbedViewProps> = ({
                   </div>
                 )}
 
-                <FullCodeBlock
+                <EmbedCodeView
                   code={fragment.code}
                   language={fragment.language}
                   showLineNumbers={true}
-                  forceTheme={isDark ? 'dark' : 'light'}
+                  theme={theme}
                 />
               </div>
             ))}
@@ -181,7 +212,7 @@ export const EmbedView: React.FC<EmbedViewProps> = ({
 
           {showPoweredBy && (
             <div className="mt-2 text-right">
-              <span className={`text-xs ${isDark ? "text-dark-text-secondary" : "text-light-text-secondary"}`}>
+              <span className={`text-xs ${getSecondaryTextColor()}`}>
                 Powered by ByteStash
               </span>
             </div>
