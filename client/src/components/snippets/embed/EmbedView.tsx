@@ -156,13 +156,6 @@ export const EmbedView: React.FC<EmbedViewProps> = ({
     return 'text-dark-text';
   };
 
-  const getSecondaryTextColor = () => {
-    if (effectiveTheme === 'light') {
-      return 'text-light-text-secondary';
-    }
-    return 'text-dark-text-secondary';
-  };
-
   return (
     <div ref={containerRef} className={`theme-${theme} max-w-5xl mx-auto p-0`}>
       <div className={`${getBackgroundColor()} rounded-lg overflow-hidden`}>
@@ -190,9 +183,9 @@ export const EmbedView: React.FC<EmbedViewProps> = ({
                     <div className="flex items-center gap-1 min-w-0 flex-1">
                       <FileCode 
                         size={12} 
-                        className={`${getSecondaryTextColor()} shrink-0`} 
+                        className={`${getTextColor()} shrink-0`} 
                       />
-                      <span className="truncate">{fragment.file_name}</span>
+                      <span className={`truncate ${getTextColor()}`}>{fragment.file_name}</span>
                     </div>
                     <span className="ml-2">
                       {getLanguageLabel(fragment.language)}
@@ -212,7 +205,7 @@ export const EmbedView: React.FC<EmbedViewProps> = ({
 
           {showPoweredBy && (
             <div className="mt-2 text-right">
-              <span className={`text-xs ${getSecondaryTextColor()}`}>
+              <span className={`text-xs ${getTextColor()}`}>
                 Powered by ByteStash
               </span>
             </div>
