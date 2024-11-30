@@ -233,11 +233,21 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ isOpen, onClose, snippet }
                         )}
                       </button>
                       <button
-                        onClick={() => handleEmbedClick(share.id)}
-                        className="p-2 hover:bg-light-hover dark:hover:bg-dark-hover rounded-md transition-colors"
-                        title="Embed snippet"
+                        onClick={() => share.requires_auth === 0 && handleEmbedClick(share.id)}
+                        className={`p-2 rounded-md transition-colors ${
+                          share.requires_auth === 0 
+                            ? 'hover:bg-light-hover dark:hover:bg-dark-hover' 
+                            : 'cursor-not-allowed'
+                        }`}
+                        title={share.requires_auth === 1 ? "Only unauthenticated snippets can be embedded" : "Embed snippet"}
                       >
-                        <Code2 size={16} className="text-light-text dark:text-dark-text" />
+                        <Code2 
+                          size={16} 
+                          className={share.requires_auth === 1 
+                            ? "text-light-text-secondary dark:text-dark-text-secondary opacity-50" 
+                            : "text-light-text dark:text-dark-text"
+                          } 
+                        />
                       </button>
                       <button
                         onClick={() => handleDeleteShare(share.id)}
@@ -268,4 +278,4 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ isOpen, onClose, snippet }
       )}
     </>
   );
-};
+}
