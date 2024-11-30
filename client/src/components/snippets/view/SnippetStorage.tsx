@@ -149,7 +149,7 @@ const SnippetStorage: React.FC = () => {
 
       {snippetToShare && (
         <ShareMenu
-          snippetId={snippetToShare.id}
+          snippet={snippetToShare}
           isOpen={isShareMenuOpen}
           onClose={closeShareMenu}
         />

@@ -5,5 +5,6 @@ export const ROUTES = {
   LOGIN: '/login',
   REGISTER: '/register',
   PUBLIC_SNIPPETS: '/public/snippets',
-  AUTH_CALLBACK: '/auth/callback'
+  AUTH_CALLBACK: '/auth/callback',
+  EMBED: '/embed/:shareId'
 } as const;

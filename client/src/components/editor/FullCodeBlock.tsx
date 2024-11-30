@@ -10,12 +10,14 @@ export interface FullCodeBlockProps {
   code: string;
   language?: string;
   showLineNumbers?: boolean;
+  forceTheme?: 'light' | 'dark' | null;
 }
 
 export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({ 
   code, 
   language = 'plaintext',
-  showLineNumbers = true
+  showLineNumbers = true,
+  forceTheme = null
 }) => {
   const { theme } = useTheme();
   const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark'>(
@@ -25,6 +27,11 @@ export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({
   );
   
   useEffect(() => {
+    if (forceTheme) {
+      setEffectiveTheme(forceTheme);
+      return;
+    }
+
     if (theme === 'system') {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       const handleChange = () => {
@@ -92,6 +99,17 @@ export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({
             border-radius: 0.5rem;
             position: relative;
           }
+          .markdown-content-full pre,
+          .markdown-content-full code {
+            background-color: ${isDark ? '#2d2d2d' : '#ebebeb'} !important;
+            color: ${isDark ? '#e5e7eb' : '#1f2937'} !important;
+          }
+          .markdown-content-full pre code {
+            background-color: transparent !important;
+            padding: 0;
+            border: none;
+            box-shadow: none;
+          }
           :root {
             --text-color: ${isDark ? '#ffffff' : '#000000'};
           }
@@ -137,7 +155,7 @@ export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({
           </div>
         )}
 
-        <CopyButton text={code} />
+        <CopyButton text={code} forceTheme={forceTheme}/>
       </div>
     </div>
   );

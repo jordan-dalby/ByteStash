@@ -5,6 +5,7 @@ import authRoutes from './routes/authRoutes.js';
 import shareRoutes from './routes/shareRoutes.js';
 import publicRoutes from './routes/publicRoutes.js';
 import oidcRoutes from './routes/oidcRoutes.js';
+import embedRoutes from './routes/embedRoutes.js';
 import { authenticateToken } from './middleware/auth.js';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -29,6 +30,7 @@ app.use(`${basePath}/api/auth/oidc`, oidcRoutes);
 app.use(`${basePath}/api/snippets`, authenticateToken, snippetRoutes);
 app.use(`${basePath}/api/share`, shareRoutes);
 app.use(`${basePath}/api/public/snippets`, publicRoutes);
+app.use(`${basePath}/api/embed`, embedRoutes);
 
 app.use(`${basePath}/assets`, express.static(assetsPath));
 app.use(`${basePath}/monacoeditorwork`, express.static(join(buildPath, 'monacoeditorwork')));

@@ -27,7 +27,11 @@ const Modal: React.FC<ModalProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      // Check if the click target is a modal backdrop (the semi-transparent overlay)
+      const isBackdropClick = (event.target as HTMLElement).classList.contains('modal-backdrop');
+      
+      // Only close if clicking directly on the backdrop of this modal
+      if (isBackdropClick && modalRef.current?.parentElement === event.target) {
         onClose();
       }
     };
@@ -56,7 +60,7 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <div 
-      className={`fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50 transition-opacity duration-300 
+      className={`modal-backdrop fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50 transition-opacity duration-300 
         ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
     >
       <div 
