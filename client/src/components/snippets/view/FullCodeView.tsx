@@ -5,8 +5,7 @@ import { Snippet } from '../../../types/snippets';
 import CategoryList from '../../categories/CategoryList';
 import { getLanguageLabel, getUniqueLanguages } from '../../../utils/language/languageUtils';
 import { FullCodeBlock } from '../../editor/FullCodeBlock';
-import Linkify from 'linkify-react';
-import { linkifyOptions } from '../../../constants/linkify';
+import ReactMarkdown from 'react-markdown';
 
 interface FullCodeViewProps {
   showTitle?: boolean;
@@ -73,9 +72,9 @@ export const FullCodeView: React.FC<FullCodeViewProps> = ({
 
           {/* Description */}
           <div className="text-sm text-light-text dark:text-dark-text mt-3">
-            <Linkify options={linkifyOptions}>
+            <ReactMarkdown className={`markdown prose max-w-none`}>
               {snippet.description || 'No description available'}
-            </Linkify>
+            </ReactMarkdown>
           </div>
 
           {/* Categories */}

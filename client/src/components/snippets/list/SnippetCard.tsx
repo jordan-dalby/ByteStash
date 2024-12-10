@@ -5,8 +5,7 @@ import { ConfirmationModal } from '../../common/modals/ConfirmationModal';
 import { Snippet } from '../../../types/snippets';
 import CategoryList from '../../categories/CategoryList';
 import { PreviewCodeBlock } from '../../editor/PreviewCodeBlock';
-import Linkify from 'linkify-react';
-import { linkifyOptions } from '../../../constants/linkify';
+import ReactMarkdown from 'react-markdown';
 import { formatDistanceToNow } from 'date-fns';
 import { getUniqueLanguages } from '../../../utils/language/languageUtils';
 
@@ -174,10 +173,10 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
           </div>
 
           {!compactView && (
-            <p className="text-sm text-light-text dark:text-dark-text mb-3 line-clamp-2">
-              <Linkify options={linkifyOptions}>
+            <p className="text-sm text-light-text dark:text-dark-text mb-3 line-clamp-1">
+              <ReactMarkdown className={`markdown prose max-w-none`}>
                 {snippet.description || 'No description available'}
-              </Linkify>
+              </ReactMarkdown>
             </p>
           )}
 
