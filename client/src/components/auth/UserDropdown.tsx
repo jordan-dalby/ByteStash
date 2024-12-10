@@ -1,11 +1,13 @@
 import React, { useRef, useState } from 'react';
-import { LogOut, User } from 'lucide-react';
+import { LogOut, User, Key } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useOutsideClick } from '../../hooks/useOutsideClick';
 import { Link } from 'react-router-dom';
+import { ApiKeysModal } from './ApiKeysModal';
 
 export const UserDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isApiKeysModalOpen, setIsApiKeysModalOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { user, logout } = useAuth();
 
@@ -35,6 +37,17 @@ export const UserDropdown: React.FC = () => {
             <button
               onClick={() => {
                 setIsOpen(false);
+                setIsApiKeysModalOpen(true);
+              }}
+              className="w-full px-4 py-2 text-sm text-left text-light-text dark:text-dark-text hover:bg-light-hover 
+                dark:hover:bg-dark-hover flex items-center gap-2"
+            >
+              <Key size={16} />
+              <span>API Keys</span>
+            </button>
+            <button
+              onClick={() => {
+                setIsOpen(false);
                 logout();
               }}
               className="w-full px-4 py-2 text-sm text-left text-light-text dark:text-dark-text hover:bg-light-hover 
@@ -45,6 +58,11 @@ export const UserDropdown: React.FC = () => {
             </button>
           </div>
         )}
+
+        <ApiKeysModal 
+          isOpen={isApiKeysModalOpen}
+          onClose={() => setIsApiKeysModalOpen(false)}
+        />
       </div>
     );
   }

@@ -6,7 +6,10 @@ import shareRoutes from './routes/shareRoutes.js';
 import publicRoutes from './routes/publicRoutes.js';
 import oidcRoutes from './routes/oidcRoutes.js';
 import embedRoutes from './routes/embedRoutes.js';
+import apiKeyRoutes from './routes/apiKeyRoutes.js';
+import apiSnippetRoutes from './routes/apiSnippetRoutes.js';
 import { authenticateToken } from './middleware/auth.js';
+import { authenticateApiKey } from './middleware/apiKeyAuth.js';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import fs from 'fs';
@@ -27,10 +30,12 @@ const assetsPath = join(buildPath, 'assets');
 
 app.use(`${basePath}/api/auth`, authRoutes);
 app.use(`${basePath}/api/auth/oidc`, oidcRoutes);
-app.use(`${basePath}/api/snippets`, authenticateToken, snippetRoutes);
+app.use(`${basePath}/api/keys`, authenticateToken, apiKeyRoutes);
+app.use(`${basePath}/api/snippets`, authenticateApiKey, authenticateToken, snippetRoutes);
 app.use(`${basePath}/api/share`, shareRoutes);
 app.use(`${basePath}/api/public/snippets`, publicRoutes);
 app.use(`${basePath}/api/embed`, embedRoutes);
+app.use(`${basePath}/api/v1/snippets`, apiSnippetRoutes);
 
 app.use(`${basePath}/assets`, express.static(assetsPath));
 app.use(`${basePath}/monacoeditorwork`, express.static(join(buildPath, 'monacoeditorwork')));

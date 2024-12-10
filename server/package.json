@@ -19,6 +19,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
     "openai": "^4.67.3",
     "openid-client": "^6.1.3"
   },
