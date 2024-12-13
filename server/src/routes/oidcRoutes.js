@@ -116,7 +116,7 @@ router.get('/callback', async (req, res) => {
       expiresIn: TOKEN_EXPIRY 
     });
 
-    res.redirect(`${process.env.BASE_PATH}/auth/callback?token=${token}`);
+    res.redirect(`${process.env.BASE_PATH || ''}/auth/callback?token=${token}`);
   } catch (error) {
     Logger.error('OIDC callback error:', error);
     let errorType = 'auth_failed';
