@@ -129,9 +129,17 @@ class UserRepository {
       const user = this.findByOIDCIdStmt.get(profile.sub, provider);
       if (user) return user;
 
-      const baseUsername = profile.email?.split('@')[0] || 
-                          profile.preferred_username ||
-                          profile.sub;
+      const sanitizeName = (name) => {
+        return name
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, '')
+          .slice(0, 30);
+      };
+
+      let baseUsername = profile.name ? sanitizeName(profile.name) :
+                        profile.preferred_username ? sanitizeName(profile.preferred_username) :
+                        profile.email?.split('@')[0] || 
+                        profile.sub;
                           
       const username = await this.generateUniqueUsername(baseUsername);
 
