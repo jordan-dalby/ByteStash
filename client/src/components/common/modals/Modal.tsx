@@ -36,9 +36,16 @@ const Modal: React.FC<ModalProps> = ({
       }
     };
 
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+
     if (isOpen) {
       document.body.style.overflow = 'hidden';
       document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleEscapeKey);
       if (contentRef.current) {
         contentRef.current.scrollTop = 0;
       }
@@ -47,6 +54,7 @@ const Modal: React.FC<ModalProps> = ({
     return () => {
       document.body.style.overflow = 'unset';
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscapeKey);
     };
   }, [isOpen, onClose]);
 
