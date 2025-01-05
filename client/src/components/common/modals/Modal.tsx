@@ -21,7 +21,22 @@ const Modal: React.FC<ModalProps> = ({
   expandable = false,
   defaultExpanded = false
 }) => {
-  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+  const [isExpanded, setIsExpanded] = useState(() => {
+    // Only use saved state if the modal is expandable
+    if (expandable) {
+      const savedState = localStorage.getItem('modalExpandedState');
+      return savedState !== null ? savedState === 'true' : defaultExpanded;
+    }
+    return defaultExpanded;
+  });
+
+  // Only save expanded state for expandable modals
+  useEffect(() => {
+    if (expandable) {
+      localStorage.setItem('modalExpandedState', isExpanded.toString());
+    }
+  }, [isExpanded, expandable]);
+
   const modalRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -57,12 +72,6 @@ const Modal: React.FC<ModalProps> = ({
       document.removeEventListener('keydown', handleEscapeKey);
     };
   }, [isOpen, onClose]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      setIsExpanded(defaultExpanded);
-    }
-  }, [isOpen, defaultExpanded]);
 
   const modalWidth = isExpanded ? 'max-w-[90vw]' : width;
 
