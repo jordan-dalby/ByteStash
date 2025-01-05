@@ -5,6 +5,7 @@ import ChangelogModal from '../common/modals/ChangelogModal';
 import { useToast } from '../../hooks/useToast';
 import { Snippet } from '../../types/snippets';
 import { Switch } from '../common/switch/Switch';
+import { getAssetPath } from '../../utils/paths';
 
 const GITHUB_URL = "https://github.com/jordan-dalby/ByteStash";
 const DOCKER_URL = "https://github.com/jordan-dalby/ByteStash/pkgs/container/bytestash";
@@ -448,7 +449,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 className="opacity-60 hover:opacity-100 transition-opacity"
                 title="GitHub Repository"
               >
-                <img src="/github-mark-white.svg" alt="GitHub" className="w-6 h-6 dark:brightness-100 brightness-0" />
+                <img src={getAssetPath('/github-mark-white.svg')} alt="GitHub" className="w-6 h-6 dark:brightness-100 brightness-0" />
               </a>
               <a 
                 href={DOCKER_URL}
@@ -457,7 +458,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 className="opacity-60 hover:opacity-100 transition-opacity"
                 title="GitHub Packages"
               >
-                <img src="/docker-mark-white.svg" alt="Docker" className="w-6 h-6 dark:brightness-100 brightness-0" />
+                <img src={getAssetPath('/docker-mark-white.svg')} alt="Docker" className="w-6 h-6 dark:brightness-100 brightness-0" />
               </a>
               <a 
                 href={REDDIT_URL}
@@ -466,7 +467,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 className="opacity-60 hover:opacity-100 transition-opacity"
                 title="Reddit Post"
               >
-                <img src="/reddit-mark-white.svg" alt="Reddit" className="w-6 h-6 dark:brightness-100 brightness-0" />
+                <img src={getAssetPath('/reddit-mark-white.svg')} alt="Reddit" className="w-6 h-6 dark:brightness-100 brightness-0" />
               </a>
               <a 
                 href={WIKI_URL}

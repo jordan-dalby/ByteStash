@@ -37,9 +37,17 @@ app.use(`${basePath}/api/public/snippets`, publicRoutes);
 app.use(`${basePath}/api/embed`, embedRoutes);
 app.use(`${basePath}/api/v1/snippets`, apiSnippetRoutes);
 
+app.use(`${basePath}/manifest.json`, express.static(join(buildPath, 'manifest.json')));
+
+app.get('/', (req, res, next) => {
+  if (basePath) {
+    return res.redirect(basePath);
+  }
+  next();
+});
+
 app.use(`${basePath}/assets`, express.static(assetsPath));
 app.use(`${basePath}/monacoeditorwork`, express.static(join(buildPath, 'monacoeditorwork')));
-
 app.use(basePath, express.static(buildPath, { index: false }));
 
 /* 
@@ -75,6 +83,9 @@ app.get(`${basePath}/*`, (req, res, next) => {
     ).replace(
       /\/monacoeditorwork\//g,
       `${basePath}/monacoeditorwork/`
+    ).replace(
+      /(href)="\/manifest\.json"/g,
+      `$1="${basePath}/manifest.json"`
     );
 
     const scriptInjection = `<script>window.__BASE_PATH__ = "${basePath}";</script>`;

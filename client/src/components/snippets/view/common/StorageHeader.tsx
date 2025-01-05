@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { APP_VERSION } from '../../../../constants/settings';
 import ViewSwitch from './ViewSwitch';
 import { ROUTES } from '../../../../constants/routes';
+import { getAssetPath } from '../../../../utils/paths';
 
 interface StorageHeaderProps {
   isPublicView: boolean;
@@ -23,7 +24,7 @@ const StorageHeader: React.FC<StorageHeaderProps> = ({ isPublicView }) => {
   return (
     <div className="flex flex-col gap-2">
       <h1 className="text-4xl font-bold text-light-text dark:text-dark-text flex items-baseline gap-2">
-        <img src="/logo512.png" alt="ByteStash Logo" className="w-7 h-7" />
+        <img src={getAssetPath('/logo512.png')} alt="ByteStash Logo" className="w-7 h-7" />
         ByteStash
         <span className="text-sm text-light-text-secondary dark:text-dark-text-secondary">v{APP_VERSION}</span>
       </h1>
