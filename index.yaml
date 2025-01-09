@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  bytestash:
+  - apiVersion: v2
+    appVersion: 1.5.7
+    created: "2025-01-09T18:08:27.971288+07:00"
+    description: A Helm chart for deploying ByteStash to Kubernetes
+    digest: bc9339255f92ce87bdfc131f51ad6910db3aa615baa5cfdf77e34a68e895ba66
+    name: bytestash
+    type: application
+    urls:
+    - https://jordan-dalby.github.io/ByteStash/bytestash-0.1.0.tgz
+    version: 0.1.0
+generated: "2025-01-09T18:08:27.970695+07:00"
