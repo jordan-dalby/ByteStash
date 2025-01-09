@@ -1,0 +1,21 @@
+persistence:
+  enabled: true
+  storageClassName: some-class
+  size: 10Gi
+bytestash:
+  baseUrl: /bytestash
+  allowNewAccount: true
+  existingJwtSecret:
+    secretName: name-of-existing-secret
+    jwtKey: key-a-in-secret
+    expirityKey: key-b-in-secret
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+ingress:
+  enabled: true
+  className: nginx
+  host: org.example.com
+  path: /bytestash
+  pathType: Prefix

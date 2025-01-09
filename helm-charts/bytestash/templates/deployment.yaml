@@ -1,0 +1,140 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bytestash.fullname" . }}
+  labels:
+    {{- include "bytestash.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "bytestash.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "bytestash.labels" . | nindent 8 }}
+	{{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "bytestash.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          {{- with .Values.bytestash.baseUrl  }}
+          - name: BASE_PATH
+            value: {{ . }}
+          {{- end }}
+          {{- with .Values.extraEnv }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- range $key, $value := .Values.extraEnvSecrets }}
+          - name: {{ $key }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ $value.name | quote }}
+                key: {{ $value.key | quote }}
+          {{- end }}
+          - name: DEBUG
+            value: {{ .Values.bytestash.debug | quote }}
+          - name: DISABLE_ACCOUNTS
+            value: {{ .Values.bytestash.disableAccount | quote }}
+          - name: DISABLE_INTERNAL_ACCOUNTS
+            value: {{ .Values.bytestash.disableAllAccount | quote }}
+          - name: ALLOW_NEW_ACCOUNTS
+            value: {{ .Values.bytestash.allowNewAccount | quote }}
+          {{- if ( ne .Values.bytestash.existingJwtSecret.secretName "" ) }}
+          - name: JWT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.bytestash.existingJwtSecret.secretName | quote }}
+                key: {{ .Values.bytestash.existingJwtSecret.jwtKey | quote }}
+          - name: TOKEN_EXPIRY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.bytestash.existingJwtSecret.secretName | quote }}
+                key: {{ .Values.bytestash.existingJwtSecret.expirityKey | quote }}
+          {{- else }}
+          - name: JWT_SECRET
+            value: {{ .Values.bytestash.jwtSecret | quote }}
+          - name: TOKEN_EXPIRY
+            value: {{ .Values.bytestash.jwtExpirity | quote }}
+          {{- end }}
+          {{- if .Values.oidc.enabled }}
+          - name: OIDC_ENABLED
+            value: "true"
+          - name: OIDC_DISPLAY_NAME
+            value: {{ .Values.oidc.name | quote }}
+          - name: OIDC_ISSUER_URL
+            value: {{ .Values.oidc.issuerUrl | quote }}
+          - name: OIDC_CLIENT_ID
+            value: {{ .Values.oidc.clientId | quote }}
+          - name: OIDC_CLIENT_SECRET
+            value: {{ .Values.oidc.clientSecret | quote }}
+          - name: OIDC_SCOPES
+            value: {{ .Values.oidc.scopes | quote }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              {{- $contextPath := .Values.bytestash.baseUrl | default "/" | printf "%s" | urlParse }}
+              path: {{ get $contextPath "path" }}
+              port: {{ .Values.livenessProbe.httpGet.port }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+          readinessProbe:
+            httpGet:
+              {{- $contextPath := .Values.bytestash.baseUrl | default "/" | printf "%s" | urlParse }}
+              path: {{ get $contextPath "path" }}
+              port: {{ .Values.readinessProbe.httpGet.port }}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.persistence.enabled }}
+          volumeMounts:
+            - name: data
+              mountPath: /data
+              subPath: snippets
+          {{- end }}
+      {{- if .Values.persistence.enabled }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "bytestash.fullname" . }}-data
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

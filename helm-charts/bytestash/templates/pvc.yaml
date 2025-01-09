@@ -1,0 +1,21 @@
+{{- if .Values.persistence.enabled -}}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "bytestash.fullname" . }}-data
+  labels:
+    {{- include "bytestash.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.size | quote }}
+{{- if .Values.persistence.storageClassName }}
+{{- if (eq "-" .Values.persistence.storageClassName) }}
+  storageClassName: ""
+{{- else }}
+  storageClassName: "{{ .Values.persistence.storageClassName }}"
+{{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,7 @@
+apiVersion: v2
+name: bytestash
+description: A Helm chart for deploying ByteStash to Kubernetes
+
+type: application
+version: 0.1.0
+appVersion: "1.5.7"

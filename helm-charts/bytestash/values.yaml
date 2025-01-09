@@ -1,0 +1,173 @@
+### ByteStash Helm Chart for Kubernetes
+### Maintainer: Tin Trung Ngo - trungtinth1011@gmail.com
+
+## Strings for naming overrides
+##
+nameOverride: ""
+fullnameOverride: ""
+
+## ServiceAccount configuration
+##
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+### ByteStash configs
+### ref: https://github.com/jordan-dalby/ByteStash/wiki
+###
+replicaCount: 1
+
+### Enabling this will persist the `/data` directory with a Persistent Volume
+persistence:
+  enabled: false
+  storageClassName: ""
+  size: 10Gi
+
+### Basic configs
+bytestash:
+  baseUrl: "/"
+  debug: false
+  disableAccount: false
+  disableAllAccount: false
+  allowNewAccount: false
+  jwtSecret: ""
+  jwtExpirity: ""
+
+  ### Existing Kubernetes Secret that contains JWT secret and JWT expiration time
+  ### This will override the `bytestash.jwtSecret` and `bytestash.jwtExpirity`
+  existingJwtSecret:
+    secretName: ""
+    jwtKey: ""
+    expirityKey: ""
+
+### Ref: https://github.com/jordan-dalby/ByteStash/wiki/Single-Sign%E2%80%90on-Setup
+oidc:
+  enabled: false
+  name: "Single Sign-on"
+  issuerUrl: "" # Authentik, Authelia, or Keycloak
+  clientId: ""
+  clientSecret: ""
+  scopes: ""
+
+imagePullSecrets: []
+image:
+  repository: ghcr.io/jordan-dalby/bytestash
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: 1.5.7
+
+## Array with extra environment variables to add to the pod. For example:
+## extraEnv:
+##   - name: ENV01
+##     value: "value01"
+##
+extraEnv: []
+
+## Map with extra environment variables fetched from existing secrets. For example:
+## extraEnvSecrets:
+##   ENV02:
+##     name: extra-secret
+##     key: username
+extraEnvSecrets: {}
+
+## Configure resource requests and limits
+## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+##
+resources: {}
+
+## Configure liveness and readiness probes
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
+##
+livenessProbe:
+  httpGet:
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 10
+  failureThreshold: 3
+  successThreshold: 1
+
+readinessProbe:
+  httpGet:
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 10
+  failureThreshold: 3
+  successThreshold: 1
+
+## Extra annotations for pods
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+##
+podAnnotations: {}
+
+## Extra labels for pods
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+##
+podLabels: {}
+
+## Configure Pods Security Context
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+##
+podSecurityContext:
+  {}
+  # fsGroup: 1000
+  # runAsGroup: 1000
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+## Configure Container Security Context
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
+##
+containerSecurityContext:
+  {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+## ByteStash service parameters
+##
+service:
+  type: ClusterIP
+  port: 5000
+  annotations: {}
+  externalIPs: []
+  loadBalancerIP: ""
+  loadBalancerSourceRanges: []
+
+## ByteStash ingress parameters
+##
+ingress:
+  enabled: false
+  useSubpath: false
+  className: ""
+  annotations:
+    {}
+    # kubernetes.io/tls-acme: "true"
+  host: chart-example.local
+  path: /
+  pathType: ImplementationSpecific
+  tls: []
+
+## Node labels selector for pods assignment
+## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+##
+nodeSelector: {}
+
+## Tolerations for pods assignment
+## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+##
+tolerations: []
+
+## Affinity for pods assignment
+## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+##
+affinity: {}
