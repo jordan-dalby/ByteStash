@@ -18,7 +18,7 @@ ByteStash is now on the Unraid App Store! Install it from there.
 
 ### Other
 ByteStash can also be hosted manually via the docker-compose file:
-```
+```yaml
 services:
   bytestash:
     image: "ghcr.io/jordan-dalby/bytestash:latest"
