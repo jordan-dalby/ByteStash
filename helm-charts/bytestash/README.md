@@ -17,7 +17,7 @@ To install Helm, see [Helm Installation guide](https://helm.sh/docs/intro/instal
 To add the ByteStash helm repository, run command:
 
 ```bash
-helm repo add bytestash https://jordan-dalby.github.io/bytestash/
+helm repo add bytestash https://jordan-dalby.github.io/ByteStash/
 ```
 
 To install the ByteStash helm chart with a release name `my-release` in `ns` namespace, run command:
