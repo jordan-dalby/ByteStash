@@ -103,7 +103,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
             ref={dropdownRef}
             onMouseLeave={() => setIsDropdownOpen(false)}
             className="absolute right-0 top-full mt-1 w-48 bg-light-surface dark:bg-dark-surface rounded-md shadow-lg 
-              border border-light-border dark:border-dark-border py-1 z-50"
+              border border-light-border dark:border-dark-border py-1 z-[100]"
           >
             <button
               onClick={(e) => {

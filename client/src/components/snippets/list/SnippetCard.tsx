@@ -105,7 +105,7 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
   return (
     <>
       <div
-        className={`bg-light-surface dark:bg-dark-surface rounded-lg overflow-hidden ${viewMode === 'grid' ? 'h-full' : 'mb-4'} 
+        className={`bg-light-surface dark:bg-dark-surface rounded-lg ${viewMode === 'grid' ? 'h-full' : 'mb-4'} 
           cursor-pointer hover:bg-light-hover dark:hover:bg-dark-hover transition-colors relative group`}
         onClick={() => onOpen(snippet)}
       >
