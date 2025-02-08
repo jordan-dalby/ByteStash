@@ -20,6 +20,14 @@ code {
   all: revert;
 }
 
+.markdown p {
+  margin: revert;
+}
+
+.markdown a {
+  @apply text-blue-600 dark:text-blue-400 no-underline hover:underline;
+}
+
 .markdown ul {
   list-style-type: disc;
   padding-left: 1.5rem;
