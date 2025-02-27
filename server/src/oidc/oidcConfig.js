@@ -1,9 +1,6 @@
 import * as client from 'openid-client';
 import Logger from '../logger.js';
-import crypto from 'crypto';
 import { URL } from 'url';
-
-globalThis.crypto = crypto;
 
 class OIDCConfig {
   static instance = null;

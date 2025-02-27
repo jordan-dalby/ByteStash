@@ -1,5 +1,5 @@
 # Build stage for client
-FROM node:18-alpine AS client-build
+FROM node:22-alpine AS client-build
 WORKDIR /app/client
 COPY client/package.json ./
 RUN npm install --package-lock-only
@@ -8,7 +8,7 @@ COPY client/ ./
 RUN npm run build
 
 # Production stage
-FROM node:18-alpine AS production
+FROM node:22-alpine AS production
 WORKDIR /app
 
 # Copy server source and dependencies
