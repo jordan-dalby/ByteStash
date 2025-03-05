@@ -88,7 +88,7 @@ export const RegisterPage: React.FC = () => {
   };
 
   const handleOIDCLogin = () => {
-    window.location.href = `${window.__BASE_PATH__}/api/auth/oidc/auth`;
+    window.location.href = `${window.__BASE_PATH__ || ''}/api/auth/oidc/auth`;
   };
 
   const showInternalRegistration = !authConfig?.disableInternalAccounts;
