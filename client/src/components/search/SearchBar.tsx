@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import BaseDropdown from '../common/dropdowns/BaseDropdown';
+import { IconButton } from '../common/buttons/IconButton';
 
 interface SearchBarProps {
   value: string;
@@ -89,9 +90,21 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         className="h-10 mt-0 bg-light-surface dark:bg-dark-surface"
         showChevron={false}
       />
+      {inputValue && (
+        <IconButton
+          icon={<X size={20} />}
+        onClick={() => {
+          setInputValue('');
+          onChange('');
+        }}
+        variant="secondary"
+        className="absolute right-3 top-1/2 -translate-y-1/2 mr-4 text-light-text-secondary dark:text-dark-text-secondary"
+        label="Clear search"
+        />
+      )}
       <Search 
         className="absolute right-3 top-1/2 -translate-y-1/2 text-light-text-secondary dark:text-dark-text-secondary pointer-events-none" 
-        size={20} 
+        size={16} 
       />
     </div>
   );
