@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronDown, Grid, List, Settings, Plus, X } from 'lucide-react';
+import { ChevronDown, Grid, List, Settings, Plus } from 'lucide-react';
 import { SearchBar } from './SearchBar';
 import { IconButton } from '../common/buttons/IconButton';
 
