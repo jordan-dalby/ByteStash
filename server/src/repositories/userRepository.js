@@ -136,9 +136,9 @@ class UserRepository {
           .slice(0, 30);
       };
 
-      let baseUsername = profile.name ? sanitizeName(profile.name) :
-                        profile.preferred_username ? sanitizeName(profile.preferred_username) :
+      let baseUsername = profile.preferred_username ? sanitizeName(profile.preferred_username) :
                         profile.email?.split('@')[0] || 
+                        profile.name ? sanitizeName(profile.name) :
                         profile.sub;
                           
       const username = await this.generateUniqueUsername(baseUsername);
