@@ -126,6 +126,17 @@ function createInitialSchema(db) {
       FOREIGN KEY (snippet_id) REFERENCES snippets(id) ON DELETE CASCADE
     );
 
+    CREATE TABLE IF NOT EXISTS api_keys (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      key TEXT NOT NULL UNIQUE,
+      name TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      last_used_at DATETIME,
+      is_active BOOLEAN DEFAULT TRUE,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
     CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
     CREATE INDEX IF NOT EXISTS idx_snippets_user_id ON snippets(user_id);
     CREATE INDEX IF NOT EXISTS idx_categories_snippet_id ON categories(snippet_id);
@@ -134,6 +145,8 @@ function createInitialSchema(db) {
     CREATE INDEX idx_snippets_is_public ON snippets(is_public);
     CREATE UNIQUE INDEX IF NOT EXISTS idx_users_username_normalized ON users(username_normalized COLLATE NOCASE);
     CREATE UNIQUE INDEX IF NOT EXISTS idx_users_oidc ON users(oidc_id, oidc_provider) WHERE oidc_id IS NOT NULL AND oidc_provider IS NOT NULL;
+    CREATE INDEX IF NOT EXISTS idx_api_keys_user_id ON api_keys(user_id);
+    CREATE INDEX IF NOT EXISTS idx_api_keys_key ON api_keys(key);
   `);
 }
 
