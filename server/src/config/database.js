@@ -9,7 +9,7 @@ import { up_v1_5_0_oidc } from './migrations/20241120-migration.js';
 import { fileURLToPath } from 'url';
 import { up_v1_5_0_usernames } from './migrations/20241121-migration.js';
 import { up_v1_5_1_api_keys } from './migrations/20241122-migration.js';
-
+import path from 'path';
 let db = null;
 let checkpointInterval = null;
 
@@ -26,13 +26,13 @@ function getDatabasePath() {
 
 function checkpointDatabase() {
   if (!db) return;
-  
+
   try {
     Logger.debug('Starting database checkpoint...');
     const start = Date.now();
-    
+
     db.pragma('wal_checkpoint(PASSIVE)');
-    
+
     const duration = Date.now() - start;
     Logger.debug(`Database checkpoint completed in ${duration}ms`);
   } catch (error) {
@@ -42,7 +42,7 @@ function checkpointDatabase() {
 
 function startCheckpointInterval() {
   const CHECKPOINT_INTERVAL = 5 * 60 * 1000;
-  
+
   if (checkpointInterval) {
     clearInterval(checkpointInterval);
   }
@@ -79,7 +79,9 @@ function backupDatabase(dbPath) {
 
 function createInitialSchema(db) {
   const initSQL = fs.readFileSync(path.join(__dirname, 'schema/init.sql'), 'utf8');
+  Logger.debug('Init SQL Path:', path.join(__dirname, 'schema/init.sql'));
   db.exec(initSQL);
+  Logger.debug("✅ Initial schema executed");
 }
 
 function initializeDatabase() {
@@ -89,7 +91,7 @@ function initializeDatabase() {
 
     const dbExists = fs.existsSync(dbPath);
 
-    db = new Database(dbPath, { 
+    db = new Database(dbPath, {
       verbose: Logger.debug,
       fileMustExist: false
     });
@@ -104,7 +106,7 @@ function initializeDatabase() {
       createInitialSchema(db);
     } else {
       Logger.debug('Database file exists, checking for needed migrations...');
-      
+
       up_v1_4_0(db);
       up_v1_5_0(db);
       up_v1_5_0_public(db);
@@ -135,11 +137,11 @@ function shutdownDatabase() {
     try {
       Logger.debug('Performing final database checkpoint...');
       db.pragma('wal_checkpoint(TRUNCATE)');
-      
+
       stopCheckpointInterval();
       db.close();
       db = null;
-      
+
       Logger.debug('Database shutdown completed successfully');
     } catch (error) {
       Logger.error('Error during database shutdown:', error);

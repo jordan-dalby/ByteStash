@@ -74,6 +74,7 @@ app.get(`${basePath}/*`, (req, res, next) => {
 
   fs.readFile(join(buildPath, 'index.html'), 'utf8', (err, data) => {
     if (err) {
+      Logger.error('Failed to read index.html:', err)
       return res.status(500).send('Error loading index.html');
     }
 
