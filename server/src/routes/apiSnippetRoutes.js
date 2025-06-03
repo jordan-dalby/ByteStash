@@ -7,6 +7,20 @@ import { authenticateApiKey } from '../middleware/apiKeyAuth.js';
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
+router.get('/', authenticateApiKey, async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ error: 'API key required' });
+    }
+
+    const snippets = await snippetService.getAllSnippets(req.user.id);
+    res.status(200).json(snippets);
+  } catch (error) {
+    Logger.error('Error in GET /api/snippets:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 router.post('/push', authenticateApiKey, upload.array('files'), async (req, res) => {
   try {
     if (!req.user) {
