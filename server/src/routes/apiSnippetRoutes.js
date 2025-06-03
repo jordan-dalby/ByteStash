@@ -16,7 +16,7 @@ router.get('/', authenticateApiKey, async (req, res) => {
     const snippets = await snippetService.getAllSnippets(req.user.id);
     res.status(200).json(snippets);
   } catch (error) {
-    Logger.error('Error in GET /api/snippets:', error);
+    Logger.error('Error in GET /api/v1/snippets:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
