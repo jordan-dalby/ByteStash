@@ -21,6 +21,24 @@ router.get('/', authenticateApiKey, async (req, res) => {
   }
 });
 
+router.get('/:id', authenticateApiKey, async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ error: 'API key required' });
+    }
+
+    const snippet = await snippetService.findById(req.params.id, req.user.id);
+    if (!snippet) {
+      res.status(404).json({ error: 'Snippet not found' });
+    } else {
+      res.status(200).json(snippet);
+    }
+  } catch (error) {
+    Logger.error('Error in GET /api/v1/snippets/:id:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 router.post('/push', authenticateApiKey, upload.array('files'), async (req, res) => {
   try {
     if (!req.user) {
