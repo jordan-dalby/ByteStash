@@ -45,7 +45,7 @@ router.post('/push', authenticateApiKey, upload.array('files'), async (req, res)
       return res.status(401).json({ error: 'API key required' });
     }
 
-    const { title, description, isPublic, categories } = req.body;
+    const { title, description, is_public, categories } = req.body;
     const files = req.files || [];
     let fragments = [];
 
@@ -89,7 +89,7 @@ router.post('/push', authenticateApiKey, upload.array('files'), async (req, res)
     const snippetData = {
       title: title || 'Untitled Snippet',
       description: description || '',
-      isPublic: isPublic === 'true',
+      is_public: is_public === 'true',
       categories: parsedCategories,
       fragments
     };
