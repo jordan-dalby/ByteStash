@@ -13,6 +13,8 @@ import { authenticateApiKey } from './middleware/apiKeyAuth.js';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import fs from 'fs';
+import swaggerUi from 'swagger-ui-express';
+import yaml from 'yamljs';
 import Logger from './logger.js';
 
 const app = express();
@@ -27,6 +29,10 @@ const __dirname = dirname(__filename);
 const basePath = process.env.BASE_PATH || '';
 const buildPath = join(__dirname, '../../client/build');
 const assetsPath = join(buildPath, 'assets');
+
+const swaggerPath = join(__dirname, '../docs/swagger.yaml');
+const swaggerDocument = yaml.load(swaggerPath);
+app.use(`${basePath}/api-docs`, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(`${basePath}/api/auth`, authRoutes);
 app.use(`${basePath}/api/auth/oidc`, oidcRoutes);

@@ -1,0 +1,762 @@
+openapi: 3.0.0
+info:
+  title: ByteStash API
+  version: "1.0.0"
+  description: API documentation for ByteStash snippet storage service.
+servers:
+  - url: /
+    description: Local server
+components:
+  securitySchemes:
+    JwtAuth:
+      type: apiKey
+      in: header
+      name: bytestashauth
+      description: JWT token obtained from /api/auth/login. Must be prefixed with "bearer TOKEN"
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: API key for CLI access
+  schemas:
+    Fragment:
+      type: object
+      properties:
+        id:
+          type: integer
+        file_name:
+          type: string
+        code:
+          type: string
+        language:
+          type: string
+        position:
+          type: integer
+    Snippet:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        categories:
+          type: array
+          items:
+            type: string
+        fragments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Fragment'
+        updated_at:
+          type: string
+        share_count:
+          type: integer
+    Share:
+      type: object
+      properties:
+        id:
+          type: string
+        snippetId:
+          type: integer
+        requiresAuth:
+          type: boolean
+        expiresIn:
+          type: integer
+    ApiKey:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        key:
+          type: string
+        created_at:
+          type: string
+paths:
+  /api/auth/login:
+    post:
+      summary: Authenticate a user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      username:
+                        type: string
+                      created_at:
+                        type: string
+        '401':
+          description: Invalid credentials
+  /api/auth/register:
+    post:
+      summary: Register a new user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Successfully registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      username:
+                        type: string
+                      created_at:
+                        type: string
+        '400':
+          description: Validation error
+  /api/auth/config:
+    get:
+      summary: Get authentication configuration
+      tags:
+        - Authentication
+      responses:
+        '200':
+          description: Auth config object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authRequired:
+                    type: boolean
+                  allowNewAccounts:
+                    type: boolean
+                  hasUsers:
+                    type: boolean
+                  disableAccounts:
+                    type: boolean
+                  disableInternalAccounts:
+                    type: boolean
+  /api/auth/verify:
+    get:
+      summary: Verify a JWT token
+      tags:
+        - Authentication
+      security:
+        - JwtAuth: []
+      responses:
+        '200':
+          description: Token is valid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      username:
+                        type: string
+                      created_at:
+                        type: string
+        '401':
+          description: Invalid token
+  /api/auth/anonymous:
+    post:
+      summary: Create an anonymous session
+      tags:
+        - Authentication
+      responses:
+        '200':
+          description: Anonymous session created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      username:
+                        type: string
+                      created_at:
+                        type: string
+        '403':
+          description: Anonymous login not allowed
+  /api/snippets:
+    get:
+      summary: Get all snippets for current user
+      tags:
+        - Snippets
+      security:
+        - JwtAuth: []
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: List of snippets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Snippet'
+        '401':
+          description: Authentication required
+    post:
+      summary: Create a new snippet
+      tags:
+        - Snippets
+      security:
+        - JwtAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Snippet'
+      responses:
+        '201':
+          description: Snippet created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Snippet'
+        '401':
+          description: Authentication required
+  /api/snippets/{id}:
+    get:
+      summary: Get snippet by id
+      tags:
+        - Snippets
+      security:
+        - JwtAuth: []
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Snippet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Snippet'
+        '401':
+          description: Authentication required
+        '404':
+          description: Snippet not found
+    put:
+      summary: Update snippet by id
+      tags:
+        - Snippets
+      security:
+        - JwtAuth: []
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Snippet'
+      responses:
+        '200':
+          description: Updated snippet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Snippet'
+        '401':
+          description: Authentication required
+        '404':
+          description: Snippet not found
+    delete:
+      summary: Delete snippet
+      tags:
+        - Snippets
+      security:
+        - JwtAuth: []
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Snippet deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+        '401':
+          description: Authentication required
+        '404':
+          description: Snippet not found
+  /api/public/snippets:
+    get:
+      summary: Get all public snippets
+      tags:
+        - Public
+      responses:
+        '200':
+          description: List of public snippets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Snippet'
+        '500':
+          description: Internal server error
+  /api/public/snippets/{id}:
+    get:
+      summary: Get a public snippet
+      tags:
+        - Public
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A public snippet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Snippet'
+        '404':
+          description: Snippet not found
+        '500':
+          description: Internal server error
+  /api/share:
+    post:
+      summary: Create share link
+      tags:
+        - Sharing
+      security:
+        - JwtAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Share'
+      responses:
+        '201':
+          description: Share link created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Share'
+        '400':
+          description: Invalid snippet ID
+        '401':
+          description: Authentication required
+        '403':
+          description: Permission denied
+  /api/share/{id}:
+    get:
+      summary: Retrieve a share
+      tags:
+        - Sharing
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Snippet with share data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Snippet'
+        '401':
+          description: Authentication required for protected share
+        '404':
+          description: Share not found
+        '410':
+          description: Share has expired
+    delete:
+      summary: Delete a share
+      tags:
+        - Sharing
+      security:
+        - JwtAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Share deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '401':
+          description: Authentication required
+        '500':
+          description: Failed to delete share
+  /api/share/snippet/{snippetId}:
+    get:
+      summary: Get all shares for a snippet
+      tags:
+        - Sharing
+      security:
+        - JwtAuth: []
+      parameters:
+        - name: snippetId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of shares for the snippet
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Share'
+        '401':
+          description: Authentication required
+  /api/keys:
+    get:
+      summary: List all API keys for the authenticated user
+      tags:
+        - API Keys
+      security:
+        - JwtAuth: []
+      responses:
+        '200':
+          description: List of API keys
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiKey'
+        '401':
+          description: Authentication required
+        '500':
+          description: Failed to fetch API keys
+    post:
+      summary: Create a new API key
+      tags:
+        - API Keys
+      security:
+        - JwtAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: API key created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKey'
+        '400':
+          description: Name is required
+        '401':
+          description: Authentication required
+        '500':
+          description: Failed to create API key
+  /api/keys/{id}:
+    delete:
+      summary: Delete an API key
+      tags:
+        - API Keys
+      security:
+        - JwtAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: API key deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sucess:
+                    type: boolean
+        '401':
+          description: Authentication required
+        '404':
+          description: API key not found
+        '500':
+          description: Failed to delete API key
+  /api/auth/oidc/config:
+    get:
+      summary: Get OIDC configuration
+      tags:
+        - OIDC
+      responses:
+        '200':
+          description: OIDC configuration
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  enabled:
+                    type: boolean
+                  displayName:
+                    type: string
+        '500':
+          description: Failed to fetch OIDC configuration
+  /api/auth/oidc/auth:
+    get:
+      summary: Initiate OIDC authentication
+      tags:
+        - OIDC
+      responses:
+        '302':
+          description: Redirect to OIDC provider
+        '500':
+          description: OIDC authentication error
+  /api/auth/oidc/callback:
+    get:
+      summary: Handle OIDC callback
+      tags:
+        - OIDC
+      parameters:
+        - name: code
+          in: query
+          schema:
+            type: string
+        - name: state
+          in: query
+          schema:
+            type: string
+      responses:
+        '302':
+          description: Redirect with token
+        '404':
+          description: OIDC not enabled
+        '500':
+          description: OIDC callback error
+  /api/embed/{shareId}:
+    get:
+      summary: Get a snippet for embedding
+      tags:
+        - Embed
+      parameters:
+        - name: shareId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: showTitle
+          in: query
+          schema:
+            type: boolean
+        - name: showDescription
+          in: query
+          schema:
+            type: boolean
+        - name: fragmentIndex
+          in: query
+          schema:
+            type: integer
+      security:
+        - JwtAuth: []
+      responses:
+        '200':
+          description: Snippet data for embedding
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  language:
+                    type: string
+                  fragments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Fragment'
+                  created_at:
+                    type: string
+                  updated_at:
+                    type: string
+        '401':
+          description: Authentication required for protected share
+        '404':
+          description: Snippet not found
+        '500':
+          description: Internal server error
+  /api/v1/snippets:
+    get:
+      summary: Get all snippets for current user (API)
+      tags:
+        - API Snippets
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: List of snippets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Snippet'
+        '401':
+          description: API key required
+        '500':
+          description: Internal server error
+  /api/v1/snippets/push:
+    post:
+      summary: Create a new snippet with file uploads
+      tags:
+        - API Snippets
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                isPublic:
+                  type: boolean
+                categories:
+                  type: string
+                  description: Comma-separated list of categories
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                fragments:
+                  type: string
+                  description: JSON array of fragments
+      responses:
+        '201':
+          description: Snippet created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Snippet'
+        '400':
+          description: At least one fragment is required
+        '401':
+          description: API key required
+        '500':
+          description: Internal server error
+  /api/v1/snippets/{id}:
+    get:
+      summary: Get snippet by id (API)
+      tags:
+        - API Snippets
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Snippet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Snippet'
+        '401':
+          description: API key required
+        '404':
+          description: Snippet not found
+        '500':
+          description: Internal server error

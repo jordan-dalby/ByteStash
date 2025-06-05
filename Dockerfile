@@ -19,6 +19,7 @@ RUN apk add --no-cache --virtual .build-deps python3 make g++ gcc && \
       apk del .build-deps
 
 COPY server/src ./src
+COPY server/docs ./docs
 
 # Copy client build
 COPY --from=client-build /app/client/build /client/build
