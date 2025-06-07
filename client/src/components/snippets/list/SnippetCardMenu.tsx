@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Share, Pencil, Trash2, ExternalLink, MoreVertical, Copy } from 'lucide-react';
+import { Share, Pencil, Trash2, ExternalLink, MoreVertical, Copy, Code } from 'lucide-react';
 import { IconButton } from '../../common/buttons/IconButton';
 import { useOutsideClick } from '../../../hooks/useOutsideClick';
 
@@ -9,6 +9,7 @@ interface SnippetCardMenuProps {
   onShare: (e: React.MouseEvent) => void;
   onOpenInNewTab: () => void;
   onDuplicate: (e: React.MouseEvent) => void;
+  onOpenRaw: (e: React.MouseEvent) => void;
   isPublicView: boolean;
   isAuthenticated: boolean;
 }
@@ -19,8 +20,9 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
   onShare,
   onOpenInNewTab,
   onDuplicate,
+  onOpenRaw,
   isPublicView,
-  isAuthenticated
+  isAuthenticated,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -31,6 +33,17 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
   if (isPublicView) {
     return (
       <div className="top-4 right-4 flex items-center gap-1">
+        <IconButton
+          icon={<Code size={16} />}
+          onClick={(e: React.MouseEvent) => {
+            e.stopPropagation();
+            onOpenRaw(e);
+          }}
+          variant="custom"
+          size="sm"
+          className="bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
+          label="Open Raw"
+        />
         {isAuthenticated && (
           <IconButton
             icon={<Copy size={16} />}
@@ -61,6 +74,17 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
 
   return (
     <div className="top-4 right-4 flex items-center gap-1">
+      <IconButton
+        icon={<Code size={16} />}
+        onClick={(e: React.MouseEvent) => {
+          e.stopPropagation();
+          onOpenRaw(e);
+        }}
+        variant="custom"
+        size="sm"
+        className="bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
+        label="Open Raw"
+      />
       <IconButton
         icon={<Pencil size={16} />}
         onClick={(e: React.MouseEvent) => {
