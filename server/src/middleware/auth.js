@@ -53,8 +53,14 @@ const authenticateToken = async (req, res, next) => {
     }
   }
 
+  // Try to get token from header first (for API calls)
   const authHeader = req.headers['bytestashauth'];
-  const token = authHeader && authHeader.split(' ')[1];
+  let token = authHeader && authHeader.split(' ')[1];
+
+  // If no header token, try to get from cookie (for browser access)
+  if (!token && req.cookies) {
+    token = req.cookies.bytestash_token;
+  }
 
   if (!token) {
     return res.status(401).json({ error: 'Authentication required' });

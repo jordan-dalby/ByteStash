@@ -1,4 +1,5 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import { initializeDatabase, shutdownDatabase } from './config/database.js';
 import snippetRoutes from './routes/snippetRoutes.js';
 import authRoutes from './routes/authRoutes.js';
@@ -21,6 +22,7 @@ const app = express();
 const PORT = 5000;
 
 app.use(express.json());
+app.use(cookieParser());
 app.set('trust proxy', true);
 
 const __filename = fileURLToPath(import.meta.url);

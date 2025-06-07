@@ -30,6 +30,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const handleAuthError = () => {
       localStorage.removeItem('token');
+      document.cookie = 'bytestash_token=; path=/; max-age=0';
       setIsAuthenticated(false);
       setUser(null);
     };
@@ -63,12 +64,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               setUser(response.user);
             } else {
               localStorage.removeItem('token');
+              document.cookie = 'bytestash_token=; path=/; max-age=0';
             }
           }
         }
       } catch (error) {
         console.error('Auth initialization error:', error);
         localStorage.removeItem('token');
+        document.cookie = 'bytestash_token=; path=/; max-age=0';
       } finally {
         setIsLoading(false);
       }
@@ -79,12 +82,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = (token: string, userData: User | null) => {
     localStorage.setItem('token', token);
+    // Also set as httpOnly cookie for direct browser API access
+    document.cookie = `bytestash_token=${token}; path=/; max-age=86400; SameSite=Lax`;
     setIsAuthenticated(true);
     setUser(userData);
   };
 
   const logout = () => {
     localStorage.removeItem('token');
+    // Clear the cookie as well
+    document.cookie = 'bytestash_token=; path=/; max-age=0';
     setIsAuthenticated(false);
     setUser(null);
     addToast('Successfully logged out.', 'info');
