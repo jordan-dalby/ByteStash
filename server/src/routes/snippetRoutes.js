@@ -58,14 +58,14 @@ router.put('/:id', async (req, res) => {
 });
 
 // Raw snippet endpoint for plain text access
-router.get('/:id/raw', async (req, res) => {
+router.get('/:id/:fragmentId/raw', async (req, res) => {
   try {
-    const snippet = await snippetService.findById(req.params.id, req.user.id);
+    const { id, fragmentId } = req.params;
+    const snippet = await snippetService.findById(id, req.user.id);
     if (!snippet) {
       res.status(404).send('Snippet not found');
     } else {
-      // Join all fragment code with newlines
-      const content = snippet.fragments.map(fragment => fragment.code).join('\n\n');
+      const content = snippet.fragments.find(fragment => fragment.id === fragmentId).code;
       res.set('Content-Type', 'text/plain; charset=utf-8');
       res.send(content);
     }
