@@ -1,5 +1,5 @@
 {
-  "name": "bytestash-server",
+  "name": "seanstash-server",
   "version": "1.0.0",
   "main": "src/app.js",
   "type": "module",
@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.53.0",
     "bcrypt": "^5.1.1",
     "better-sqlite3": "^11.5.0",
     "body-parser": "^1.20.3",

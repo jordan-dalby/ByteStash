@@ -76,3 +76,14 @@ export const getPublicSnippetById = async (id: string): Promise<Snippet> => {
     throw error;
   }
 };
+
+export const toggleSnippetLock = async (id: string, locked: boolean): Promise<Snippet> => {
+  try {
+    const updatedSnippet = await apiClient.patch<Snippet>(`${API_ENDPOINTS.SNIPPETS}/${id}/lock`, { locked }, { requiresAuth: true });
+    window.dispatchEvent(createCustomEvent(EVENTS.SNIPPET_UPDATED));
+    return updatedSnippet;
+  } catch (error) {
+    console.error('Error toggling snippet lock:', error);
+    throw error;
+  }
+};

@@ -9,3 +9,6 @@ kube.yml
 docker-compose-dev.yaml
 
 example-fragment.js
+
+# CLI config with API keys
+~/.seanstash/

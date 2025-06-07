@@ -1,5 +1,6 @@
 services:
   server:
+    container_name: stash-it-now
     build:
       context: .
       dockerfile: Dockerfile
@@ -21,6 +22,16 @@ services:
       - DISABLE_ACCOUNTS=false
       # Should internal accounts be disabled?
       - DISABLE_INTERNAL_ACCOUNTS=false
+
+      # Claude AI Configuration (API key now managed via UI)
+      - CLAUDE_MODEL=claude-3-5-sonnet-20241022
+      - CLAUDE_MAX_TOKENS=4000
+      - CLAUDE_TEMPERATURE=0.1
+      - CLAUDE_MAX_RETRIES=3
+      - CLAUDE_TIMEOUT=30000
+      
+      # Smart Deduplication Configuration  
+      - CLEANUP_REDUNDANT_SNIPPETS=true
 
       # Optional: Enable OIDC for Single Sign On
       - OIDC_ENABLED=true

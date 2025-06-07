@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Share, Pencil, Trash2, ExternalLink, MoreVertical, Copy } from 'lucide-react';
 import { IconButton } from '../../common/buttons/IconButton';
+import { LockToggleButton } from '../../common/buttons/LockToggleButton';
 import { useOutsideClick } from '../../../hooks/useOutsideClick';
 
 interface SnippetCardMenuProps {
@@ -9,6 +10,8 @@ interface SnippetCardMenuProps {
   onShare: (e: React.MouseEvent) => void;
   onOpenInNewTab: () => void;
   onDuplicate: (e: React.MouseEvent) => void;
+  onToggleLock?: (e: React.MouseEvent) => void;
+  isLocked?: boolean;
   isPublicView: boolean;
   isAuthenticated: boolean;
 }
@@ -19,6 +22,8 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
   onShare,
   onOpenInNewTab,
   onDuplicate,
+  onToggleLock,
+  isLocked = false,
   isPublicView,
   isAuthenticated
 }) => {
@@ -61,6 +66,18 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
 
   return (
     <div className="top-4 right-4 flex items-center gap-1">
+      {onToggleLock && (
+        <LockToggleButton
+          isLocked={isLocked}
+          onToggle={(e) => {
+            e?.stopPropagation();
+            onToggleLock(e!);
+          }}
+          variant="icon"
+          size="sm"
+          className="bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more"
+        />
+      )}
       <IconButton
         icon={<Pencil size={16} />}
         onClick={(e: React.MouseEvent) => {

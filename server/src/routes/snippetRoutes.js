@@ -71,4 +71,30 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Toggle lock status of a snippet
+router.patch('/:id/lock', async (req, res) => {
+  try {
+    const { locked } = req.body;
+    
+    if (typeof locked !== 'boolean') {
+      return res.status(400).json({ error: 'locked field must be a boolean' });
+    }
+    
+    const updatedSnippet = await snippetService.updateLock(
+      req.params.id, 
+      locked, 
+      req.user.id
+    );
+    
+    if (!updatedSnippet) {
+      res.status(404).json({ error: 'Snippet not found' });
+    } else {
+      res.json(updatedSnippet);
+    }
+  } catch (error) {
+    Logger.error('Error in PATCH /snippets/:id/lock:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 export default router;

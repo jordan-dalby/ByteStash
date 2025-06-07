@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSnippets } from '../../../hooks/useSnippets';
+import { useSnippetsContext } from '../../../contexts/SnippetsContext';
 import { useSettings } from '../../../hooks/useSettings';
 import { useToast } from '../../../hooks/useToast';
 import { initializeMonaco } from '../../../utils/language/languageUtils';
@@ -18,8 +18,9 @@ const SnippetStorage: React.FC = () => {
     addSnippet, 
     updateSnippet, 
     removeSnippet, 
+    toggleLock,
     reloadSnippets 
-  } = useSnippets();
+  } = useSnippetsContext();
   
   const { 
     viewMode, setViewMode, compactView, showCodePreview, 
@@ -113,6 +114,7 @@ const SnippetStorage: React.FC = () => {
         onEdit={openEditSnippetModal}
         onShare={openShareMenu}
         onDuplicate={handleDuplicate}
+        onToggleLock={toggleLock}
         headerRight={<UserDropdown />}
         isPublicView={false}
         isAuthenticated={isAuthenticated}

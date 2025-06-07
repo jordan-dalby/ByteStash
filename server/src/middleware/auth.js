@@ -53,8 +53,24 @@ const authenticateToken = async (req, res, next) => {
     }
   }
 
-  const authHeader = req.headers['bytestashauth'];
-  const token = authHeader && authHeader.split(' ')[1];
+  // Support both standard Authorization header and custom bytestashauth header
+  const authHeader = req.headers['authorization'] || req.headers['bytestashauth'];
+  let token;
+  
+  if (authHeader) {
+    // Handle Bearer token format (Authorization: Bearer <token>)
+    if (authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    } 
+    // Handle legacy format (bytestashauth: TOKEN <token>)
+    else if (authHeader.includes(' ')) {
+      token = authHeader.split(' ')[1];
+    }
+    // Handle direct token (for backwards compatibility)
+    else {
+      token = authHeader;
+    }
+  }
 
   if (!token) {
     return res.status(401).json({ error: 'Authentication required' });

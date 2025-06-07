@@ -15,6 +15,7 @@ export interface Snippet {
   fragments: CodeFragment[];
   share_count?: number;
   is_public: number;
+  locked?: boolean; // Default: false - protects snippet from accidental deletion
   username?: string;
 }
 

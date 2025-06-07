@@ -80,6 +80,18 @@ class SnippetService {
       throw error;
     }
   }
+
+  async updateLock(id, locked, userId) {
+    try {
+      Logger.debug('Service: Updating lock status for snippet:', id, 'locked:', locked, 'for user:', userId);
+      const result = await snippetRepository.updateLock(id, locked, userId);
+      Logger.debug('Service: Update lock operation result:', result ? 'Success' : 'Not Found');
+      return result;
+    } catch (error) {
+      Logger.error('Service Error - updateLock:', error);
+      throw error;
+    }
+  }
 }
 
 export default new SnippetService();

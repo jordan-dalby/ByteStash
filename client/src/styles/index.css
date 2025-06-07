@@ -1,0 +1,15 @@
+/* Existing styles... */
+
+/* Search highlighting styles */
+.search-highlight {
+  background-color: #fbbf24;
+  color: #78350f;
+  padding: 0.1rem 0.2rem;
+  border-radius: 0.25rem;
+  font-weight: 600;
+}
+
+.dark .search-highlight {
+  background-color: #f59e0b;
+  color: #fef3c7;
+} 

@@ -8,6 +8,10 @@ import oidcRoutes from './routes/oidcRoutes.js';
 import embedRoutes from './routes/embedRoutes.js';
 import apiKeyRoutes from './routes/apiKeyRoutes.js';
 import apiSnippetRoutes from './routes/apiSnippetRoutes.js';
+import apiV2SnippetRoutes from './routes/apiV2SnippetRoutes.js';
+import aiRoutes from './routes/aiRoutes.js';
+import settingsRoutes from './routes/settingsRoutes.js';
+import CommandProcessor from './services/commandProcessor.js';
 import { authenticateToken } from './middleware/auth.js';
 import { authenticateApiKey } from './middleware/apiKeyAuth.js';
 import { fileURLToPath } from 'url';
@@ -36,6 +40,9 @@ app.use(`${basePath}/api/share`, shareRoutes);
 app.use(`${basePath}/api/public/snippets`, publicRoutes);
 app.use(`${basePath}/api/embed`, embedRoutes);
 app.use(`${basePath}/api/v1/snippets`, apiSnippetRoutes);
+app.use(`${basePath}/api/v2/snippets`, apiV2SnippetRoutes);
+app.use(`${basePath}/api/v2/ai`, aiRoutes);
+app.use(`${basePath}/api/v2/ai`, settingsRoutes);
 
 app.use(`${basePath}/manifest.json`, express.static(join(buildPath, 'manifest.json')));
 
@@ -102,9 +109,16 @@ app.get(`${basePath}/*`, (req, res, next) => {
   });
 });
 
+// Initialize command processor
+let commandProcessor;
+
 function handleShutdown() {
   Logger.info('Received shutdown signal, starting graceful shutdown...');
 
+  if (commandProcessor) {
+    commandProcessor.stop();
+  }
+  
   shutdownDatabase();
 
   process.exit(0);
@@ -112,6 +126,14 @@ function handleShutdown() {
 
 (async () => {
   await initializeDatabase();
+
+  // Initialize and start command processor
+  commandProcessor = new CommandProcessor();
+  await commandProcessor.initializeDatabase();
+  commandProcessor.start();
+  
+  // Make processor available globally for status endpoint
+  global.commandProcessor = commandProcessor;
 
   return new Promise((resolve) => {
     app.listen(PORT, () => {

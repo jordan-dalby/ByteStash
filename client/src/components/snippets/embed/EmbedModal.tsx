@@ -53,7 +53,7 @@ export const EmbedModal: React.FC<EmbedModalProps> = ({
       }
     });
   })(this);"
-  title="ByteStash Code Snippet"
+              title="SeanStash Code Snippet"
 ></iframe>`;
   };
 
@@ -110,7 +110,7 @@ export const EmbedModal: React.FC<EmbedModalProps> = ({
                 checked={showPoweredBy}
                 onChange={setShowPoweredBy}
               />
-              <span>Show "Powered by ByteStash"</span>
+              <span>Show "Powered by SeanStash"</span>
             </label>
 
             <div>

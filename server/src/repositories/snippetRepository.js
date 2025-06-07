@@ -15,6 +15,7 @@ class SnippetRepository {
     this.selectPublicByIdStmt = null;
     this.deleteSnippetStmt = null;
     this.selectFragmentsStmt = null;
+    this.updateLockStmt = null;
   }
 
   #initializeStatements() {
@@ -29,6 +30,7 @@ class SnippetRepository {
           datetime(s.updated_at) || 'Z' as updated_at,
           s.user_id,
           s.is_public,
+          s.locked,
           u.username,
           GROUP_CONCAT(DISTINCT c.name) as categories,
           (SELECT COUNT(*) FROM shared_snippets WHERE snippet_id = s.id) as share_count
@@ -48,6 +50,7 @@ class SnippetRepository {
           datetime(s.updated_at) || 'Z' as updated_at,
           s.user_id,
           s.is_public,
+          s.locked,
           u.username,
           GROUP_CONCAT(DISTINCT c.name) as categories,
           (SELECT COUNT(*) FROM shared_snippets WHERE snippet_id = s.id) as share_count
@@ -65,8 +68,9 @@ class SnippetRepository {
           description, 
           updated_at,
           user_id,
-          is_public
-        ) VALUES (?, ?, datetime('now', 'utc'), ?, ?)
+          is_public,
+          locked
+        ) VALUES (?, ?, datetime('now', 'utc'), ?, ?, ?)
       `);
 
       this.insertFragmentStmt = db.prepare(`
@@ -88,7 +92,8 @@ class SnippetRepository {
         SET title = ?, 
             description = ?,
             updated_at = datetime('now', 'utc'),
-            is_public = ?
+            is_public = ?,
+            locked = ?
         WHERE id = ? AND user_id = ?
       `);
 
@@ -120,6 +125,7 @@ class SnippetRepository {
           datetime(s.updated_at) || 'Z' as updated_at,
           s.user_id,
           s.is_public,
+          s.locked,
           u.username,
           GROUP_CONCAT(DISTINCT c.name) as categories,
           (SELECT COUNT(*) FROM shared_snippets WHERE snippet_id = s.id) as share_count
@@ -138,6 +144,7 @@ class SnippetRepository {
           datetime(s.updated_at) || 'Z' as updated_at,
           s.user_id,
           s.is_public,
+          s.locked,
           u.username,
           GROUP_CONCAT(DISTINCT c.name) as categories,
           (SELECT COUNT(*) FROM shared_snippets WHERE snippet_id = s.id) as share_count
@@ -158,6 +165,13 @@ class SnippetRepository {
         FROM fragments
         WHERE snippet_id = ?
         ORDER BY position
+      `);
+
+      this.updateLockStmt = db.prepare(`
+        UPDATE snippets 
+        SET locked = ?,
+            updated_at = datetime('now', 'utc')
+        WHERE id = ? AND user_id = ?
       `);
     }
   }
@@ -197,13 +211,13 @@ class SnippetRepository {
     }
   }
 
-  create({ title, description, categories = [], fragments = [], userId, isPublic = 0 }) {
+  create({ title, description, categories = [], fragments = [], userId, isPublic = 0, locked = false }) {
     this.#initializeStatements();
     try {
       const db = getDb();
       
       return db.transaction(() => {
-        const insertResult = this.insertSnippetStmt.run(title, description, userId, isPublic ? 1 : 0);
+        const insertResult = this.insertSnippetStmt.run(title, description, userId, isPublic ? 1 : 0, locked ? 1 : 0);
         const snippetId = insertResult.lastInsertRowid;
         
         fragments.forEach((fragment, index) => {
@@ -233,13 +247,13 @@ class SnippetRepository {
     }
   }
 
-  update(id, { title, description, categories = [], fragments = [], isPublic = 0 }, userId) {
+  update(id, { title, description, categories = [], fragments = [], isPublic = 0, locked = false }, userId) {
     this.#initializeStatements();
     try {
       const db = getDb();
       
       return db.transaction(() => {
-        this.updateSnippetStmt.run(title, description, isPublic ? 1 : 0, id, userId);
+        this.updateSnippetStmt.run(title, description, isPublic ? 1 : 0, locked ? 1 : 0, id, userId);
         
         this.deleteFragmentsStmt.run(id, userId);
         fragments.forEach((fragment, index) => {
@@ -283,6 +297,23 @@ class SnippetRepository {
       })();
     } catch (error) {
       Logger.error('Error in delete:', error);
+      throw error;
+    }
+  }
+
+  // Toggle lock status of a snippet
+  updateLock(id, locked, userId) {
+    this.#initializeStatements();
+    try {
+      const db = getDb();
+      
+      return db.transaction(() => {
+        this.updateLockStmt.run(locked ? 1 : 0, id, userId);
+        const updated = this.selectByIdStmt.get(id, userId);
+        return this.#processSnippet(updated);
+      })();
+    } catch (error) {
+      Logger.error('Error in updateLock:', error);
       throw error;
     }
   }

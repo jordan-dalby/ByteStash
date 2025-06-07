@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS snippets (
     description TEXT,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     user_id INTEGER REFERENCES users (id),
-    is_public BOOLEAN DEFAULT FALSE
+    is_public BOOLEAN DEFAULT FALSE,
+    locked BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS categories (

@@ -67,10 +67,104 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   const [showChangelog, setShowChangelog] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importProgress, setImportProgress] = useState<ImportProgress | null>(null);
+  const [claudeApiKey, setClaudeApiKey] = useState('');
+  const [claudeApiKeyStatus, setClaudeApiKeyStatus] = useState<'unchecked' | 'checking' | 'valid' | 'invalid'>('unchecked');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { addToast } = useToast();
 
-  const handleSave = () => {
+  // Load Claude API key when modal opens
+  React.useEffect(() => {
+    if (isOpen) {
+      loadClaudeApiKey();
+    }
+  }, [isOpen]);
+
+  const loadClaudeApiKey = async () => {
+    try {
+      // Get JWT token from localStorage
+      const token = localStorage.getItem('token');
+      
+      const response = await fetch('/api/v2/ai/config', {
+        headers: {
+          'bytestashauth': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.apiKey) {
+          setClaudeApiKey(data.apiKey);
+          setClaudeApiKeyStatus('valid');
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load Claude API key:', error);
+    }
+  };
+
+  const testClaudeApiKey = async () => {
+    if (!claudeApiKey.trim()) {
+      setClaudeApiKeyStatus('invalid');
+      addToast('Please enter an API key', 'error');
+      return;
+    }
+
+    setClaudeApiKeyStatus('checking');
+    try {
+      // Get JWT token from localStorage
+      const token = localStorage.getItem('token');
+      
+      const response = await fetch('/api/v2/ai/test-key', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'bytestashauth': `Bearer ${token}`
+        },
+        body: JSON.stringify({ apiKey: claudeApiKey })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setClaudeApiKeyStatus('valid');
+        addToast(`Claude API key is valid! (${result.model})`, 'success');
+      } else {
+        const error = await response.json();
+        setClaudeApiKeyStatus('invalid');
+        addToast(`Invalid Claude API key: ${error.message || 'Authentication failed'}`, 'error');
+      }
+    } catch (error) {
+      setClaudeApiKeyStatus('invalid');
+      addToast('Failed to test Claude API key', 'error');
+    }
+  };
+
+  const saveClaudeApiKey = async () => {
+    try {
+      // Get JWT token from localStorage
+      const token = localStorage.getItem('token');
+      
+      const response = await fetch('/api/v2/ai/config', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'bytestashauth': `Bearer ${token}`
+        },
+        body: JSON.stringify({ apiKey: claudeApiKey })
+      });
+
+      if (response.ok) {
+        addToast('Claude API key saved successfully', 'success');
+      } else {
+        const error = await response.json();
+        addToast(`Failed to save Claude API key: ${error.message || 'Unknown error'}`, 'error');
+      }
+    } catch (error) {
+      addToast('Failed to save Claude API key', 'error');
+    }
+  };
+
+  const handleSave = async () => {
+    // Save UI settings
     onSettingsChange({
       compactView,
       showCodePreview,
@@ -81,6 +175,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
       showLineNumbers,
       theme: themePreference
     });
+
+    // Save Claude API key if it was changed
+    if (claudeApiKey.trim()) {
+      await saveClaudeApiKey();
+    }
+
     onClose();
   };
 
@@ -368,6 +468,59 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
               />
             </SettingRow>
           </SettingsGroup>
+
+          {!isPublicView && (
+            <SettingsGroup title="🤖 Claude AI Settings">
+              <div className="space-y-3">
+                <SettingRow 
+                  label="Claude API Key" 
+                  htmlFor="claudeApiKey"
+                  description="Enter your Anthropic Claude API key for AI-powered command analysis"
+                >
+                  <div className="flex gap-2 items-center">
+                    <input
+                      type="text"
+                      id="claudeApiKey"
+                      value={claudeApiKey}
+                      onChange={(e) => {
+                        setClaudeApiKey(e.target.value);
+                        setClaudeApiKeyStatus('unchecked');
+                      }}
+                      placeholder="enter your API key here..."
+                      autoComplete="off"
+                      spellCheck="false"
+                      style={{ fontFamily: 'monospace' }}
+                      className="form-input w-64 rounded-md bg-light-surface dark:bg-dark-surface border border-light-border dark:border-dark-border text-light-text dark:text-dark-text p-2 text-sm"
+                    />
+                    <button
+                      onClick={testClaudeApiKey}
+                      disabled={!claudeApiKey.trim() || claudeApiKeyStatus === 'checking'}
+                      className={`px-3 py-2 text-sm rounded-md transition-colors ${
+                        claudeApiKeyStatus === 'checking'
+                          ? 'bg-gray-400 cursor-not-allowed text-white'
+                          : claudeApiKeyStatus === 'valid'
+                          ? 'bg-green-600 hover:bg-green-700 text-white'
+                          : claudeApiKeyStatus === 'invalid'
+                          ? 'bg-red-600 hover:bg-red-700 text-white'
+                          : 'bg-blue-600 hover:bg-blue-700 text-white'
+                      }`}
+                    >
+                      {claudeApiKeyStatus === 'checking' && '🔄 Testing...'}
+                      {claudeApiKeyStatus === 'valid' && '✅ Valid'}
+                      {claudeApiKeyStatus === 'invalid' && '❌ Invalid'}
+                      {claudeApiKeyStatus === 'unchecked' && '🧪 Test'}
+                    </button>
+                  </div>
+                </SettingRow>
+                
+                <div className="text-xs text-light-text-secondary dark:text-dark-text-secondary space-y-1">
+                  <p>• Get your API key from <a href="https://console.anthropic.com/" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Anthropic Console</a></p>
+                  <p>• Cost: ~$0.007-0.012 per command analysis</p>
+                  <p>• Required for enhanced mode: <code className="bg-light-hover dark:bg-dark-hover px-1 rounded">sse '!command'</code></p>
+                </div>
+              </div>
+            </SettingsGroup>
+          )}
 
           {!isPublicView && (
             <SettingsGroup title="Data Management">

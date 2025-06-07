@@ -10,6 +10,7 @@ export interface SnippetListProps {
   onEdit: (snippet: Snippet) => void;
   onShare: (snippet: Snippet) => void;
   onDuplicate: (snippet: Snippet) => void;
+  onToggleLock?: (id: string, locked: boolean) => void;
   onCategoryClick: (category: string) => void;
   compactView: boolean;
   showCodePreview: boolean;
@@ -29,6 +30,7 @@ const SnippetList: React.FC<SnippetListProps> = ({
   onEdit,
   onShare,
   onDuplicate,
+  onToggleLock,
   onCategoryClick,
   compactView, 
   showCodePreview, 
@@ -64,6 +66,7 @@ const SnippetList: React.FC<SnippetListProps> = ({
           onEdit={onEdit}
           onShare={onShare}
           onDuplicate={onDuplicate}
+          onToggleLock={onToggleLock}
           onCategoryClick={onCategoryClick}
           compactView={compactView}
           showCodePreview={showCodePreview}

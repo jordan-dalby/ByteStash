@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Clock, Users, FileCode, ChevronLeft, ChevronRight, Globe } from 'lucide-react';
 import SnippetCardMenu from './SnippetCardMenu';
-import { ConfirmationModal } from '../../common/modals/ConfirmationModal';
+import { DeleteConfirmationModal } from '../../common/modals/DeleteConfirmationModal';
+import { LockToggleButton } from '../../common/buttons/LockToggleButton';
 import { Snippet } from '../../../types/snippets';
 import CategoryList from '../../categories/CategoryList';
 import { PreviewCodeBlock } from '../../editor/PreviewCodeBlock';
@@ -17,6 +18,7 @@ interface SnippetCardProps {
   onEdit: (snippet: Snippet) => void;
   onShare: (snippet: Snippet) => void;
   onDuplicate: (snippet: Snippet) => void;
+  onToggleLock?: (id: string, locked: boolean) => void;
   onCategoryClick: (category: string) => void;
   compactView: boolean;
   showCodePreview: boolean;
@@ -36,6 +38,7 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
   onEdit,
   onShare,
   onDuplicate,
+  onToggleLock,
   onCategoryClick,
   compactView,
   showCodePreview,
@@ -100,6 +103,13 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
     onDuplicate(snippet);
   };
 
+  const handleToggleLock = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (onToggleLock) {
+      onToggleLock(snippet.id, !snippet.locked);
+    }
+  };
+
   const currentFragment = snippet.fragments[currentFragmentIndex];
 
   return (
@@ -109,20 +119,34 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
           cursor-pointer hover:bg-light-hover dark:hover:bg-dark-hover transition-colors relative group`}
         onClick={() => onOpen(snippet)}
       >
-        {(snippet.is_public === 1 || snippet.updated_at) && (
+        {(snippet.is_public === 1 || !!snippet.updated_at || !!snippet.locked) && (
           <div className="bg-light-hover/50 dark:bg-dark-hover/50 px-3 py-1 text-xs flex items-center justify-between">
-            {snippet.is_public === 1 && (
-              <div className="flex items-center gap-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded">
-                <Globe size={12} />
-                <span>Public</span>
-              </div>
-            )}
-            {!isPublicView && (snippet.share_count || 0) > 0 && (
-              <div className="flex items-center gap-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded ml-2">
-                <Users size={12} />
-                <span>Shared</span>
-              </div>
-            )}
+            <div className="flex items-center gap-2">
+              {snippet.locked ? (
+                <LockToggleButton
+                  isLocked={true}
+                  onToggle={handleToggleLock}
+                  variant="badge"
+                  size="sm"
+                />
+              ) : (
+                <span className="text-light-text-secondary dark:text-dark-text-secondary text-xs">
+                  Unlocked
+                </span>
+              )}
+              {snippet.is_public === 1 && (
+                <div className="flex items-center gap-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded">
+                  <Globe size={12} />
+                  <span>Public</span>
+                </div>
+              )}
+              {!isPublicView && snippet.share_count != null && snippet.share_count > 0 && (
+                <div className="flex items-center gap-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded">
+                  <Users size={12} />
+                  <span>Shared</span>
+                </div>
+              )}
+            </div>
             <div className="flex items-center gap-1 text-light-text-secondary dark:text-dark-text-secondary ml-auto">
               <Clock size={12} />
               <span>{getRelativeUpdateTime(snippet.updated_at)} ago</span>
@@ -166,6 +190,8 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
                 }}
                 onOpenInNewTab={handleOpenInNewTab}
                 onDuplicate={handleDuplicate}
+                onToggleLock={onToggleLock ? handleToggleLock : undefined}
+                isLocked={snippet.locked || false}
                 isPublicView={isPublicView}
                 isAuthenticated={isAuthenticated}
               />
@@ -234,15 +260,12 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
         </div>
       </div>
 
-      <ConfirmationModal
+      <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={handleDeleteModalClose}
         onConfirm={handleDeleteConfirm}
-        title="Confirm Deletion"
-        message={`Are you sure you want to delete "${snippet.title}"? This action cannot be undone.`}
-        confirmLabel="Delete"
-        cancelLabel="Cancel"
-        variant="danger"
+        title={snippet.title}
+        isLocked={snippet.locked || false}
       />
     </>
   );

@@ -73,7 +73,7 @@ export const LoginPage: React.FC = () => {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-bold text-light-text dark:text-dark-text">
-            ByteStash
+            SeanStash
           </h2>
           <p className="mt-2 text-center text-sm text-light-text-secondary dark:text-dark-text-secondary">
             Please sign in to continue
