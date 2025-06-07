@@ -9,6 +9,7 @@ export interface SnippetModalProps {
   onClose: () => void;
   onCategoryClick: (category: string) => void;
   showLineNumbers: boolean;
+  isPublicView: boolean;
 }
 
 const SnippetModal: React.FC<SnippetModalProps> = ({
@@ -17,6 +18,7 @@ const SnippetModal: React.FC<SnippetModalProps> = ({
   onClose,
   onCategoryClick,
   showLineNumbers,
+  isPublicView
 }) => {
   if (!snippet) return null;
 
@@ -40,6 +42,7 @@ const SnippetModal: React.FC<SnippetModalProps> = ({
         showLineNumbers={showLineNumbers}
         onCategoryClick={() => handleCategoryClick}
         isModal={true}
+        isPublicView={isPublicView}
       />
     </Modal>
   );

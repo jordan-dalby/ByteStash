@@ -14,6 +14,7 @@ interface FullCodeViewProps {
   showLineNumbers?: boolean;
   className?: string;
   isModal?: boolean;
+  isPublicView?: boolean;
 }
 
 export const FullCodeView: React.FC<FullCodeViewProps> = ({
@@ -22,7 +23,8 @@ export const FullCodeView: React.FC<FullCodeViewProps> = ({
   onCategoryClick,
   showLineNumbers = true,
   className = '',
-  isModal = false
+  isModal = false,
+  isPublicView = false
 }) => {
   const handleCategoryClick = (e: React.MouseEvent, category: string) => {
     e.preventDefault();
@@ -108,6 +110,9 @@ export const FullCodeView: React.FC<FullCodeViewProps> = ({
                 code={fragment.code}
                 language={fragment.language}
                 showLineNumbers={showLineNumbers}
+                isPublicView={isPublicView}
+                snippetId={snippet.id}
+                fragmentId={fragment.id}
               />
             </div>
           ))}

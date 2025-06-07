@@ -210,6 +210,7 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
         onClose={closeSnippet}
         onCategoryClick={handleCategoryClick}
         showLineNumbers={showLineNumbers}
+        isPublicView={isPublicView}
       />
     </div>
   );

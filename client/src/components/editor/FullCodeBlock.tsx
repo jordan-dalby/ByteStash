@@ -5,17 +5,24 @@ import { vscDarkPlus, oneLight } from 'react-syntax-highlighter/dist/cjs/styles/
 import { getLanguageLabel, getMonacoLanguage } from '../../utils/language/languageUtils';
 import CopyButton from '../common/buttons/CopyButton';
 import { useTheme } from '../../contexts/ThemeContext';
+import RawButton from '../common/buttons/RawButton';
 
 export interface FullCodeBlockProps {
   code: string;
   language?: string;
   showLineNumbers?: boolean;
+  isPublicView?: boolean;
+  snippetId?: string;
+  fragmentId?: string;
 }
 
 export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({ 
   code, 
   language = 'plaintext',
-  showLineNumbers = true
+  showLineNumbers = true,
+  isPublicView,
+  snippetId,
+  fragmentId
 }) => {
   const { theme } = useTheme();
   const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark'>(
@@ -138,6 +145,13 @@ export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({
         )}
 
         <CopyButton text={code} />
+        {isPublicView !== undefined && snippetId !== undefined && fragmentId !== undefined && (
+          <RawButton
+            isPublicView={isPublicView}
+            snippetId={snippetId}
+            fragmentId={fragmentId}
+          />
+        )}
       </div>
     </div>
   );

@@ -98,7 +98,7 @@ const SharedSnippetView: React.FC = () => {
   return (
     <div className="min-h-screen bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text p-8">
       <div className="max-w-4xl mx-auto">
-        <FullCodeView snippet={snippet} />
+        <FullCodeView snippet={snippet} isPublicView={true} />
       </div>
     </div>
   );

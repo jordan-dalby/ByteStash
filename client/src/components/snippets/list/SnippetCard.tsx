@@ -100,15 +100,6 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
     onDuplicate(snippet);
   };
 
-  const handleOpenRaw = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (isPublicView) {
-      window.open(`/api/public/snippets/${snippet.id}/raw`, '_blank');
-    } else {
-      window.open(`/api/snippets/${snippet.id}/raw`, '_blank');
-    }
-  };
-
   const currentFragment = snippet.fragments[currentFragmentIndex];
 
   return (
@@ -175,7 +166,6 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
                 }}
                 onOpenInNewTab={handleOpenInNewTab}
                 onDuplicate={handleDuplicate}
-                onOpenRaw={handleOpenRaw}
                 isPublicView={isPublicView}
                 isAuthenticated={isAuthenticated}
               />
@@ -238,6 +228,9 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
                 language={currentFragment.language}
                 previewLines={previewLines}
                 showLineNumbers={showLineNumbers}
+                isPublicView={isPublicView}
+                snippetId={snippet.id}
+                fragmentId={currentFragment.id}
               />
             </div>
           )}

@@ -65,9 +65,13 @@ router.get('/:id/:fragmentId/raw', async (req, res) => {
     if (!snippet) {
       res.status(404).send('Snippet not found');
     } else {
-      const content = snippet.fragments.find(fragment => fragment.id === fragmentId).code;
-      res.set('Content-Type', 'text/plain; charset=utf-8');
-      res.send(content);
+      const fragment = snippet.fragments.find(fragment => fragment.id === parseInt(fragmentId));
+      if (!fragment) {
+        res.status(404).send('Fragment not found');
+      } else {
+        res.set('Content-Type', 'text/plain; charset=utf-8');
+        res.send(fragment.code);
+      }
     }
   } catch (error) {
     Logger.error('Error in GET /snippets/:id/raw:', error);

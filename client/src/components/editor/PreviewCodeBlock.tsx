@@ -5,27 +5,34 @@ import { vscDarkPlus, oneLight } from 'react-syntax-highlighter/dist/cjs/styles/
 import { getLanguageLabel, getMonacoLanguage } from '../../utils/language/languageUtils';
 import CopyButton from '../common/buttons/CopyButton';
 import { useTheme } from '../../contexts/ThemeContext';
+import RawButton from '../common/buttons/RawButton';
 
 interface PreviewCodeBlockProps {
   code: string;
   language?: string;
   previewLines?: number;
   showLineNumbers?: boolean;
+  isPublicView?: boolean;
+  snippetId?: string;
+  fragmentId?: string;
 }
 
 export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
   code,
   language = 'plaintext',
   previewLines = 4,
-  showLineNumbers = true
+  showLineNumbers = true,
+  isPublicView,
+  snippetId,
+  fragmentId
 }) => {
   const { theme } = useTheme();
   const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark'>(
-    theme === 'system' 
+    theme === 'system'
       ? window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
       : theme
   );
-  
+
   useEffect(() => {
     const updateEffectiveTheme = () => {
       if (theme === 'system') {
@@ -134,15 +141,22 @@ export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
           </div>
         )}
 
-        <div 
+        <div
           className="absolute inset-x-0 bottom-0 bg-gradient-to-t to-transparent pointer-events-none rounded-b-lg"
-          style={{ 
+          style={{
             height: `${LINE_HEIGHT * 2}px`,
             background: `linear-gradient(to top, ${backgroundColor}, transparent)`
           }}
         />
 
         <CopyButton text={code} />
+        {isPublicView !== undefined && snippetId !== undefined && fragmentId !== undefined && (
+          <RawButton
+            isPublicView={isPublicView}
+            snippetId={snippetId}
+            fragmentId={fragmentId}
+          />
+        )}
       </div>
     </div>
   );
