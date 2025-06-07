@@ -21,3 +21,10 @@ export const register = async (username: string, password: string): Promise<Auth
 export const anonymous = async (): Promise<AuthResponse> => {
   return apiClient.post<AuthResponse>(`${API_ENDPOINTS.AUTH}/anonymous`, {});
 }
+
+export const changePassword = async (currentPassword: string, newPassword: string): Promise<{ success: boolean; message: string }> => {
+  return apiClient.post<{ success: boolean; message: string }>(`${API_ENDPOINTS.AUTH}/change-password`, { 
+    currentPassword, 
+    newPassword 
+  }, { requiresAuth: true });
+};

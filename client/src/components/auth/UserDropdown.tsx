@@ -1,21 +1,28 @@
 import React, { useRef, useState } from 'react';
-import { LogOut, User, Key } from 'lucide-react';
+import { LogOut, User, Key, Lock } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useOutsideClick } from '../../hooks/useOutsideClick';
 import { Link } from 'react-router-dom';
 import { ApiKeysModal } from './ApiKeysModal';
+import { ChangePasswordModal } from './ChangePasswordModal';
 
 export const UserDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isApiKeysModalOpen, setIsApiKeysModalOpen] = useState(false);
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { user, logout } = useAuth();
+  const { user, logout, authConfig } = useAuth();
 
   if (user?.id === 0) {
     return (<></>)
   }
 
   useOutsideClick(dropdownRef, () => setIsOpen(false));
+
+  const handlePasswordChanged = () => {
+    // Log out the user after password change to force re-login
+    logout();
+  };
 
   if (user) {
     return (
@@ -45,6 +52,19 @@ export const UserDropdown: React.FC = () => {
               <Key size={16} />
               <span>API Keys</span>
             </button>
+            {!user.oidc_id && authConfig?.allowPasswordChanges && (
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  setIsChangePasswordModalOpen(true);
+                }}
+                className="w-full px-4 py-2 text-sm text-left text-light-text dark:text-dark-text hover:bg-light-hover 
+                  dark:hover:bg-dark-hover flex items-center gap-2"
+              >
+                <Lock size={16} />
+                <span>Change Password</span>
+              </button>
+            )}
             <button
               onClick={() => {
                 setIsOpen(false);
@@ -62,6 +82,12 @@ export const UserDropdown: React.FC = () => {
         <ApiKeysModal 
           isOpen={isApiKeysModalOpen}
           onClose={() => setIsApiKeysModalOpen(false)}
+        />
+
+        <ChangePasswordModal 
+          isOpen={isChangePasswordModalOpen}
+          onClose={() => setIsChangePasswordModalOpen(false)}
+          onPasswordChanged={handlePasswordChanged}
         />
       </div>
     );

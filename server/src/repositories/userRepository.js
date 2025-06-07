@@ -9,6 +9,8 @@ class UserRepository {
     this.findByIdStmt = null;
     this.findByOIDCIdStmt = null;
     this.createUserWithOIDCStmt = null;
+    this.updatePasswordStmt = null;
+    this.findByIdWithPasswordStmt = null;
   }
 
   #initializeStatements() {
@@ -27,7 +29,13 @@ class UserRepository {
       `);
 
       this.findByIdStmt = db.prepare(`
-        SELECT id, username, created_at, email, name
+        SELECT id, username, created_at, email, name, oidc_id
+        FROM users
+        WHERE id = ?
+      `);
+
+      this.findByIdWithPasswordStmt = db.prepare(`
+        SELECT id, username, password_hash, created_at, email, name
         FROM users
         WHERE id = ?
       `);
@@ -66,6 +74,12 @@ class UserRepository {
         ) VALUES (0, ?, ?, '', datetime('now'))
         ON CONFLICT(id) DO NOTHING
       `);
+
+      this.updatePasswordStmt = db.prepare(`
+        UPDATE users 
+        SET password_hash = ? 
+        WHERE id = ?
+      `);
     }
   }
 
@@ -100,6 +114,11 @@ class UserRepository {
   async findById(id) {
     this.#initializeStatements();
     return this.findByIdStmt.get(id);
+  }
+
+  async findByIdWithPassword(id) {
+    this.#initializeStatements();
+    return this.findByIdWithPasswordStmt.get(id);
   }
 
   async verifyPassword(user, password) {
@@ -180,6 +199,26 @@ class UserRepository {
       };
     } catch (error) {
       Logger.error('Error creating anonymous user:', error);
+      throw error;
+    }
+  }
+
+  async updatePassword(userId, newPassword) {
+    this.#initializeStatements();
+    
+    try {
+      const saltRounds = 10;
+      const passwordHash = await bcrypt.hash(newPassword, saltRounds);
+      
+      const result = this.updatePasswordStmt.run(passwordHash, userId);
+      
+      if (result.changes === 0) {
+        throw new Error('User not found or password not updated');
+      }
+      
+      return true;
+    } catch (error) {
+      Logger.error('Error updating password:', error);
       throw error;
     }
   }

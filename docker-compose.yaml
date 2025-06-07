@@ -21,6 +21,8 @@ services:
       - DISABLE_ACCOUNTS=false
       # Should internal accounts be disabled?
       - DISABLE_INTERNAL_ACCOUNTS=false
+      # Allow password changes (false by default)
+      - ALLOW_PASSWORD_CHANGES=true
 
       # Optional: Enable OIDC for Single Sign On
       - OIDC_ENABLED=true

@@ -2,6 +2,7 @@ export interface User {
   id: number;
   username: string;
   created_at: string;
+  oidc_id?: string;
 }
 
 export interface AuthResponse {
@@ -16,4 +17,5 @@ export interface AuthConfig {
   hasUsers: boolean;
   disableAccounts: boolean;
   disableInternalAccounts: boolean;
+  allowPasswordChanges: boolean;
 }

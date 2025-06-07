@@ -56,6 +56,33 @@ class UserService {
       throw error;
     }
   }
+
+  async changePassword(userId, currentPassword, newPassword) {
+    try {
+      // Validate new password
+      if (!newPassword || newPassword.length < 8) {
+        throw new Error('New password must be at least 8 characters');
+      }
+
+      // Get user to verify current password
+      const user = await userRepository.findByIdWithPassword(userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      // Verify current password
+      const isCurrentPasswordValid = await userRepository.verifyPassword(user, currentPassword);
+      if (!isCurrentPasswordValid) {
+        throw new Error('Current password is incorrect');
+      }
+
+      // Update password
+      return await userRepository.updatePassword(userId, newPassword);
+    } catch (error) {
+      Logger.error('Service Error - changePassword:', error);
+      throw error;
+    }
+  }
 }
 
 export default new UserService();

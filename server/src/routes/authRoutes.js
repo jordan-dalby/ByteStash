@@ -1,6 +1,6 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS, DISABLE_ACCOUNTS, DISABLE_INTERNAL_ACCOUNTS, getOrCreateAnonymousUser } from '../middleware/auth.js';
+import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS, DISABLE_ACCOUNTS, DISABLE_INTERNAL_ACCOUNTS, getOrCreateAnonymousUser, authenticateToken, ALLOW_PASSWORD_CHANGES } from '../middleware/auth.js';
 import userService from '../services/userService.js';
 import { getDb } from '../config/database.js';
 import { up_v1_5_0_snippets } from '../config/migrations/20241117-migration.js';
@@ -19,7 +19,8 @@ router.get('/config', async (req, res) => {
       allowNewAccounts: !hasUsers || (ALLOW_NEW_ACCOUNTS && !DISABLE_ACCOUNTS),
       hasUsers,
       disableAccounts: DISABLE_ACCOUNTS,
-      disableInternalAccounts: DISABLE_INTERNAL_ACCOUNTS
+      disableInternalAccounts: DISABLE_INTERNAL_ACCOUNTS,
+      allowPasswordChanges: ALLOW_PASSWORD_CHANGES
     });
   } catch (error) {
     Logger.error('Error getting auth config:', error);
@@ -143,6 +144,38 @@ router.post('/anonymous', async (req, res) => {
   } catch (error) {
     Logger.error('Error in anonymous login:', error);
     res.status(500).json({ error: 'Failed to create anonymous session' });
+  }
+});
+
+router.post('/change-password', authenticateToken, async (req, res) => {
+  try {
+    if (!ALLOW_PASSWORD_CHANGES) {
+      return res.status(403).json({ error: 'Password changes are disabled' });
+    }
+
+    if (DISABLE_INTERNAL_ACCOUNTS) {
+      return res.status(403).json({ error: 'Internal accounts are disabled' });
+    }
+
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user.id;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'Current password and new password are required' });
+    }
+
+    // Check if user is using OIDC authentication
+    const user = await userService.findById(userId);
+    if (user?.oidc_id) {
+      return res.status(403).json({ error: 'Password change not available for external authentication accounts' });
+    }
+
+    await userService.changePassword(userId, currentPassword, newPassword);
+    
+    res.json({ success: true, message: 'Password changed successfully' });
+  } catch (error) {
+    Logger.error('Change password error:', error);
+    res.status(400).json({ error: error.message });
   }
 });
 
