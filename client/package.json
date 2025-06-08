@@ -1,7 +1,7 @@
 {
   "name": "bytestash-client",
   "version": "0.1.0",
-  "private": true,
+  "license": "ISC",
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
     "date-fns": "^4.1.0",
@@ -34,5 +34,8 @@
     "start": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

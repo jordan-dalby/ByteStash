@@ -12,25 +12,14 @@
   "dependencies": {
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
-    "css-select": "^5.1.0",
     "express": "^4.21.1",
-    "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7",
-    "svgo": "^3.3.2",
     "vite": "^5.4.10"
-  },
-  "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "concurrently": "^8.2.2",
-    "cross-env": "^7.0.3",
-    "wait-on": "^7.2.0"
   },
   "workspaces": [
     "client",
     "server"
   ],
-  "private": true,
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22"
   }
 }
