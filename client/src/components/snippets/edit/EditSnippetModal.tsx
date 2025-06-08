@@ -19,10 +19,10 @@ export interface EditSnippetModalProps {
   allCategories: string[];
 }
 
-const EditSnippetModal: React.FC<EditSnippetModalProps> = ({ 
-  isOpen, 
-  onClose, 
-  onSubmit, 
+const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
+  isOpen,
+  onClose,
+  onSubmit,
   snippetToEdit,
   showLineNumbers,
   allCategories
@@ -35,6 +35,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPublic, setIsPublic] = useState(snippetToEdit?.is_public || false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const resetForm = () => {
     setTitle('');
@@ -48,6 +49,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
     setCategories([]);
     setError('');
     setCategoryInput('');
+    setHasUnsavedChanges(false);
   };
 
   useEffect(() => {
@@ -74,6 +76,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
     const normalizedCategory = category.toLowerCase().trim();
     if (normalizedCategory && categories.length < 20 && !categories.includes(normalizedCategory)) {
       setCategories(prev => [...prev, normalizedCategory]);
+      setHasUnsavedChanges(true);
     }
     setCategoryInput('');
   };
@@ -81,6 +84,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
   const handleRemoveCategory = (e: React.MouseEvent, category: string) => {
     e.preventDefault();
     setCategories(cats => cats.filter(c => c !== category));
+    setHasUnsavedChanges(true);
   };
 
   const handleAddFragment = () => {
@@ -93,6 +97,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
         position: current.length
       }
     ]);
+    setHasUnsavedChanges(true);
   };
 
   const handleUpdateFragment = (index: number, updatedFragment: CodeFragment) => {
@@ -101,19 +106,21 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
       newFragments[index] = updatedFragment;
       return newFragments;
     });
+    setHasUnsavedChanges(true);
   };
 
   const handleDeleteFragment = (index: number) => {
     if (fragments.length > 1) {
       setFragments(current => current.filter((_, i) => i !== index));
+      setHasUnsavedChanges(true);
     }
   };
 
   const moveFragment = (fromIndex: number, direction: 'up' | 'down') => {
     const toIndex = direction === 'up' ? fromIndex - 1 : fromIndex + 1;
-    
+
     if (toIndex < 0 || toIndex >= fragments.length) return;
-    
+
     setFragments(current => {
       const newFragments = [...current];
       const [movedFragment] = newFragments.splice(fromIndex, 1);
@@ -123,6 +130,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
         position: index
       }));
     });
+    setHasUnsavedChanges(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -150,6 +158,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
 
     try {
       await onSubmit(snippetData);
+      setHasUnsavedChanges(false);
       onClose();
     } catch (error) {
       setError('An error occurred while saving the snippet. Please try again.');
@@ -159,10 +168,18 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
     }
   };
 
+  const handleModalClose = () => {
+    if (hasUnsavedChanges) {
+      const confirmClose = window.confirm('You have unsaved changes. Are you sure you want to close?');
+      if (!confirmClose) return;
+    }
+    onClose();
+  };
+
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleModalClose}
       expandable={true}
       title={
         <h2 className="text-xl font-bold text-light-text dark:text-dark-text">
@@ -225,7 +242,10 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
                   type="text"
                   id="title"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value.slice(0, 100))}
+                  onChange={(e) => {
+                    setTitle(e.target.value.slice(0, 100));
+                    setHasUnsavedChanges(true);
+                  }}
                   className="mt-1 block w-full rounded-md bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text p-2 text-sm
                     border border-light-border dark:border-dark-border
                     focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary focus:border-light-primary dark:focus:border-dark-primary"
@@ -235,14 +255,17 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
                 />
                 <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary mt-1">{title.length}/100 characters</p>
               </div>
-              
+
               {/* Description input */}
               <div>
                 <label htmlFor="description" className="block text-sm font-medium text-light-text dark:text-dark-text">Description</label>
                 <textarea
                   id="description"
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={(e) => {
+                    setDescription(e.target.value);
+                    setHasUnsavedChanges(true);
+                  }}
                   className="mt-1 block w-full rounded-md bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text p-2 text-sm
                     border border-light-border dark:border-dark-border
                     focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary focus:border-light-primary dark:focus:border-dark-primary"
@@ -250,7 +273,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
                   placeholder="Write a short description of the snippet"
                 />
               </div>
-              
+
               {/* Categories section */}
               <div>
                 <label htmlFor="categories" className="block text-sm font-medium text-light-text dark:text-dark-text">
@@ -284,10 +307,13 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
               {/* Public snippet section */}
               <div className="space-y-1">
                 <label className="flex items-center gap-2">
-                  <Switch 
+                  <Switch
                     id="isPublic"
                     checked={!!isPublic}
-                    onChange={setIsPublic}
+                    onChange={(checked) => {
+                      setIsPublic(checked);
+                      setHasUnsavedChanges(true);
+                    }}
                   />
                   <span className="text-sm font-medium text-light-text dark:text-dark-text">Make snippet public</span>
                 </label>
@@ -316,12 +342,12 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
                       canMoveDown={index < fragments.length - 1}
                     />
                   ))}
-                  
+
                   {/* New Add Fragment button positioned below fragments */}
                   <button
                     type="button"
                     onClick={handleAddFragment}
-                    className="add-fragment-button w-full py-3 px-4 border-2 border-dashed border-light-border dark:border-dark-border rounded-lg 
+                    className="add-fragment-button w-full py-3 px-4 border-2 border-dashed border-light-border dark:border-dark-border rounded-lg
                              hover:border-light-primary dark:hover:border-dark-primary hover:bg-light-hover dark:hover:bg-dark-hover transition-all duration-200
                              flex items-center justify-center gap-2 text-light-text-secondary dark:text-dark-text-secondary hover:text-light-primary dark:hover:text-dark-primary group"
                   >
@@ -338,15 +364,15 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
             <div className="flex justify-end gap-2 py-4">
               <button
                 type="button"
-                onClick={onClose}
-                className="px-4 py-2 bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text rounded-md 
+                onClick={handleModalClose}
+                className="px-4 py-2 bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text rounded-md
                   hover:bg-light-hover dark:hover:bg-dark-hover text-sm border border-light-border dark:border-dark-border"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-light-primary dark:bg-dark-primary text-white rounded-md hover:opacity-90 text-sm 
+                className="px-4 py-2 bg-light-primary dark:bg-dark-primary text-white rounded-md hover:opacity-90 text-sm
                   disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isSubmitting}
               >
