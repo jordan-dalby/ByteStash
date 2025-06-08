@@ -19,6 +19,7 @@ export const ApiKeysModal: React.FC<ApiKeysModalProps> = ({ isOpen, onClose }) =
 
   useEffect(() => {
     if (isOpen) {
+      setNewKey(null);
       loadApiKeys();
     }
   }, [isOpen]);
@@ -34,7 +35,7 @@ export const ApiKeysModal: React.FC<ApiKeysModalProps> = ({ isOpen, onClose }) =
 
   const handleCreateKey = async () => {
     if (!newKeyName.trim()) return;
-    
+
     try {
       setIsCreating(true);
       const response = await createApiKey({ name: newKeyName.trim() });
@@ -68,9 +69,9 @@ export const ApiKeysModal: React.FC<ApiKeysModalProps> = ({ isOpen, onClose }) =
               value={newKeyName}
               onChange={(e) => setNewKeyName(e.target.value)}
               placeholder="Enter key name"
-              className="flex-1 px-3 py-2 bg-light-hover dark:bg-dark-hover border border-light-border 
-                dark:border-dark-border rounded-md text-sm text-light-text dark:text-dark-text 
-                focus:border-light-primary dark:focus:border-dark-primary outline-none 
+              className="flex-1 px-3 py-2 bg-light-hover dark:bg-dark-hover border border-light-border
+                dark:border-dark-border rounded-md text-sm text-light-text dark:text-dark-text
+                focus:border-light-primary dark:focus:border-dark-primary outline-none
                 transition-colors"
             />
             <IconButton
@@ -83,7 +84,7 @@ export const ApiKeysModal: React.FC<ApiKeysModalProps> = ({ isOpen, onClose }) =
               disabled={isCreating || !newKeyName.trim()}
             />
           </div>
-          
+
           {/* Display newly created key */}
           {newKey && (
             <div className="p-3 bg-light-hover dark:bg-dark-hover rounded-md space-y-2">
@@ -93,7 +94,7 @@ export const ApiKeysModal: React.FC<ApiKeysModalProps> = ({ isOpen, onClose }) =
                 </span>
                 <button
                   onClick={() => setNewKey(null)}
-                  className="text-light-text-secondary dark:text-dark-text-secondary 
+                  className="text-light-text-secondary dark:text-dark-text-secondary
                     hover:text-light-primary dark:hover:text-dark-primary transition-colors"
                 >
                   <X size={16} />
@@ -116,8 +117,8 @@ export const ApiKeysModal: React.FC<ApiKeysModalProps> = ({ isOpen, onClose }) =
             {apiKeys.map((key) => (
               <div
                 key={key.id}
-                className="flex items-center justify-between p-3 bg-light-surface dark:bg-dark-surface 
-                  border border-light-border dark:border-dark-border rounded-md hover:bg-light-hover-more 
+                className="flex items-center justify-between p-3 bg-light-surface dark:bg-dark-surface
+                  border border-light-border dark:border-dark-border rounded-md hover:bg-light-hover-more
                   dark:hover:bg-dark-hover-more transition-colors"
               >
                 <div className="space-y-1">
@@ -134,7 +135,7 @@ export const ApiKeysModal: React.FC<ApiKeysModalProps> = ({ isOpen, onClose }) =
                 </div>
                 <button
                   onClick={() => handleDeleteKey(key.id)}
-                  className="p-1 text-light-text-secondary dark:text-dark-text-secondary 
+                  className="p-1 text-light-text-secondary dark:text-dark-text-secondary
                     hover:text-red-500 transition-colors"
                   aria-label="Delete API key"
                 >
