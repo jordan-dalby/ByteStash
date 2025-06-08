@@ -31,11 +31,13 @@
     "vite": "^5.1.6"
   },
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "start": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=22",
+    "pnpm": ">=10"
   }
 }

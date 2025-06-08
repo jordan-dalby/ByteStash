@@ -1,0 +1,6 @@
+packages:
+  - client/**
+  - server/**
+
+ignoredBuiltDependencies:
+  - esbuild

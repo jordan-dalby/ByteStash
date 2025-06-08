@@ -1,11 +1,10 @@
 # Build stage for client
 FROM node:22-alpine AS client-build
 WORKDIR /app/client
-COPY client/package.json ./
-RUN npm install --package-lock-only
-RUN npm ci
+COPY client/package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 COPY client/ ./
-RUN npm run build
+RUN pnpm run build
 
 # Production stage
 FROM node:22-alpine AS production
@@ -13,10 +12,10 @@ WORKDIR /app
 
 # Copy server source and dependencies
 WORKDIR /app
-COPY server/package.json ./
+COPY server/package.json pnpm-lock.yaml ./
 RUN apk add --no-cache --virtual .build-deps python3 make g++ gcc && \
-      npm install --omit=dev && \
-      apk del .build-deps
+    pnpm install --frozen-lockfile --prod && \
+    apk del .build-deps
 
 COPY server/src ./src
 COPY server/docs ./docs

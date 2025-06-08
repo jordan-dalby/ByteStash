@@ -5,8 +5,9 @@
   "version": "1.0.0",
   "main": "server/app.js",
   "scripts": {
-    "start": "cd client && npm start",
-    "server": "cd server && npm start",
+    "preinstall": "npx only-allow pnpm",
+    "start": "cd client && pnpm start",
+    "server": "cd server && pnpm start",
     "dev": "docker-compose up --build"
   },
   "dependencies": {
@@ -15,11 +16,14 @@
     "express": "^4.21.1",
     "vite": "^5.4.10"
   },
-  "workspaces": [
-    "client",
-    "server"
-  ],
   "engines": {
-    "node": ">=22"
+    "node": ">=22",
+    "pnpm": ">=10"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "bcrypt",
+      "better-sqlite3"
+    ]
   }
 }

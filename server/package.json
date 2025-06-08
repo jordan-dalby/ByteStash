@@ -4,6 +4,7 @@
   "main": "src/app.js",
   "type": "module",
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "start": "node src/app.js",
     "test": "jest"
   },
@@ -13,7 +14,7 @@
   "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",
-    "better-sqlite3": "^11.5.0",
+    "better-sqlite3": "^11.10.0",
     "body-parser": "^1.20.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -25,6 +26,7 @@
     "yamljs": "^0.3.0"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=22",
+    "pnpm": ">=10"
   }
 }
