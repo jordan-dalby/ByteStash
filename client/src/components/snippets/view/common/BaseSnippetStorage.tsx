@@ -82,7 +82,7 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
     return Array.from(langSet).sort();
   }, [snippets]);
 
-  const allCategories = useMemo(() => 
+  const allCategories = useMemo(() =>
     [...new Set(snippets.flatMap(snippet => snippet.categories))].sort(),
     [snippets]
   );
@@ -93,21 +93,21 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
         snippet.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         snippet.description.toLowerCase().includes(searchTerm.toLowerCase())
       );
-  
-      const fragmentMatch = snippet.fragments.some(fragment => 
+
+      const fragmentMatch = snippet.fragments.some(fragment =>
         fragment.file_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         getLanguageLabel(fragment.language).toLowerCase().includes(searchTerm.toLowerCase()) ||
         (includeCodeInSearch && fragment.code.toLowerCase().includes(searchTerm.toLowerCase()))
       );
-  
-      const languageMatch = selectedLanguage === '' || 
-        snippet.fragments.some(fragment => 
+
+      const languageMatch = selectedLanguage === '' ||
+        snippet.fragments.some(fragment =>
           getLanguageLabel(fragment.language).toLowerCase() === selectedLanguage.toLowerCase()
         );
-  
-      const categoryMatch = selectedCategories.length === 0 || 
+
+      const categoryMatch = selectedCategories.length === 0 ||
         selectedCategories.every(cat => snippet.categories.includes(cat));
-  
+
       return (basicMatch || fragmentMatch) && languageMatch && categoryMatch;
     }).sort((a, b) => {
       switch (sortOrder) {
@@ -150,7 +150,7 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
         <StorageHeader isPublicView={isPublicView} />
         {headerRight}
       </div>
-      
+
       <SearchAndFilter
         searchTerm={searchTerm}
         setSearchTerm={handleSearchTermChange}
@@ -168,7 +168,7 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
         onCategoryClick={handleCategoryClick}
         hideNewSnippet={isPublicView}
       />
-      
+
       {selectedCategories.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-4 items-center">
           <span className="text-sm text-light-text-secondary dark:text-dark-text-secondary">Filtered by categories:</span>
@@ -184,7 +184,7 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
           ))}
         </div>
       )}
-      
+
       <SnippetList
         snippets={filteredSnippets}
         viewMode={viewMode}
@@ -205,9 +205,11 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
       />
 
       <SnippetModal
-        snippet={selectedSnippet} 
-        isOpen={!!selectedSnippet} 
+        snippet={selectedSnippet}
+        isOpen={!!selectedSnippet}
         onClose={closeSnippet}
+        onDelete={onDelete}
+        onEdit={onEdit}
         onCategoryClick={handleCategoryClick}
         showLineNumbers={showLineNumbers}
         isPublicView={isPublicView}

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { X, Maximize2, Minimize2 } from 'lucide-react';
+import { X, Maximize2, Minimize2, Trash2, Pencil } from 'lucide-react';
 import { IconButton } from '../buttons/IconButton';
 
 export interface ModalProps {
@@ -10,16 +10,20 @@ export interface ModalProps {
   width?: string;
   expandable?: boolean;
   defaultExpanded?: boolean;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ 
-  isOpen, 
-  onClose, 
-  title, 
+const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  title,
   children,
   width = 'max-w-3xl',
   expandable = false,
-  defaultExpanded = false
+  defaultExpanded = false,
+  onEdit,
+  onDelete
 }) => {
   const [isExpanded, setIsExpanded] = useState(() => {
     // Only use saved state if the modal is expandable
@@ -44,7 +48,7 @@ const Modal: React.FC<ModalProps> = ({
     const handleClickOutside = (event: MouseEvent) => {
       // Check if the click target is a modal backdrop (the semi-transparent overlay)
       const isBackdropClick = (event.target as HTMLElement).classList.contains('modal-backdrop');
-      
+
       // Only close if clicking directly on the backdrop of this modal
       if (isBackdropClick && modalRef.current?.parentElement === event.target) {
         onClose();
@@ -76,16 +80,16 @@ const Modal: React.FC<ModalProps> = ({
   const modalWidth = isExpanded ? 'max-w-[90vw]' : width;
 
   return (
-    <div 
-      className={`modal-backdrop fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50 transition-opacity duration-300 
+    <div
+      className={`modal-backdrop fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50 transition-opacity duration-300
         ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
     >
-      <div 
-        ref={modalRef} 
-        className={`bg-light-surface dark:bg-dark-surface rounded-lg w-full ${modalWidth} max-h-[80vh] flex flex-col 
+      <div
+        ref={modalRef}
+        className={`bg-light-surface dark:bg-dark-surface rounded-lg w-full ${modalWidth} max-h-[80vh] flex flex-col
           transition-all duration-300 ease-in-out transform
           ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
-        style={{ 
+        style={{
           willChange: 'transform, opacity, width',
         }}
       >
@@ -103,7 +107,25 @@ const Modal: React.FC<ModalProps> = ({
                 label={isExpanded ? "Minimize" : "Maximize"}
               />
             )}
-            <button 
+            {onEdit && (
+              <IconButton
+                icon={<Pencil size={18} />}
+                onClick={onEdit}
+                variant="secondary"
+                size="sm"
+                label="Edit"
+              />
+            )}
+            {onDelete && (
+              <IconButton
+                icon={<Trash2 size={18} />}
+                onClick={onDelete}
+                variant="secondary"
+                size="sm"
+                label="Delete"
+              />
+            )}
+            <button
               onClick={onClose}
               className="text-light-text-secondary dark:text-dark-text-secondary hover:text-light-text dark:hover:text-dark-text
                 flex-shrink-0 transition-colors"
