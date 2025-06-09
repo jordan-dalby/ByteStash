@@ -9,12 +9,6 @@
     "server": "cd server && npm start",
     "dev": "docker-compose up --build"
   },
-  "dependencies": {
-    "body-parser": "^1.20.3",
-    "cors": "^2.8.5",
-    "express": "^4.21.1",
-    "vite": "^5.4.10"
-  },
   "workspaces": [
     "client",
     "server"
