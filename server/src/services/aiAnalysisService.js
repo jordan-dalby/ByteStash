@@ -77,9 +77,10 @@ COMMANDS TO ANALYZE:
 ${commandList}
 
 FORMATTING RULES:
-1. **TITLE**: Use the actual command as the title (e.g., "docker ps", "git log --oneline")
+1. **TITLE**: Use a concise version of the command as the title, MAX 60 CHARACTERS (e.g., "docker ps", "docker build -t image", "git log --oneline")
 2. **DESCRIPTION**: Start with a simple analogy explaining what the command does in plain English, then explain the practical benefits and when to use it
 3. **CODE**: Show the basic command, explain each flag, then provide advanced variations and pro tips that most people don't know
+4. **CATEGORIES**: MAXIMUM 3 categories only. Choose the most relevant ones (e.g., main tool, action, purpose)
 
 EDUCATIONAL APPROACH:
 - Use analogies to explain concepts (like comparing docker ps to checking what programs are running)
@@ -208,6 +209,18 @@ Make each snippet a mini-masterclass on that specific command with practical ins
     const errors = [];
 
     snippets.forEach((snippet, index) => {
+      // Auto-fix: Limit categories to maximum 3 if exceeded
+      if (snippet.categories && snippet.categories.length > 3) {
+        console.log(`⚠️ Snippet ${index} has ${snippet.categories.length} categories, trimming to 3`);
+        snippet.categories = snippet.categories.slice(0, 3);
+      }
+
+      // Auto-fix: Trim title if it exceeds 60 characters
+      if (snippet.title && snippet.title.length > 60) {
+        console.log(`⚠️ Snippet ${index} title is ${snippet.title.length} chars, trimming to 60`);
+        snippet.title = snippet.title.substring(0, 57) + '...';
+      }
+
       const validation = this.validateSnippetStructure(snippet);
       
       if (validation.isValid) {
