@@ -692,7 +692,7 @@ paths:
           description: Internal server error
   /api/v1/snippets/push:
     post:
-      summary: Create a new snippet with file uploads
+      summary: Create a new snippet with file uploads (API)
       tags:
         - API Snippets
       security:
@@ -734,6 +734,46 @@ paths:
           description: API key required
         '500':
           description: Internal server error
+  /api/v1/snippets/search:
+    get:
+      summary: Search snippets (API)
+      tags:
+        - API Snippets
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search term to filter snippets
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [newest, oldest, alpha-asc, alpha-desc]
+          description: Sort order for results
+        - name: searchCode
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Whether to search within code fragments
+      responses:
+        '200':
+          description: Filtered and sorted list of snippets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Snippet'
+        '401':
+          description: API key required
+        '500':
+          description: Internal server error
   /api/v1/snippets/{id}:
     get:
       summary: Get snippet by id (API)
@@ -754,6 +794,85 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Snippet'
+        '401':
+          description: API key required
+        '404':
+          description: Snippet not found
+        '500':
+          description: Internal server error
+    put:
+      summary: Update snippet by id (API)
+      tags:
+        - API Snippets
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                is_public:
+                  type: boolean
+                categories:
+                  type: string
+                  description: Comma-separated list of categories
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                fragments:
+                  type: string
+                  description: JSON array of fragments
+      responses:
+        '200':
+          description: Updated snippet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Snippet'
+        '400':
+          description: At least one fragment is required
+        '401':
+          description: API key required
+        '404':
+          description: Snippet not found
+        '500':
+          description: Internal server error
+    delete:
+      summary: Delete snippet (API)
+      tags:
+        - API Snippets
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Snippet deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
         '401':
           description: API key required
         '404':
