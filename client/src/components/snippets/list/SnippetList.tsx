@@ -7,6 +7,7 @@ export interface SnippetListProps {
   viewMode: 'grid' | 'list';
   onOpen: (snippet: Snippet) => void;
   onDelete: (id: string) => void;
+  onRestore: (id: string) => void;
   onEdit: (snippet: Snippet) => void;
   onShare: (snippet: Snippet) => void;
   onDuplicate: (snippet: Snippet) => void;
@@ -18,6 +19,7 @@ export interface SnippetListProps {
   expandCategories: boolean;
   showLineNumbers: boolean;
   isPublicView: boolean;
+  isRecycleView: boolean;
   isAuthenticated: boolean;
 }
 
@@ -25,7 +27,8 @@ const SnippetList: React.FC<SnippetListProps> = ({
   snippets, 
   viewMode, 
   onOpen, 
-  onDelete, 
+  onDelete,
+  onRestore, 
   onEdit,
   onShare,
   onDuplicate,
@@ -37,6 +40,7 @@ const SnippetList: React.FC<SnippetListProps> = ({
   expandCategories,
   showLineNumbers,
   isPublicView,
+  isRecycleView,
   isAuthenticated
 }) => {
   if (snippets.length === 0) {
@@ -61,6 +65,7 @@ const SnippetList: React.FC<SnippetListProps> = ({
           viewMode={viewMode}
           onOpen={onOpen}
           onDelete={onDelete}
+          onRestore={onRestore}
           onEdit={onEdit}
           onShare={onShare}
           onDuplicate={onDuplicate}
@@ -72,6 +77,7 @@ const SnippetList: React.FC<SnippetListProps> = ({
           expandCategories={expandCategories}
           showLineNumbers={showLineNumbers}
           isPublicView={isPublicView}
+          isRecycleView={isRecycleView}
           isAuthenticated={isAuthenticated}
         />
       ))}

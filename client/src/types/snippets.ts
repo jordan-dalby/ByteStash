@@ -11,6 +11,7 @@ export interface Snippet {
   title: string;
   description: string;
   updated_at: string;
+  expiry_date?: string;
   categories: string[];
   fragments: CodeFragment[];
   share_count?: number;

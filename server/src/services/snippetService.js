@@ -42,6 +42,49 @@ class SnippetService {
     }
   }
 
+  async moveToRecycle(id, userId) {
+    try {
+      Logger.debug('Service: Moving snippet to recycle bin:', id, 'for user:', userId);
+      const result = await snippetRepository.moveToRecycle(id, userId);
+      if (!result) {
+        Logger.warn('Service: Snippet not found or already moved to recycle bin');
+        return null;
+      }
+      Logger.debug('Service: Snippet moved to recycle bin successfully');
+      return { id: result.id };
+    } catch (error) {
+      Logger.error('Service Error - moveToRecycle:', error);
+      throw error;
+    }
+  }
+
+  async getRecycledSnippets(userId) {
+    try {
+      // Ensure expired snippets are deleted before fetching recycled snippets
+      this.deleteExpiredSnippets();
+
+      Logger.debug('Service: Getting recycled snippets for user:', userId);
+      const result = await snippetRepository.findAllDeleted(userId);
+      Logger.debug(`Service: Retrieved ${result.length} recycled snippets`);
+      return result;
+      // return {};
+    } catch (error) {
+      Logger.error('Service Error - getRecycledSnippets:', error);    
+      throw error;
+    }
+  }
+
+  async deleteExpiredSnippets() {
+    try{
+      Logger.debug('Service: Deleting expired snippets');
+       await snippetRepository.deleteExpired();
+      Logger.debug(`Service: Deleted expired snippets`);
+    } catch (error) {
+      Logger.error('Service Error - deleteExpiredSnippets:', error);
+      throw error;
+    }
+  } 
+
   async deleteSnippet(id, userId) {
     try {
       Logger.debug('Service: Deleting snippet:', id, 'for user:', userId);
@@ -50,6 +93,18 @@ class SnippetService {
       return result;
     } catch (error) {
       Logger.error('Service Error - deleteSnippet:', error);
+      throw error;
+    }
+  }
+
+  async restoreSnippet(id, userId) {
+    try {
+      Logger.debug('Service: Restoring snippet:', id, 'for user:', userId);
+      await snippetRepository.restore(id, userId);
+      Logger.debug('Service: Restore operation result:', 'Success');
+      return { id };
+    } catch (error) {
+      Logger.error('Service Error - restoreSnippet:', error);
       throw error;
     }
   }

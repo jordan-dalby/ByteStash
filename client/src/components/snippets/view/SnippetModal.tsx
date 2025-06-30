@@ -13,6 +13,7 @@ export interface SnippetModalProps {
   onCategoryClick: (category: string) => void;
   showLineNumbers: boolean;
   isPublicView: boolean;
+  isRecycleView?: boolean;
 }
 
 const SnippetModal: React.FC<SnippetModalProps> = ({
@@ -23,7 +24,8 @@ const SnippetModal: React.FC<SnippetModalProps> = ({
   onDelete,
   onCategoryClick,
   showLineNumbers,
-  isPublicView
+  isPublicView,
+  isRecycleView
 }) => {
   if (!snippet) return null;
 
@@ -85,9 +87,13 @@ const SnippetModal: React.FC<SnippetModalProps> = ({
         isOpen={isDeleteModalOpen}
         onClose={cancelDeleteSnippet}
         onConfirm={confirmDeleteSnippet}
-        title="Confirm Deletion"
-        message={`Are you sure you want to delete "${snippetToDelete?.title || snippet?.title}"? This action cannot be undone.`}
-        confirmLabel="Delete"
+         title={isRecycleView ? "Confirm Deletion" : "Move to Recycle Bin"}
+        message={
+          isRecycleView
+            ? `Are you sure you want to permanently delete "${snippet.title}"? This action cannot be undone.`
+            : `Are you sure you want to move "${snippet.title}" to the Recycle Bin?`
+        }
+        confirmLabel={isRecycleView ? "Delete Permanently" : "Move to Recycle Bin"}
         cancelLabel="Cancel"
         variant="danger"
       />

@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { fetchSnippets, createSnippet, editSnippet, deleteSnippet } from '../utils/api/snippets';
+import { fetchSnippets, createSnippet, editSnippet, moveToRecycleBin, deleteSnippet, restoreSnippetById } from '../utils/api/snippets';
 import { Snippet } from '../types/snippets';
 import { useToast } from './useToast';
 import { useAuth } from './useAuth';
+import { useNavigate } from 'react-router-dom';
 
 export const useSnippets = () => {
   const [snippets, setSnippets] = useState<Snippet[]>([]);
@@ -12,6 +13,7 @@ export const useSnippets = () => {
   const hasLoadedRef = useRef(false);
   const loadingPromiseRef = useRef<Promise<void> | null>(null);
   const mountedRef = useRef(false);
+  const navigate = useNavigate();
 
   const handleAuthError = useCallback((error: any) => {
     if (error.status === 401 || error.status === 403) {
@@ -99,14 +101,37 @@ export const useSnippets = () => {
 
   const removeSnippet = useCallback(async (id: string) => {
     try {
-      await deleteSnippet(id);
+      await moveToRecycleBin(id);
       setSnippets(prevSnippets => prevSnippets.filter(snippet => snippet.id !== id));
+      addToast('Snippet moved to recycle bin successfully', 'success');
+    } catch (error: any) {
+      console.error('Failed to move snippet to recycle bin:', error);
+      handleAuthError(error);
+      addToast('Failed to move snippet to recycle bin. Please try again.', 'error');
+      throw error;
+    }
+  }, [addToast, handleAuthError]);
+
+  const permanentDeleteSnippet = useCallback(async (id: string) => {
+    try {
+      await deleteSnippet(id);
       addToast('Snippet deleted successfully', 'success');
     } catch (error: any) {
-      console.error('Failed to delete snippet:', error);
+      console.error('Failed to delete snippet:', error);  
       handleAuthError(error);
       addToast('Failed to delete snippet. Please try again.', 'error');
-      throw error;
+    }
+  }, [addToast, handleAuthError]);
+
+  const restoreSnippet = useCallback(async (id: string) => {
+    try {
+      await restoreSnippetById(id);
+      addToast('Snippet restored successfully', 'success');
+      navigate(`/`);
+    } catch (error: any) {
+      console.error('Failed to restore snippet:', error);
+      handleAuthError(error);
+      addToast('Failed to restore snippet. Please try again.', 'error');
     }
   }, [addToast, handleAuthError]);
 
@@ -134,6 +159,8 @@ export const useSnippets = () => {
     addSnippet,
     updateSnippet,
     removeSnippet,
+    permanentDeleteSnippet,
+    restoreSnippet,
     reloadSnippets
   }), [
     snippets,
@@ -141,6 +168,8 @@ export const useSnippets = () => {
     addSnippet,
     updateSnippet,
     removeSnippet,
+    permanentDeleteSnippet,
+    restoreSnippet,
     reloadSnippets
   ]);
 };

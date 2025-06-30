@@ -76,3 +76,30 @@ export const getPublicSnippetById = async (id: string): Promise<Snippet> => {
     throw error;
   }
 };
+
+export const getRecycleSnippets = async (): Promise<Snippet[]> => {
+  try {
+    return await snippetService.getRecycleSnippets();
+  } catch (error) {
+    console.error('Error fetching recycled snippets:', error);
+    throw error;
+  }
+};
+
+export const restoreSnippetById = async (id: string): Promise<void> => {
+  try {
+    await snippetService.restoreSnippet(id);
+  } catch (error) {
+    console.error('Error restoring snippet:', error);
+    throw error;
+  }
+};
+
+export const moveToRecycleBin = async (id: string): Promise<void> => {
+  try {
+    await snippetService.moveToRecycleBin(id);
+  } catch (error) {
+    console.error('Error moving snippet to recycle bin:', error);
+    throw error;
+  }
+};

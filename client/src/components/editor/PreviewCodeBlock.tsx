@@ -13,6 +13,7 @@ interface PreviewCodeBlockProps {
   previewLines?: number;
   showLineNumbers?: boolean;
   isPublicView?: boolean;
+  isRecycleView?: boolean;
   snippetId?: string;
   fragmentId?: string;
 }
@@ -23,6 +24,7 @@ export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
   previewLines = 4,
   showLineNumbers = true,
   isPublicView,
+  isRecycleView,
   snippetId,
   fragmentId
 }) => {
@@ -150,7 +152,7 @@ export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
         />
 
         <CopyButton text={code} />
-        {isPublicView !== undefined && snippetId !== undefined && fragmentId !== undefined && (
+        {!isRecycleView && isPublicView !== undefined && snippetId !== undefined && fragmentId !== undefined && (
           <RawButton
             isPublicView={isPublicView}
             snippetId={snippetId}

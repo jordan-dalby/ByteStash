@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS snippets (
     title TEXT NOT NULL,
     description TEXT,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    expiry_date DATETIME DEFAULT NULL,
     user_id INTEGER REFERENCES users (id),
     is_public BOOLEAN DEFAULT FALSE
 );

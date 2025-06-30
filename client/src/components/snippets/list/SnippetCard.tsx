@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Clock, Users, FileCode, ChevronLeft, ChevronRight, Globe } from 'lucide-react';
 import SnippetCardMenu from './SnippetCardMenu';
+import SnippetRecycleCardMenu from './SnippetRecycleCardMenu';
 import { ConfirmationModal } from '../../common/modals/ConfirmationModal';
 import { Snippet } from '../../../types/snippets';
 import CategoryList from '../../categories/CategoryList';
@@ -14,6 +15,7 @@ interface SnippetCardProps {
   viewMode: 'grid' | 'list';
   onOpen: (snippet: Snippet) => void;
   onDelete: (id: string) => void;
+  onRestore: (id: string) => void;
   onEdit: (snippet: Snippet) => void;
   onShare: (snippet: Snippet) => void;
   onDuplicate: (snippet: Snippet) => void;
@@ -25,6 +27,7 @@ interface SnippetCardProps {
   expandCategories: boolean;
   showLineNumbers: boolean;
   isPublicView?: boolean;
+  isRecycleView?: boolean;
   isAuthenticated: boolean;
 }
 
@@ -33,6 +36,7 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
   viewMode,
   onOpen,
   onDelete,
+  onRestore,
   onEdit,
   onShare,
   onDuplicate,
@@ -44,10 +48,12 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
   expandCategories,
   showLineNumbers,
   isPublicView = false,
+  isRecycleView = false,
   isAuthenticated
 }) => {
   const [currentFragmentIndex, setCurrentFragmentIndex] = useState(0);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
 
   const getRelativeUpdateTime = (updatedAt: string): string => {
     try {
@@ -63,6 +69,12 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
     e?.stopPropagation();
     onDelete(snippet.id);
     setIsDeleteModalOpen(false);
+  };
+
+  const handleRestoreConfirm = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    onRestore(snippet.id);
+    setIsRestoreModalOpen(false);
   };
 
   const handleCategoryClick = (e: React.MouseEvent, category: string) => {
@@ -90,6 +102,11 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
     setIsDeleteModalOpen(true);
   };
 
+  const handleRestore = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsRestoreModalOpen(true);
+  };
+
   const handleDeleteModalClose = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     setIsDeleteModalOpen(false);
@@ -107,7 +124,7 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
       <div
         className={`bg-light-surface dark:bg-dark-surface rounded-lg ${viewMode === 'grid' ? 'h-full' : 'mb-4'} 
           cursor-pointer hover:bg-light-hover dark:hover:bg-dark-hover transition-colors relative group`}
-        onClick={() => onOpen(snippet)}
+        onClick={() => {if(!isRecycleView) onOpen(snippet)}}
       >
         {(snippet.is_public === 1 || snippet.updated_at) && (
           <div className="bg-light-hover/50 dark:bg-dark-hover/50 px-3 py-1 text-xs flex items-center justify-between">
@@ -117,7 +134,7 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
                 <span>Public</span>
               </div>
             )}
-            {!isPublicView && (snippet.share_count || 0) > 0 && (
+            {isPublicView && (snippet.share_count || 0) > 0 && (
               <div className="flex items-center gap-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded ml-2">
                 <Users size={12} />
                 <span>Shared</span>
@@ -125,7 +142,9 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
             )}
             <div className="flex items-center gap-1 text-light-text-secondary dark:text-dark-text-secondary ml-auto">
               <Clock size={12} />
-              <span>{getRelativeUpdateTime(snippet.updated_at)} ago</span>
+              {
+               !isRecycleView ? <span>{getRelativeUpdateTime(snippet.updated_at)} ago</span> : <span>{getRelativeUpdateTime(snippet.expiry_date || '')} left</span>
+              } 
             </div>
           </div>
         )}
@@ -152,23 +171,29 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
                 )}
               </div>
             </div>
-
             <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-              <SnippetCardMenu
-                onEdit={(e: React.MouseEvent) => {
-                  e.stopPropagation();
-                  onEdit(snippet);
-                }}
-                onDelete={handleDelete}
-                onShare={(e: React.MouseEvent) => {
-                  e.stopPropagation();
-                  onShare(snippet);
-                }}
-                onOpenInNewTab={handleOpenInNewTab}
-                onDuplicate={handleDuplicate}
-                isPublicView={isPublicView}
-                isAuthenticated={isAuthenticated}
-              />
+              {!isRecycleView ? (
+                <SnippetCardMenu
+                  onEdit={(e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    onEdit(snippet);
+                  }}
+                  onDelete={handleDelete}
+                  onShare={(e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    onShare(snippet);
+                  }}
+                  onOpenInNewTab={handleOpenInNewTab}
+                  onDuplicate={handleDuplicate}
+                  isPublicView={isPublicView}
+                  isAuthenticated={isAuthenticated}
+                />
+              ) : (
+                <SnippetRecycleCardMenu
+                  onRestore={handleRestore}
+                  onDelete={handleDelete}
+                />
+              )}
             </div>
           </div>
 
@@ -229,6 +254,7 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
                 previewLines={previewLines}
                 showLineNumbers={showLineNumbers}
                 isPublicView={isPublicView}
+                isRecycleView={isRecycleView}
                 snippetId={snippet.id}
                 fragmentId={currentFragment.id}
               />
@@ -241,11 +267,26 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
         isOpen={isDeleteModalOpen}
         onClose={handleDeleteModalClose}
         onConfirm={handleDeleteConfirm}
-        title="Confirm Deletion"
-        message={`Are you sure you want to delete "${snippet.title}"? This action cannot be undone.`}
-        confirmLabel="Delete"
+        title={isRecycleView ? "Confirm Deletion" : "Move to Recycle Bin"}
+        message={
+          isRecycleView
+            ? `Are you sure you want to permanently delete "${snippet.title}"? This action cannot be undone.`
+            : `Are you sure you want to move "${snippet.title}" to the Recycle Bin?`
+        }
+        confirmLabel={isRecycleView ? "Delete Permanently" : "Move to Recycle Bin"}
         cancelLabel="Cancel"
         variant="danger"
+      />
+
+      <ConfirmationModal
+        isOpen={isRestoreModalOpen}
+        onClose={() => setIsRestoreModalOpen(false)}
+        onConfirm={handleRestoreConfirm}
+        title="Confirm Restore"
+        message={`Are you sure you want to restore "${snippet.title}"?`}
+        confirmLabel="Restore"
+        cancelLabel="Cancel"
+        variant="info"
       />
     </>
   );

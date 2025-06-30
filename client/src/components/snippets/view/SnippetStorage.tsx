@@ -115,6 +115,7 @@ const SnippetStorage: React.FC = () => {
         onDuplicate={handleDuplicate}
         headerRight={<UserDropdown />}
         isPublicView={false}
+        isRecycleView={false}
         isAuthenticated={isAuthenticated}
       />
 

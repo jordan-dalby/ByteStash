@@ -1,7 +1,8 @@
 import React from 'react';
-import { ChevronDown, Grid, List, Settings, Plus } from 'lucide-react';
+import { ChevronDown, Grid, List, Settings, Plus, Trash } from 'lucide-react';
 import { SearchBar } from './SearchBar';
 import { IconButton } from '../common/buttons/IconButton';
+import { useNavigate } from 'react-router-dom';
 
 export type SortOrder = 'newest' | 'oldest' | 'alpha-asc' | 'alpha-desc';
 
@@ -28,6 +29,7 @@ export interface SearchAndFilterProps {
   selectedCategories: string[];
   onCategoryClick: (category: string) => void;
   hideNewSnippet?: boolean;
+  hideRecycleBin?: boolean;
 }
 
 export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({ 
@@ -45,8 +47,10 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
   allCategories,
   selectedCategories,
   onCategoryClick,
-  hideNewSnippet = false
+  hideNewSnippet = false,
+  hideRecycleBin = false
 }) => {
+  const navigate = useNavigate();
   return (
     <div className="flex flex-wrap items-center gap-2 mb-6">
       <SearchBar
@@ -114,16 +118,27 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
           className="h-10 px-4"
           label="Open settings"
         />
-        {!hideNewSnippet && (
+      {!hideNewSnippet && (
+        <div className="flex gap-2">
+          {!hideRecycleBin && (
+            <IconButton
+              icon={<Plus size={20} />}
+              label="New Snippet"
+              onClick={openNewSnippetModal}
+              variant="action"
+              className="h-10 pl-2 pr-4"
+              showLabel
+            />
+          )}
           <IconButton
-            icon={<Plus size={20} />}
-            label="New Snippet"
-            onClick={openNewSnippetModal}
-            variant="action"
-            className="h-10 pl-2 pr-4"
-            showLabel={true}
+            icon={<Trash size={20} />}
+            onClick={() => navigate('/recycle/snippets')}
+            variant={location.pathname === '/recycle/snippets' ? 'primary' : 'secondary'}
+            className="h-10 px-4"
+            label="Recycle Bin"
           />
-        )}
+        </div>
+      )}
       </div>
     </div>
   );

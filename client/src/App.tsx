@@ -14,6 +14,7 @@ import SharedSnippetView from './components/snippets/share/SharedSnippetView';
 import SnippetPage from './components/snippets/view/SnippetPage';
 import PublicSnippetStorage from './components/snippets/view/public/PublicSnippetStorage';
 import EmbedView from './components/snippets/embed/EmbedView';
+import RecycleSnippetStorage from './components/snippets/view/recycle/RecycleSnippetStorage';
 
 const AuthenticatedApp: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -71,6 +72,7 @@ const App: React.FC = () => {
                 <Route path={ROUTES.AUTH_CALLBACK} element={<OIDCCallback />} />
                 <Route path={ROUTES.SHARED_SNIPPET} element={<SharedSnippetView />} />
                 <Route path={ROUTES.PUBLIC_SNIPPETS} element={<PublicSnippetStorage />} />
+                <Route path={ROUTES.RECYCLE} element={<RecycleSnippetStorage />} />
                 <Route path={ROUTES.EMBED} element={<EmbedViewWrapper />} />
                 <Route path={ROUTES.SNIPPET} element={<SnippetPage />} />
                 <Route path={ROUTES.HOME} element={<AuthenticatedApp />} />

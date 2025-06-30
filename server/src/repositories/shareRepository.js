@@ -40,7 +40,7 @@ class ShareRepository {
         FROM shared_snippets ss
         JOIN snippets s ON s.id = ss.snippet_id
         LEFT JOIN categories c ON s.id = c.snippet_id
-        WHERE ss.id = ?
+        WHERE ss.id = ? AND ss.expiry_date IS NULL
         GROUP BY s.id
       `);
 
@@ -50,7 +50,7 @@ class ShareRepository {
           datetime(ss.expires_at) < datetime('now') as expired
         FROM shared_snippets ss
         JOIN snippets s ON s.id = ss.snippet_id
-        WHERE ss.snippet_id = ? AND s.user_id = ?
+        WHERE ss.snippet_id = ? AND s.user_id = ? AND s.expiry_date IS NULL
         ORDER BY ss.created_at DESC
       `);
 

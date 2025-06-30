@@ -9,6 +9,7 @@ import { up_v1_5_0_oidc } from './migrations/20241120-migration.js';
 import { fileURLToPath } from 'url';
 import { up_v1_5_0_usernames } from './migrations/20241121-migration.js';
 import { up_v1_5_1_api_keys } from './migrations/20241122-migration.js';
+import { up_v1_6_0_snippet_expiry } from './migrations/20250601-migration.js';  
 import path from 'path';
 let db = null;
 let checkpointInterval = null;
@@ -106,13 +107,14 @@ function initializeDatabase() {
       createInitialSchema(db);
     } else {
       Logger.debug('Database file exists, checking for needed migrations...');
-
       up_v1_4_0(db);
       up_v1_5_0(db);
       up_v1_5_0_public(db);
       up_v1_5_0_oidc(db);
       up_v1_5_0_usernames(db);
       up_v1_5_1_api_keys(db);
+      up_v1_6_0_snippet_expiry(db);
+      Logger.debug('All migrations applied successfully');
     }
 
     startCheckpointInterval();

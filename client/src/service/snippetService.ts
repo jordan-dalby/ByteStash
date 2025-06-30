@@ -21,5 +21,17 @@ export const snippetService = {
 
   async deleteSnippet(id: string): Promise<void> {
     return apiClient.delete(`${API_ENDPOINTS.SNIPPETS}/${id}`, { requiresAuth: true });
+  },
+
+  async getRecycleSnippets(): Promise<Snippet[]> {
+    return apiClient.get(`${API_ENDPOINTS.SNIPPETS}/recycled`, { requiresAuth: true });
+  },
+
+  async restoreSnippet(id: string): Promise<void> {
+    return apiClient.patch(`${API_ENDPOINTS.SNIPPETS}/${id}/restore`, {}, { requiresAuth: true });
+  },
+
+  async moveToRecycleBin(id: string): Promise<void> {
+    return apiClient.patch(`${API_ENDPOINTS.SNIPPETS}/${id}/recycle`, {}, { requiresAuth: true });
   }
 };

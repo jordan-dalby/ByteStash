@@ -13,8 +13,12 @@ class SnippetRepository {
     this.deleteCategoriesStmt = null;
     this.selectByIdStmt = null;
     this.selectPublicByIdStmt = null;
+    this.moveToRecycleBinStmt = null;
     this.deleteSnippetStmt = null;
     this.selectFragmentsStmt = null;
+    this.selectAllDeletedStmt = null;
+    this.deleteExpiredSnippetsStmt = null;
+    this.restoreSnippetStmt = null;
   }
 
   #initializeStatements() {
@@ -35,7 +39,7 @@ class SnippetRepository {
         FROM snippets s
         LEFT JOIN categories c ON s.id = c.snippet_id
         LEFT JOIN users u ON s.user_id = u.id
-        WHERE s.user_id = ?
+        WHERE s.user_id = ? AND s.expiry_date IS NULL
         GROUP BY s.id
         ORDER BY s.updated_at DESC
       `);
@@ -54,7 +58,7 @@ class SnippetRepository {
         FROM snippets s
         LEFT JOIN categories c ON s.id = c.snippet_id
         LEFT JOIN users u ON s.user_id = u.id
-        WHERE s.is_public = 1
+        WHERE s.is_public = 1 AND s.expiry_date IS NULL 
         GROUP BY s.id
         ORDER BY s.updated_at DESC
       `);
@@ -64,9 +68,10 @@ class SnippetRepository {
           title, 
           description, 
           updated_at,
+          expiry_date,
           user_id,
           is_public
-        ) VALUES (?, ?, datetime('now', 'utc'), ?, ?)
+        ) VALUES (?, ?, datetime('now', 'utc'),NULL, ?, ?)
       `);
 
       this.insertFragmentStmt = db.prepare(`
@@ -92,6 +97,12 @@ class SnippetRepository {
         WHERE id = ? AND user_id = ?
       `);
 
+      this.restoreSnippetStmt = db.prepare(`
+        UPDATE snippets
+        SET expiry_date = NULL
+        WHERE id = ? AND user_id = ?
+      `);
+
       this.deleteFragmentsStmt = db.prepare(`
         DELETE FROM fragments 
         WHERE snippet_id = ? 
@@ -112,6 +123,31 @@ class SnippetRepository {
         )
       `);
 
+      this.selectAllDeletedStmt = db.prepare(`
+        SELECT 
+          s.id,
+          s.title,
+          s.description,
+          datetime(s.updated_at) || 'Z' as updated_at,
+          datetime(s.expiry_date) || 'Z' as expiry_date,
+          s.user_id,
+          s.is_public,
+          u.username,
+          GROUP_CONCAT(DISTINCT c.name) as categories,
+          (SELECT COUNT(*) FROM shared_snippets WHERE snippet_id = s.id) as share_count
+        FROM snippets s
+        LEFT JOIN categories c ON s.id = c.snippet_id
+        LEFT JOIN users u ON s.user_id = u.id
+        WHERE s.user_id = ? AND s.expiry_date IS NOT NULL
+        GROUP BY s.id
+        ORDER BY s.updated_at DESC
+      `);
+
+      this.deleteExpiredSnippetsStmt = db.prepare(`
+        DELETE FROM snippets
+        WHERE expiry_date IS NOT NULL AND datetime(expiry_date) <= datetime(?, 'utc')
+      `);
+
       this.selectByIdStmt = db.prepare(`
         SELECT 
           s.id,
@@ -126,7 +162,7 @@ class SnippetRepository {
         FROM snippets s
         LEFT JOIN categories c ON s.id = c.snippet_id
         LEFT JOIN users u ON s.user_id = u.id
-        WHERE s.id = ? AND (s.user_id = ? OR s.is_public = 1)
+        WHERE s.id = ? AND (s.user_id = ? OR s.is_public = 1) AND s.expiry_date IS NULL
         GROUP BY s.id
       `);
 
@@ -144,14 +180,22 @@ class SnippetRepository {
         FROM snippets s
         LEFT JOIN categories c ON s.id = c.snippet_id
         LEFT JOIN users u ON s.user_id = u.id
-        WHERE s.id = ? AND s.is_public = TRUE
+        WHERE s.id = ? AND s.is_public = TRUE AND s.expiry_date IS NULL
         GROUP BY s.id
       `);
+
+      this.moveToRecycleBinStmt = db.prepare(`
+        UPDATE snippets
+        SET expiry_date = datetime('now', '+30 days')
+        WHERE id = ? AND user_id = ?
+      `);
+
 
       this.deleteSnippetStmt = db.prepare(`
         DELETE FROM snippets 
         WHERE id = ? AND user_id = ?
-      `);
+        RETURNING *                            
+      `);        // returns the deleted snippet 
 
       this.selectFragmentsStmt = db.prepare(`
         SELECT id, file_name, code, language, position
@@ -268,21 +312,74 @@ class SnippetRepository {
     }
   }
 
-  delete(id, userId) {
+  restore(id,userId) {
     this.#initializeStatements();
     try {
       const db = getDb();
-      
       return db.transaction(() => {
-        const snippet = this.selectByIdStmt.get(id, userId);
-        if (snippet) {
-          this.deleteSnippetStmt.run(id, userId);
+        this.restoreSnippetStmt.run(id, userId);
+      })();
+    } catch (error) {
+      Logger.error('Error in restore:', error);
+      throw error;
+    } 
+  }
+
+  moveToRecycle(id,userId) {
+    this.#initializeStatements();
+    try{
+      const db = getDb();
+      return db.transaction(() => {
+        const snippet = this.selectByIdStmt.get(id,userId);
+        if(snippet) {
+          this.moveToRecycleBinStmt.run(id,userId);
           return this.#processSnippet(snippet);
         }
         return null;
       })();
+    }catch (error){
+      Logger.error('Error in moving to recycle:', error);
+      throw error;
+    }
+  }
+
+  findAllDeleted(userId) {
+    this.#initializeStatements();
+    try {
+      const deletedSnippets = this.selectAllDeletedStmt.all(userId);
+      return deletedSnippets.map(this.#processSnippet.bind(this));
+    } catch (error) {
+      Logger.error('Error in findAllDeleted:', error);
+      throw error;
+    }
+  }
+
+  delete(id, userId) {
+    this.#initializeStatements();
+    try {
+      const db = getDb();
+
+      return db.transaction(() => {
+        const deletedSnippet = this.deleteSnippetStmt.get(id, userId); // get() will return deleted row
+        return deletedSnippet ? this.#processSnippet(deletedSnippet) : null;
+      })();
     } catch (error) {
       Logger.error('Error in delete:', error);
+      throw error;
+    }
+  }
+
+
+  deleteExpired() {
+    this.#initializeStatements();
+    try {
+      const db = getDb();
+      const currentTime = new Date().toISOString();
+      db.transaction(() => {
+        this.deleteExpiredSnippetsStmt.run(currentTime);
+      })();
+    } catch (error) {
+      Logger.error('Error in deleteExpired:', error);
       throw error;
     }
   }
