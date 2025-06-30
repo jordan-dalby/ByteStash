@@ -47,7 +47,7 @@ class SnippetService {
       Logger.debug('Service: Moving snippet to recycle bin:', id, 'for user:', userId);
       const result = await snippetRepository.moveToRecycle(id, userId);
       if (!result) {
-        Logger.warn('Service: Snippet not found or already moved to recycle bin');
+        Logger.debug('Service: Snippet not found or already moved to recycle bin');
         return null;
       }
       Logger.debug('Service: Snippet moved to recycle bin successfully');

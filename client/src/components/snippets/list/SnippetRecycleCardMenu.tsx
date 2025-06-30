@@ -33,7 +33,7 @@ const SnippetRecycleCardMenu: React.FC<SnippetRecycleCardMenuProps> = ({
         variant="custom"
         size="sm"
         className="bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more"
-        label="Restore snippet"
+        label="Delete snippet"
       />
     </div>
   );
