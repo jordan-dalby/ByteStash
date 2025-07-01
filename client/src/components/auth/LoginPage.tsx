@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Eye, EyeClosed } from 'lucide-react';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { PageContainer } from '../common/layout/PageContainer';
@@ -13,6 +14,7 @@ export const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [oidcConfig, setOIDCConfig] = useState<OIDCConfig | null>(null);
   const { login, isAuthenticated, authConfig } = useAuth();
   const { addToast } = useToast();
@@ -135,20 +137,31 @@ export const LoginPage: React.FC = () => {
                   disabled={isLoading}
                 />
               </div>
-              <div>
+              <div className="relative">
                 <input
-                  type="password"
+                  type={isPasswordVisible ? 'text' : 'password'}
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border 
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 pr-10 border 
                     border-light-border dark:border-dark-border placeholder-light-text-secondary dark:placeholder-dark-text-secondary 
                     text-light-text dark:text-dark-text bg-light-surface dark:bg-dark-surface rounded-b-md 
-                    focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary focus:border-light-primary dark:focus:border-dark-primary focus:z-10 sm:text-sm"
+                    focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary 
+                    focus:border-light-primary dark:focus:border-dark-primary sm:text-sm"
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
                 />
+                <button
+                  type="button"
+                  onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-10 text-gray-700 dark:text-gray-500 focus:outline-none"
+                  aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
+                >
+                  {isPasswordVisible ? <EyeClosed size={18} /> : <Eye size={18} />}
+                </button>
               </div>
+
+
             </div>
 
             <div>
