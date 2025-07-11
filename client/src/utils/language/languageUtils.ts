@@ -256,6 +256,13 @@ const LANGUAGE_MAPPING: LanguageMapping = {
     label: 'cypher'
   },
 
+  // Other
+  abap: {
+    aliases: [],
+    monacoAlias: 'abap',
+    label: 'abap'
+  },
+
   // Fallback
   plaintext: {
     aliases: ['text', 'txt', 'plain', 'log', 'raw'],
