@@ -30,7 +30,7 @@ persistence:
 
 ### Basic configs
 bytestash:
-  baseUrl: "/"
+  baseUrl: ""
   debug: false
   disableAccount: false
   disableAllAccount: false
