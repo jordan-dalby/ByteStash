@@ -65,9 +65,12 @@ const Modal: React.FC<ModalProps> = ({
       document.body.style.overflow = 'hidden';
       document.addEventListener('mousedown', handleClickOutside);
       document.addEventListener('keydown', handleEscapeKey);
-      if (contentRef.current) {
-        contentRef.current.scrollTop = 0;
-      }
+      // --> Shivam Naik - 07.08.2025
+      // ScrollTop used to cause jittery scrolls when typing code.
+      //if (contentRef.current) {
+        //contentRef.current.scrollTop = 0;
+      //}
+      // <-- Shivam Naik - 07.08.2025
     }
 
     return () => {
