@@ -394,4 +394,111 @@ router.get('/processor/status', async (req, res) => {
   }
 });
 
+/**
+ * GET /api/v2/ai/credits
+ * Get user's credits information and usage stats
+ */
+router.get('/credits', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const db = getDb();
+
+    // Get stored credit balance from database
+    const creditSettings = await db.prepare(`
+      SELECT balance, last_updated
+      FROM user_credit_settings 
+      WHERE user_id = ?
+    `).get(userId);
+
+    // Calculate estimated usage from AI analysis logs
+    const usageStats = await db.prepare(`
+      SELECT 
+        COALESCE(SUM(cost_usd), 0) as total_cost,
+        COUNT(*) as total_requests,
+        MAX(created_at) as last_request
+      FROM ai_usage 
+      WHERE user_id = ? 
+      AND created_at >= ?
+    `).get(userId, new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+
+    const response = {
+      balance: Number(creditSettings?.balance) || 0,
+      estimatedUsage: Number(usageStats?.total_cost) || 0,
+      lastUpdated: creditSettings?.last_updated || new Date().toISOString(),
+      isLiveData: false,
+      fetchError: null,
+      usage: {
+        totalRequests: Number(usageStats?.total_requests) || 0,
+        lastRequest: usageStats?.last_request || null,
+        averageCostPerRequest: usageStats?.total_requests > 0 
+          ? Number(usageStats.total_cost / usageStats.total_requests) || 0
+          : 0
+      }
+    };
+
+    res.json({
+      success: true,
+      credits: response
+    });
+
+  } catch (error) {
+    console.error('❌ Failed to fetch credits:', error);
+    res.status(500).json({
+      error: 'Failed to fetch credits',
+      message: error.message,
+      code: 'CREDITS_ERROR'
+    });
+  }
+});
+
+/**
+ * PUT /api/v2/ai/credits
+ * Update user's credit balance (manual entry)
+ */
+router.put('/credits', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { balance, resetUsage = false } = req.body;
+    const db = getDb();
+
+    if (typeof balance !== 'number' || balance < 0) {
+      return res.status(400).json({
+        error: 'Invalid balance',
+        message: 'Balance must be a positive number',
+        code: 'VALIDATION_ERROR'
+      });
+    }
+
+    // Update credit settings
+    await db.prepare(`
+      INSERT OR REPLACE INTO user_credit_settings 
+      (user_id, balance, manual_balance, last_updated, auto_track_usage)
+      VALUES (?, ?, ?, ?, 1)
+    `).run(userId, balance, balance, new Date().toISOString());
+
+    // Reset usage tracking if requested
+    if (resetUsage) {
+      await db.prepare(`
+        UPDATE ai_usage 
+        SET cost_usd = 0 
+        WHERE user_id = ? AND created_at >= ?
+      `).run(userId, new Date().toISOString());
+    }
+
+    res.json({
+      success: true,
+      message: 'Credits updated successfully',
+      balance: balance
+    });
+
+  } catch (error) {
+    console.error('❌ Failed to update credits:', error);
+    res.status(500).json({
+      error: 'Failed to update credits',
+      message: error.message,
+      code: 'CREDITS_UPDATE_ERROR'
+    });
+  }
+});
+
 export default router; 

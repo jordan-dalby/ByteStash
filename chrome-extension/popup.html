@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      width: 300px;
+      padding: 15px;
+      font-family: Arial, sans-serif;
+    }
+    .status {
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    .credits {
+      font-size: 24px;
+      font-weight: bold;
+      color: #28a745;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h3>ByteStash Credits Bridge</h3>
+  <p>This extension fetches your Anthropic credits for ByteStash.</p>
+  <button id="testFetch">Test Fetch Credits</button>
+  <div id="status"></div>
+  <script src="popup.js"></script>
+</body>
+</html>

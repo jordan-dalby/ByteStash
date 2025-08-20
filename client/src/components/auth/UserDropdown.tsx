@@ -4,6 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useOutsideClick } from '../../hooks/useOutsideClick';
 import { Link } from 'react-router-dom';
 import { ApiKeysModal } from './ApiKeysModal';
+import { CreditsDisplay } from '../common/CreditsDisplay';
 
 export const UserDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,15 +20,17 @@ export const UserDropdown: React.FC = () => {
 
   if (user) {
     return (
-      <div ref={dropdownRef} className="relative">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-2 px-3 py-1.5 bg-light-surface dark:bg-dark-surface hover:bg-light-hover 
-            dark:hover:bg-dark-hover rounded-md transition-colors text-sm text-light-text dark:text-dark-text"
-        >
-          <User size={16} />
-          <span>{user?.username}</span>
-        </button>
+      <div className="flex items-center gap-3">
+        <CreditsDisplay />
+        <div ref={dropdownRef} className="relative">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="flex items-center gap-2 px-3 py-1.5 bg-light-surface dark:bg-dark-surface hover:bg-light-hover 
+              dark:hover:bg-dark-hover rounded-md transition-colors text-sm text-light-text dark:text-dark-text"
+          >
+            <User size={16} />
+            <span>{user?.username}</span>
+          </button>
   
         {isOpen && (
           <div 
@@ -63,6 +66,7 @@ export const UserDropdown: React.FC = () => {
           isOpen={isApiKeysModalOpen}
           onClose={() => setIsApiKeysModalOpen(false)}
         />
+        </div>
       </div>
     );
   }

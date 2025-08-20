@@ -17,6 +17,7 @@ export interface BaseDropdownProps {
   disabled?: boolean;
   maxLength?: number;
   showChevron?: boolean;
+  id?: string;
 }
 
 const BaseDropdown: React.FC<BaseDropdownProps> = ({
@@ -30,6 +31,7 @@ const BaseDropdown: React.FC<BaseDropdownProps> = ({
   disabled = false,
   maxLength,
   showChevron = true,
+  id,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
@@ -159,6 +161,7 @@ const BaseDropdown: React.FC<BaseDropdownProps> = ({
       <div className="relative">
         <input
           ref={inputRef}
+          id={id}
           type="text"
           className={`block w-full rounded-md bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text p-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary ${className}`}
           value={internalValue}

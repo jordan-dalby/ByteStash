@@ -11,6 +11,7 @@ import { up_v1_5_0_usernames } from './migrations/20241121-migration.js';
 import { up_v1_5_1_api_keys } from './migrations/20241122-migration.js';
 import { up_ai_analysis } from './migrations/20250607-ai-analysis.js';
 import { up_settings_table } from './migrations/20250106-add-settings-table.js';
+import { up as up_credits_table } from './migrations/20250109-add-credits-table.js';
 import path from 'path';
 let db = null;
 let checkpointInterval = null;
@@ -117,6 +118,7 @@ function initializeDatabase() {
       up_v1_5_1_api_keys(db);
       up_ai_analysis(db);
       up_settings_table(db);
+      up_credits_table(db);
     }
 
     startCheckpointInterval();

@@ -13,6 +13,7 @@ export interface CategorySuggestionsProps {
   showAddText?: boolean;
   maxCategories?: number;
   handleHashtag: boolean;
+  id?: string;
 }
 
 const CategorySuggestions: React.FC<CategorySuggestionsProps> = ({
@@ -25,7 +26,8 @@ const CategorySuggestions: React.FC<CategorySuggestionsProps> = ({
   disabled = false,
   className = "",
   maxCategories,
-  handleHashtag = false
+  handleHashtag = false,
+  id
 }) => {
   const [internalValue, setInternalValue] = useState(inputValue);
 
@@ -124,6 +126,7 @@ const CategorySuggestions: React.FC<CategorySuggestionsProps> = ({
       className={className}
       disabled={disabled || (maxCategories !== undefined && selectedCategories.length >= maxCategories)}
       showChevron={false}
+      id={id}
     />
   );
 };

@@ -257,6 +257,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
                   Categories (max 20)
                 </label>
                 <CategorySuggestions
+                  id="categories"
                   inputValue={categoryInput}
                   onInputChange={setCategoryInput}
                   onCategorySelect={handleCategorySelect}

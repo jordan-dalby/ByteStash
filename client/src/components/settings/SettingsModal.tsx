@@ -138,6 +138,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     }
   };
 
+
   const saveClaudeApiKey = async () => {
     try {
       // Get JWT token from localStorage
@@ -163,6 +164,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     }
   };
 
+
   const handleSave = async () => {
     // Save UI settings
     onSettingsChange({
@@ -180,6 +182,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     if (claudeApiKey.trim()) {
       await saveClaudeApiKey();
     }
+
 
     onClose();
   };
@@ -513,8 +516,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                   </div>
                 </SettingRow>
                 
+
                 <div className="text-xs text-light-text-secondary dark:text-dark-text-secondary space-y-1">
                   <p>• Get your API key from <a href="https://console.anthropic.com/" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Anthropic Console</a></p>
+                  <p>• Your credit balance is automatically fetched and displayed in the header</p>
                   <p>• Cost: ~$0.007-0.012 per command analysis</p>
                   <p>• Required for enhanced mode: <code className="bg-light-hover dark:bg-dark-hover px-1 rounded">sse '!command'</code></p>
                 </div>

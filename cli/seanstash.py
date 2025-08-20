@@ -39,7 +39,7 @@ class SeanStashCLI:
             },
             'filters': {
                 'min_length': '3',
-                'exclude_patterns': 'cd,ls,pwd,exit,clear,history,echo.*password,.*secret.*,.*token.*',
+                'exclude_patterns': 'cd,ls,pwd,exit,clear,history,.*password.*,.*secret.*,.*token.*',
                 'include_working_dir': 'true',
                 'include_timestamp': 'true'
             },
@@ -453,7 +453,13 @@ class SeanStashCLI:
         print(f"Filtered to {len(filtered_commands)} relevant commands")
         
         if not filtered_commands:
-            print("Command was filtered out (too short or matches exclusion patterns).")
+            print("Command was filtered out.")
+            print(f"Command length: {len(command_string)} (minimum: {self.config.getint('filters', 'min_length')})")
+            exclude_patterns = self.config.get('filters', 'exclude_patterns').split(',')
+            print(f"Exclude patterns: {exclude_patterns}")
+            for pattern in exclude_patterns:
+                if re.search(pattern.strip(), command_string, re.IGNORECASE):
+                    print(f"Matched exclusion pattern: '{pattern.strip()}'")
             return
         
         if not force:

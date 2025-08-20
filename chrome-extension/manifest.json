@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "ByteStash Credits Bridge",
+  "version": "1.0",
+  "description": "Fetches Anthropic credits for ByteStash",
+  "permissions": [
+    "storage",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://console.anthropic.com/*",
+    "http://localhost/*",
+    "http://127.0.0.1/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://localhost:5000/*", 
+        "http://localhost:*/*", 
+        "http://127.0.0.1:*/*",
+        "http://0.0.0.0:*/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  }
+}
