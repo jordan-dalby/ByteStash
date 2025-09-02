@@ -1,8 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react';
-import Editor, { OnMount } from '@monaco-editor/react';
+import Editor, { OnMount, loader } from '@monaco-editor/react';
 import * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import { getMonacoLanguage } from '../../utils/language/languageUtils';
 import { useTheme } from '../../contexts/ThemeContext';
+loader.config({ paths: { vs: '/assets/monaco-editor/min/vs' } });
 
 export interface CodeEditorProps {
   code: string;
