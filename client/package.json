@@ -6,6 +6,7 @@
     "@monaco-editor/react": "^4.6.0",
     "date-fns": "^4.1.0",
     "framer-motion": "^11.11.9",
+    "jszip": "^3.10.1",
     "lucide-react": "^0.513.0",
     "monaco-editor": "^0.52.0",
     "parse-duration": "^1.1.0",
