@@ -1,11 +1,16 @@
-import React from 'react';
-import { FileCode, Clock } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { Snippet } from '../../../types/snippets';
-import CategoryList from '../../categories/CategoryList';
-import { getLanguageLabel, getUniqueLanguages } from '../../../utils/language/languageUtils';
-import { FullCodeBlock } from '../../editor/FullCodeBlock';
-import ReactMarkdown from 'react-markdown';
+import React from "react";
+import { FileCode, Clock } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { Snippet } from "../../../types/snippets";
+import CategoryList from "../../categories/CategoryList";
+import {
+  getLanguageLabel,
+  getUniqueLanguages,
+} from "../../../utils/language/languageUtils";
+import { FullCodeBlock } from "../../editor/FullCodeBlock";
+import ReactMarkdown from "react-markdown";
+import DownloadButton from "../../common/buttons/DownloadButton";
+import DownloadArchiveButton from "../../common/buttons/DownloadArchiveButton";
 
 interface FullCodeViewProps {
   showTitle?: boolean;
@@ -22,9 +27,9 @@ export const FullCodeView: React.FC<FullCodeViewProps> = ({
   snippet,
   onCategoryClick,
   showLineNumbers = true,
-  className = '',
+  className = "",
   isModal = false,
-  isPublicView = false
+  isPublicView = false,
 }) => {
   const handleCategoryClick = (e: React.MouseEvent, category: string) => {
     e.preventDefault();
@@ -36,8 +41,8 @@ export const FullCodeView: React.FC<FullCodeViewProps> = ({
       const updateDate = new Date(updatedAt);
       return formatDistanceToNow(updateDate);
     } catch (error) {
-      console.error('Error formatting update date:', error);
-      return 'Unknown';
+      console.error("Error formatting update date:", error);
+      return "Unknown";
     }
   };
 
@@ -57,25 +62,36 @@ export const FullCodeView: React.FC<FullCodeViewProps> = ({
         </div>
       )}
 
-      <div className={isModal ? 'p-2 pt-0' : 'p-4 pt-0'}>
+      <div className={isModal ? "p-2 pt-0" : "p-4 pt-0"}>
         {/* Header Section */}
         <div>
           {showTitle && (
-            <h1 className={`text-xl md:text-2xl font-bold text-light-text dark:text-dark-text ${isModal ? '' : 'mt-2'}`}>
+            <h1
+              className={`text-xl md:text-2xl font-bold text-light-text dark:text-dark-text ${
+                isModal ? "" : "mt-2"
+              }`}
+            >
               {snippet.title}
             </h1>
           )}
 
           {/* Language Info */}
-          <div className={`flex items-center gap-1 text-sm text-light-text-secondary dark:text-dark-text-secondary mt-${showTitle ? '2' : '0'}`}>
-            <FileCode size={14} className="text-light-text-secondary dark:text-dark-text-secondary" />
+          <div
+            className={`flex items-center gap-1 text-sm text-light-text-secondary dark:text-dark-text-secondary mt-${
+              showTitle ? "2" : "0"
+            }`}
+          >
+            <FileCode
+              size={14}
+              className="text-light-text-secondary dark:text-dark-text-secondary"
+            />
             <span>{getUniqueLanguages(snippet.fragments)}</span>
           </div>
 
           {/* Description */}
-          <div className="text-sm text-light-text dark:text-dark-text mt-3">
+          <div className="mt-3 text-sm text-light-text dark:text-dark-text">
             <ReactMarkdown className={`markdown prose max-w-none`}>
-              {snippet.description || 'No description available'}
+              {snippet.description || "No description available"}
             </ReactMarkdown>
           </div>
 
@@ -90,19 +106,42 @@ export const FullCodeView: React.FC<FullCodeViewProps> = ({
           </div>
         </div>
 
+        {/* Download Archive Button */}
+        {snippet.fragments.length > 1 && (
+          <div className="flex justify-end mt-4">
+            <DownloadArchiveButton
+              snippetTitle={snippet.title}
+              fragments={snippet.fragments}
+              variant="secondary"
+              size="sm"
+            />
+          </div>
+        )}
+
         {/* Code Fragments */}
         <div className="mt-4 space-y-4">
           {snippet.fragments.map((fragment, index) => (
             <div key={index}>
               {/* File Header */}
-              <div className="flex items-center justify-between text-xs text-light-text-secondary dark:text-dark-text-secondary mb-1 bg-light-hover/50 dark:bg-dark-hover/50 rounded px-3 h-7">
-                <div className="flex items-center gap-1 min-w-0 flex-1">
-                  <FileCode size={12} className="text-light-text-secondary dark:text-dark-text-secondary shrink-0" />
+              <div className="flex items-center justify-between px-3 mb-1 text-xs rounded text-light-text-secondary dark:text-dark-text-secondary bg-light-hover/50 dark:bg-dark-hover/50 h-7">
+                <div className="flex items-center flex-1 min-w-0 gap-1">
+                  <FileCode
+                    size={12}
+                    className="text-light-text-secondary dark:text-dark-text-secondary shrink-0"
+                  />
                   <span className="truncate">{fragment.file_name}</span>
                 </div>
-                <span className="text-light-text-secondary dark:text-dark-text-secondary ml-2">
-                  {getLanguageLabel(fragment.language)}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-light-text-secondary dark:text-dark-text-secondary">
+                    {getLanguageLabel(fragment.language)}
+                  </span>
+                  <DownloadButton
+                    code={fragment.code}
+                    fileName={fragment.file_name}
+                    language={fragment.language}
+                    className="scale-75"
+                  />
+                </div>
               </div>
 
               {/* Code Block */}

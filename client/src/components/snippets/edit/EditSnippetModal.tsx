@@ -9,6 +9,7 @@ import CategoryList from "../../categories/CategoryList";
 import CategorySuggestions from "../../categories/CategorySuggestions";
 import { FragmentEditor } from "./FragmentEditor";
 import { Switch } from "../../../components/common/switch/Switch";
+import FileUploadButton from "../../common/buttons/FileUploadButton";
 
 export interface EditSnippetModalProps {
   isOpen: boolean;
@@ -104,6 +105,30 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
       },
     ]);
     setHasUnsavedChanges(true);
+  };
+
+  const handleFileUpload = (fileData: {
+    file_name: string;
+    code: string;
+    language: string;
+    position: number;
+  }) => {
+    setFragments((current) => [
+      ...current,
+      {
+        ...fileData,
+        position: current.length,
+      },
+    ]);
+    setHasUnsavedChanges(true);
+  };
+
+  const handleUploadError = (error: string) => {
+    setError(error);
+    // Clear error after 5 seconds
+    setTimeout(() => {
+      setError("");
+    }, 5000);
   };
 
   const handleUpdateFragment = (
@@ -350,9 +375,17 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
 
               {/* Code Fragments section */}
               <div>
-                <label className="block mb-4 text-sm font-medium text-light-text dark:text-dark-text">
-                  Code Fragments ({fragments.length})
-                </label>
+                <div className="flex items-center justify-between mb-4">
+                  <label className="text-sm font-medium text-light-text dark:text-dark-text">
+                    Code Fragments ({fragments.length})
+                  </label>
+                  <FileUploadButton
+                    onFileProcessed={handleFileUpload}
+                    onError={handleUploadError}
+                    existingFragments={fragments}
+                    className="text-xs"
+                  />
+                </div>
 
                 <div className="space-y-4">
                   {fragments.map((fragment, index) => (
