@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
-import CategoryTag from './CategoryTag';
-import type { CategoryTagVariant } from './CategoryTag';
+import React, { useState, useRef, useEffect } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import CategoryTag from "./CategoryTag";
+import type { CategoryTagVariant } from "./CategoryTag";
 
 interface CategoryListProps {
   categories: string[];
@@ -16,7 +16,7 @@ const CategoryList: React.FC<CategoryListProps> = ({
   onCategoryClick,
   className = "",
   variant,
-  showAll = false
+  showAll = false,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [visibleCount, setVisibleCount] = useState(categories.length);
@@ -25,40 +25,40 @@ const CategoryList: React.FC<CategoryListProps> = ({
 
   useEffect(() => {
     if (showAll) return;
-    
+
     const calculateVisibleCount = () => {
       const container = containerRef.current;
       const measure = measureRef.current;
       if (!container || !measure || categories.length === 0) return;
 
-      measure.style.visibility = 'hidden';
-      measure.style.display = 'flex';
-      
+      measure.style.visibility = "hidden";
+      measure.style.display = "flex";
+
       const containerWidth = container.offsetWidth;
       const items = Array.from(measure.children) as HTMLElement[];
       let currentWidth = 0;
       let count = 0;
-      
+
       const moreButtonWidth = items[items.length - 1].offsetWidth + 8;
-      
+
       for (let i = 0; i < items.length - 1; i++) {
         const itemWidth = items[i].offsetWidth + 8;
         if (currentWidth + itemWidth + moreButtonWidth > containerWidth) break;
         currentWidth += itemWidth;
         count++;
       }
-      
-      measure.style.display = 'none';
-      
+
+      measure.style.display = "none";
+
       if (count > 0 && count !== visibleCount) {
         setVisibleCount(count);
       }
     };
 
     calculateVisibleCount();
-    
-    window.addEventListener('resize', calculateVisibleCount);
-    return () => window.removeEventListener('resize', calculateVisibleCount);
+
+    window.addEventListener("resize", calculateVisibleCount);
+    return () => window.removeEventListener("resize", calculateVisibleCount);
   }, [categories, visibleCount, showAll]);
 
   if (categories.length === 0) {
@@ -73,10 +73,9 @@ const CategoryList: React.FC<CategoryListProps> = ({
     );
   }
 
-  const visibleCategories = showAll || isExpanded 
-    ? categories 
-    : categories.slice(0, visibleCount);
-    
+  const visibleCategories =
+    showAll || isExpanded ? categories : categories.slice(0, visibleCount);
+
   const hasMoreCategories = !showAll && categories.length > visibleCount;
   const moreCount = categories.length - visibleCount;
 
@@ -101,7 +100,7 @@ const CategoryList: React.FC<CategoryListProps> = ({
             variant={variant}
           />
         ))}
-        
+
         {hasMoreCategories && !isExpanded && (
           <button
             onClick={handleExpandClick}
@@ -114,7 +113,7 @@ const CategoryList: React.FC<CategoryListProps> = ({
             <ChevronDown size={12} />
           </button>
         )}
-        
+
         {isExpanded && hasMoreCategories && (
           <button
             onClick={handleCollapseClick}
@@ -130,11 +129,16 @@ const CategoryList: React.FC<CategoryListProps> = ({
       </div>
 
       {!showAll && (
-        <div 
-          ref={measureRef} 
-          className="absolute flex flex-wrap items-center gap-1.5" 
+        <div
+          ref={measureRef}
+          className="absolute flex flex-wrap items-center gap-1.5"
           aria-hidden="true"
-          style={{ visibility: 'hidden', position: 'absolute', top: 0, left: 0 }}
+          style={{
+            visibility: "hidden",
+            position: "absolute",
+            top: 0,
+            left: 0,
+          }}
         >
           {categories.map((category) => (
             <CategoryTag

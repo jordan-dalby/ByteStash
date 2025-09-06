@@ -1,22 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSettings } from '../../../../hooks/useSettings';
-import { useToast } from '../../../../hooks/useToast';
-import { useAuth } from '../../../../hooks/useAuth';
-import { initializeMonaco } from '../../../../utils/language/languageUtils';
-import SettingsModal from '../../../settings/SettingsModal';
-import BaseSnippetStorage from '../common/BaseSnippetStorage';
-import { fetchPublicSnippets } from '../../../../utils/api/snippets';
-import { Snippet } from '../../../../types/snippets';
-import { UserDropdown } from '../../../auth/UserDropdown';
-import { ROUTES } from '../../../../constants/routes';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSettings } from "../../../../hooks/useSettings";
+import { useToast } from "../../../../hooks/useToast";
+import { useAuth } from "../../../../hooks/useAuth";
+import { initializeMonaco } from "../../../../utils/language/languageUtils";
+import SettingsModal from "../../../settings/SettingsModal";
+import BaseSnippetStorage from "../common/BaseSnippetStorage";
+import { fetchPublicSnippets } from "../../../../utils/api/snippets";
+import { Snippet } from "../../../../types/snippets";
+import { UserDropdown } from "../../../auth/UserDropdown";
+import { ROUTES } from "../../../../constants/routes";
 
 const PublicSnippetStorage: React.FC = () => {
-  const { 
-    viewMode, setViewMode, compactView, showCodePreview, 
-    previewLines, includeCodeInSearch, updateSettings,
-    showCategories, expandCategories, showLineNumbers,
-    theme
+  const {
+    viewMode,
+    setViewMode,
+    compactView,
+    showCodePreview,
+    previewLines,
+    includeCodeInSearch,
+    updateSettings,
+    showCategories,
+    expandCategories,
+    showLineNumbers,
+    theme,
   } = useSettings();
 
   const { isAuthenticated } = useAuth();
@@ -36,8 +43,8 @@ const PublicSnippetStorage: React.FC = () => {
       const fetchedSnippets = await fetchPublicSnippets();
       setSnippets(fetchedSnippets);
     } catch (error) {
-      console.error('Failed to load public snippets:', error);
-      addToast('Failed to load public snippets', 'error');
+      console.error("Failed to load public snippets:", error);
+      addToast("Failed to load public snippets", "error");
     } finally {
       setIsLoading(false);
     }
@@ -45,26 +52,31 @@ const PublicSnippetStorage: React.FC = () => {
 
   const handleDuplicate = async (snippet: Snippet) => {
     if (!isAuthenticated) {
-      addToast('Please sign in to add this snippet to your collection', 'info');
+      addToast("Please sign in to add this snippet to your collection", "info");
       navigate(ROUTES.LOGIN);
       return;
     }
 
     try {
-      const duplicatedSnippet: Omit<Snippet, 'id' | 'updated_at' | 'share_count' | 'username'> = {
+      const duplicatedSnippet: Omit<
+        Snippet,
+        "id" | "updated_at" | "share_count" | "username"
+      > = {
         title: `${snippet.title}`,
         description: snippet.description,
         categories: [...snippet.categories],
-        fragments: snippet.fragments.map(f => ({ ...f })),
-        is_public: 0
+        fragments: snippet.fragments.map((f) => ({ ...f })),
+        is_public: 0,
+        is_pinned: 0,
+        is_favorite: 0,
       };
-      
-      const { createSnippet } = await import('../../../../utils/api/snippets');
+
+      const { createSnippet } = await import("../../../../utils/api/snippets");
       await createSnippet(duplicatedSnippet);
-      addToast('Snippet added to your collection', 'success');
+      addToast("Snippet added to your collection", "success");
     } catch (error) {
-      console.error('Failed to duplicate snippet:', error);
-      addToast('Failed to add snippet to your collection', 'error');
+      console.error("Failed to duplicate snippet:", error);
+      addToast("Failed to add snippet to your collection", "error");
     }
   };
 
@@ -94,15 +106,15 @@ const PublicSnippetStorage: React.FC = () => {
       <SettingsModal
         isOpen={isSettingsModalOpen}
         onClose={() => setIsSettingsModalOpen(false)}
-        settings={{ 
-          compactView, 
-          showCodePreview, 
-          previewLines, 
-          includeCodeInSearch, 
-          showCategories, 
-          expandCategories, 
+        settings={{
+          compactView,
+          showCodePreview,
+          previewLines,
+          includeCodeInSearch,
+          showCategories,
+          expandCategories,
           showLineNumbers,
-          theme
+          theme,
         }}
         onSettingsChange={updateSettings}
         snippets={[]}

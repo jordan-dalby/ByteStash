@@ -1,7 +1,18 @@
-import React, { useState, useRef } from 'react';
-import { Share, Pencil, Trash2, ExternalLink, MoreVertical, Copy } from 'lucide-react';
-import { IconButton } from '../../common/buttons/IconButton';
-import { useOutsideClick } from '../../../hooks/useOutsideClick';
+import React, { useState, useRef } from "react";
+import {
+  Share,
+  Pencil,
+  Trash2,
+  ExternalLink,
+  MoreVertical,
+  Copy,
+  Pin,
+  Star,
+  PinOff,
+  StarOff,
+} from "lucide-react";
+import { IconButton } from "../../common/buttons/IconButton";
+import { useOutsideClick } from "../../../hooks/useOutsideClick";
 
 interface SnippetCardMenuProps {
   onEdit: (e: React.MouseEvent) => void;
@@ -11,6 +22,10 @@ interface SnippetCardMenuProps {
   onDuplicate: (e: React.MouseEvent) => void;
   isPublicView: boolean;
   isAuthenticated: boolean;
+  isPinned: boolean;
+  isFavorite: boolean;
+  handlePin: (e: React.MouseEvent) => void;
+  handleFavorite: (e: React.MouseEvent) => void;
 }
 
 const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
@@ -21,6 +36,10 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
   onDuplicate,
   isPublicView,
   isAuthenticated,
+  isPinned,
+  isFavorite,
+  handlePin,
+  handleFavorite,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -30,7 +49,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
 
   if (isPublicView) {
     return (
-      <div className="top-4 right-4 flex items-center gap-1">
+      <div className="flex items-center gap-1 top-4 right-4">
         {isAuthenticated && (
           <IconButton
             icon={<Copy size={16} />}
@@ -60,7 +79,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
   }
 
   return (
-    <div className="top-4 right-4 flex items-center gap-1">
+    <div className="flex items-center gap-1 top-4 right-4">
       <IconButton
         icon={<Pencil size={16} />}
         onClick={(e: React.MouseEvent) => {
@@ -97,13 +116,13 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
           className="bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more"
           label="More options"
         />
-        
+
         {isDropdownOpen && (
-          <div 
+          <div
             ref={dropdownRef}
             onMouseLeave={() => setIsDropdownOpen(false)}
-            className="absolute right-0 top-full mt-1 w-48 bg-light-surface dark:bg-dark-surface rounded-md shadow-lg 
-              border border-light-border dark:border-dark-border py-1 z-[100]"
+            className="absolute right-0 top-full mt-1 w-52 bg-light-surface dark:bg-dark-surface rounded-md shadow-lg 
+              border border-light-border dark:border-dark-border z-[100]"
           >
             <button
               onClick={(e) => {
@@ -111,7 +130,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
                 onOpenInNewTab();
                 setIsDropdownOpen(false);
               }}
-              className="w-full px-4 py-2 text-sm text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover flex items-center gap-2"
+              className="flex items-center w-full gap-2 px-4 py-2 text-sm text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover"
             >
               <ExternalLink size={16} />
               Open in new tab
@@ -119,10 +138,30 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
             <button
               onClick={(e) => {
                 e.stopPropagation();
+                handlePin(e);
+                setIsDropdownOpen(false);
+              }}
+              className="flex items-center w-full gap-2 px-4 py-2 text-sm text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover"
+            >
+              {isPinned ? (
+                <>
+                  <PinOff size={16} />
+                  Unpin Snippet
+                </>
+              ) : (
+                <>
+                  <Pin size={16} />
+                  Pin Snippet
+                </>
+              )}
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
                 onShare(e);
                 setIsDropdownOpen(false);
               }}
-              className="w-full px-4 py-2 text-sm text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover flex items-center gap-2"
+              className="flex items-center w-full gap-2 px-4 py-2 text-sm text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover"
             >
               <Share size={16} />
               Share snippet
@@ -133,10 +172,30 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
                 onDuplicate(e);
                 setIsDropdownOpen(false);
               }}
-              className="w-full px-4 py-2 text-sm text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover flex items-center gap-2"
+              className="flex items-center w-full gap-2 px-4 py-2 text-sm text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover"
             >
               <Copy size={16} />
               Duplicate snippet
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleFavorite(e);
+                setIsDropdownOpen(false);
+              }}
+              className="flex items-center w-full gap-2 px-4 py-2 text-sm text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover"
+            >
+              {isFavorite ? (
+                <>
+                  <StarOff size={16} />
+                  Remove from favorites
+                </>
+              ) : (
+                <>
+                  <Star size={16} />
+                  Add to favorites
+                </>
+              )}
             </button>
           </div>
         )}

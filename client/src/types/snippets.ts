@@ -16,6 +16,8 @@ export interface Snippet {
   fragments: CodeFragment[];
   share_count?: number;
   is_public: number;
+  is_pinned: number;
+  is_favorite: number;
   username?: string;
 }
 

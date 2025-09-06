@@ -1,5 +1,5 @@
-import { getDb } from '../config/database.js';
-import Logger from '../logger.js';
+import { getDb } from "../config/database.js";
+import Logger from "../logger.js";
 
 class SnippetRepository {
   constructor() {
@@ -19,11 +19,13 @@ class SnippetRepository {
     this.selectAllDeletedStmt = null;
     this.deleteExpiredSnippetsStmt = null;
     this.restoreSnippetStmt = null;
+    this.setPinnedStmt = null;
+    this.setFavoriteStmt = null;
   }
 
   #initializeStatements() {
     const db = getDb();
-    
+
     if (!this.selectAllStmt) {
       this.selectAllStmt = db.prepare(`
         SELECT 
@@ -33,6 +35,8 @@ class SnippetRepository {
           datetime(s.updated_at) || 'Z' as updated_at,
           s.user_id,
           s.is_public,
+          s.is_pinned,
+          s.is_favorite,
           u.username,
           GROUP_CONCAT(DISTINCT c.name) as categories,
           (SELECT COUNT(*) FROM shared_snippets WHERE snippet_id = s.id) as share_count
@@ -52,6 +56,8 @@ class SnippetRepository {
           datetime(s.updated_at) || 'Z' as updated_at,
           s.user_id,
           s.is_public,
+          s.is_pinned,
+          s.is_favorite,
           u.username,
           GROUP_CONCAT(DISTINCT c.name) as categories,
           (SELECT COUNT(*) FROM shared_snippets WHERE snippet_id = s.id) as share_count
@@ -132,6 +138,8 @@ class SnippetRepository {
           datetime(s.expiry_date) || 'Z' as expiry_date,
           s.user_id,
           s.is_public,
+          s.is_pinned,
+          s.is_favorite,
           u.username,
           GROUP_CONCAT(DISTINCT c.name) as categories,
           (SELECT COUNT(*) FROM shared_snippets WHERE snippet_id = s.id) as share_count
@@ -156,6 +164,8 @@ class SnippetRepository {
           datetime(s.updated_at) || 'Z' as updated_at,
           s.user_id,
           s.is_public,
+          s.is_pinned,
+          s.is_favorite,
           u.username,
           GROUP_CONCAT(DISTINCT c.name) as categories,
           (SELECT COUNT(*) FROM shared_snippets WHERE snippet_id = s.id) as share_count
@@ -174,6 +184,8 @@ class SnippetRepository {
           datetime(s.updated_at) || 'Z' as updated_at,
           s.user_id,
           s.is_public,
+          s.is_pinned,
+          s.is_favorite,
           u.username,
           GROUP_CONCAT(DISTINCT c.name) as categories,
           (SELECT COUNT(*) FROM shared_snippets WHERE snippet_id = s.id) as share_count
@@ -190,18 +202,29 @@ class SnippetRepository {
         WHERE id = ? AND user_id = ?
       `);
 
-
       this.deleteSnippetStmt = db.prepare(`
         DELETE FROM snippets 
         WHERE id = ? AND user_id = ?
         RETURNING *                            
-      `);        // returns the deleted snippet 
+      `); // returns the deleted snippet
 
       this.selectFragmentsStmt = db.prepare(`
-        SELECT id, file_name, code, language, position
+        SELECT id, file_name, code, language, position 
         FROM fragments
         WHERE snippet_id = ?
         ORDER BY position
+      `);
+
+      this.setPinnedStmt = db.prepare(`
+        UPDATE snippets
+        SET is_pinned = ?
+        WHERE id = ? AND user_id = ?
+      `);
+
+      this.setFavoriteStmt = db.prepare(`
+        UPDATE snippets
+        SET is_favorite = ?
+        WHERE id = ? AND user_id = ?
       `);
     }
   }
@@ -210,12 +233,12 @@ class SnippetRepository {
     if (!snippet) return null;
 
     const fragments = this.selectFragmentsStmt.all(snippet.id);
-    
+
     return {
       ...snippet,
-      categories: snippet.categories ? snippet.categories.split(',') : [],
+      categories: snippet.categories ? snippet.categories.split(",") : [],
       fragments: fragments.sort((a, b) => a.position - b.position),
-      share_count: snippet.share_count || 0
+      share_count: snippet.share_count || 0,
     };
   }
 
@@ -225,7 +248,7 @@ class SnippetRepository {
       const snippets = this.selectAllStmt.all(userId);
       return snippets.map(this.#processSnippet.bind(this));
     } catch (error) {
-      Logger.error('Error in findAll:', error);
+      Logger.error("Error in findAll:", error);
       throw error;
     }
   }
@@ -236,83 +259,108 @@ class SnippetRepository {
       const snippets = this.selectPublicStmt.all();
       return snippets.map(this.#processSnippet.bind(this));
     } catch (error) {
-      Logger.error('Error in findAllPublic:', error);
+      Logger.error("Error in findAllPublic:", error);
       throw error;
     }
   }
 
-  create({ title, description, categories = [], fragments = [], userId, isPublic = 0 }) {
+  create({
+    title,
+    description,
+    categories = [],
+    fragments = [],
+    userId,
+    isPublic = 0,
+  }) {
     this.#initializeStatements();
     try {
       const db = getDb();
-      
+
       return db.transaction(() => {
-        const insertResult = this.insertSnippetStmt.run(title, description, userId, isPublic ? 1 : 0);
+        const insertResult = this.insertSnippetStmt.run(
+          title,
+          description,
+          userId,
+          isPublic ? 1 : 0
+        );
         const snippetId = insertResult.lastInsertRowid;
-        
+
         fragments.forEach((fragment, index) => {
           this.insertFragmentStmt.run(
             snippetId,
             fragment.file_name || `file${index + 1}`,
-            fragment.code || '',
-            fragment.language || 'plaintext',
+            fragment.code || "",
+            fragment.language || "plaintext",
             fragment.position || index
           );
         });
-        
+
         if (categories.length > 0) {
           for (const category of categories) {
             if (category.trim()) {
-              this.insertCategoryStmt.run(snippetId, category.trim().toLowerCase());
+              this.insertCategoryStmt.run(
+                snippetId,
+                category.trim().toLowerCase()
+              );
             }
           }
         }
-        
+
         const created = this.selectByIdStmt.get(snippetId, userId);
         return this.#processSnippet(created);
       })();
     } catch (error) {
-      Logger.error('Error in create:', error);
+      Logger.error("Error in create:", error);
       throw error;
     }
   }
 
-  update(id, { title, description, categories = [], fragments = [], isPublic = 0 }, userId) {
+  update(
+    id,
+    { title, description, categories = [], fragments = [], isPublic = 0 },
+    userId
+  ) {
     this.#initializeStatements();
     try {
       const db = getDb();
-      
+
       return db.transaction(() => {
-        this.updateSnippetStmt.run(title, description, isPublic ? 1 : 0, id, userId);
-        
+        this.updateSnippetStmt.run(
+          title,
+          description,
+          isPublic ? 1 : 0,
+          id,
+          userId
+        );
+
         this.deleteFragmentsStmt.run(id, userId);
         fragments.forEach((fragment, index) => {
           this.insertFragmentStmt.run(
             id,
             fragment.file_name || `file${index + 1}`,
-            fragment.code || '',
-            fragment.language || 'plaintext',
+            fragment.code || "",
+            fragment.language || "plaintext",
             fragment.position || index
           );
         });
-        
+
         this.deleteCategoriesStmt.run(id, userId);
         for (const category of categories) {
           if (category.trim()) {
             this.insertCategoryStmt.run(id, category.trim().toLowerCase());
           }
         }
-        
+
         const updated = this.selectByIdStmt.get(id, userId);
         return this.#processSnippet(updated);
       })();
     } catch (error) {
-      Logger.error('Error in update:', error);
+      Logger.error("Error in update:", error);
       throw error;
     }
   }
 
-  restore(id,userId) {
+  restore(id, userId) {
     this.#initializeStatements();
     try {
       const db = getDb();
@@ -320,25 +368,25 @@ class SnippetRepository {
         this.restoreSnippetStmt.run(id, userId);
       })();
     } catch (error) {
-      Logger.error('Error in restore:', error);
+      Logger.error("Error in restore:", error);
       throw error;
-    } 
+    }
   }
 
-  moveToRecycle(id,userId) {
+  moveToRecycle(id, userId) {
     this.#initializeStatements();
-    try{
+    try {
       const db = getDb();
       return db.transaction(() => {
-        const snippet = this.selectByIdStmt.get(id,userId);
-        if(snippet) {
-          this.moveToRecycleBinStmt.run(id,userId);
+        const snippet = this.selectByIdStmt.get(id, userId);
+        if (snippet) {
+          this.moveToRecycleBinStmt.run(id, userId);
           return this.#processSnippet(snippet);
         }
         return null;
       })();
-    }catch (error){
-      Logger.error('Error in moving to recycle:', error);
+    } catch (error) {
+      Logger.error("Error in moving to recycle:", error);
       throw error;
     }
   }
@@ -349,7 +397,7 @@ class SnippetRepository {
       const deletedSnippets = this.selectAllDeletedStmt.all(userId);
       return deletedSnippets.map(this.#processSnippet.bind(this));
     } catch (error) {
-      Logger.error('Error in findAllDeleted:', error);
+      Logger.error("Error in findAllDeleted:", error);
       throw error;
     }
   }
@@ -364,11 +412,10 @@ class SnippetRepository {
         return deletedSnippet ? this.#processSnippet(deletedSnippet) : null;
       })();
     } catch (error) {
-      Logger.error('Error in delete:', error);
+      Logger.error("Error in delete:", error);
       throw error;
     }
   }
-
 
   deleteExpired() {
     this.#initializeStatements();
@@ -379,7 +426,7 @@ class SnippetRepository {
         this.deleteExpiredSnippetsStmt.run(currentTime);
       })();
     } catch (error) {
-      Logger.error('Error in deleteExpired:', error);
+      Logger.error("Error in deleteExpired:", error);
       throw error;
     }
   }
@@ -391,11 +438,39 @@ class SnippetRepository {
         const snippet = this.selectByIdStmt.get(id, userId);
         return this.#processSnippet(snippet);
       }
-      
+
       const snippet = this.selectPublicByIdStmt.get(id);
       return this.#processSnippet(snippet);
     } catch (error) {
-      Logger.error('Error in findById:', error);
+      Logger.error("Error in findById:", error);
+      throw error;
+    }
+  }
+
+  setPinned(id, value, userId) {
+    this.#initializeStatements();
+    try {
+      const result = this.setPinnedStmt.run(value ? 1 : 0, id, userId);
+      if (result.changes === 0) return null;
+      const updated = this.selectByIdStmt.get(id, userId);
+      return this.#processSnippet(updated);
+    } catch (error) {
+      Logger.error("Error in setPinned:", error);
+      throw error;
+    }
+  }
+
+  setFavorite(id, value, userId) {
+    this.#initializeStatements();
+    try {
+      const result = this.setFavoriteStmt.run(value ? 1 : 0, id, userId);
+      if (result.changes === 0) {
+        return null;
+      }
+      const updated = this.selectByIdStmt.get(id, userId);
+      return this.#processSnippet(updated);
+    } catch (error) {
+      Logger.error("Error in setFavorite:", error);
       throw error;
     }
   }

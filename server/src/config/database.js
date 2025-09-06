@@ -1,16 +1,17 @@
-import Database from 'better-sqlite3';
-import { dirname, join } from 'path';
-import fs from 'fs';
-import { up_v1_4_0 } from './migrations/20241111-migration.js';
-import { up_v1_5_0 } from './migrations/20241117-migration.js';
-import Logger from '../logger.js';
-import { up_v1_5_0_public } from './migrations/20241119-migration.js';
-import { up_v1_5_0_oidc } from './migrations/20241120-migration.js';
-import { fileURLToPath } from 'url';
-import { up_v1_5_0_usernames } from './migrations/20241121-migration.js';
-import { up_v1_5_1_api_keys } from './migrations/20241122-migration.js';
-import { up_v1_6_0_snippet_expiry } from './migrations/20250601-migration.js';  
-import path from 'path';
+import Database from "better-sqlite3";
+import { dirname, join } from "path";
+import fs from "fs";
+import { up_v1_4_0 } from "./migrations/20241111-migration.js";
+import { up_v1_5_0 } from "./migrations/20241117-migration.js";
+import Logger from "../logger.js";
+import { up_v1_5_0_public } from "./migrations/20241119-migration.js";
+import { up_v1_5_0_oidc } from "./migrations/20241120-migration.js";
+import { fileURLToPath } from "url";
+import { up_v1_5_0_usernames } from "./migrations/20241121-migration.js";
+import { up_v1_5_1_api_keys } from "./migrations/20241122-migration.js";
+import { up_v1_6_0_snippet_expiry } from "./migrations/20250601-migration.js";
+import { up_v1_7_0_snippet_pin_favorite } from "./migrations/20250905-migration.js";
+import path from "path";
 let db = null;
 let checkpointInterval = null;
 
@@ -18,26 +19,26 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 function getDatabasePath() {
-  const dbPath = join(__dirname, '../../../data/snippets');
+  const dbPath = join(__dirname, "../../../data/snippets");
   if (!fs.existsSync(dbPath)) {
     fs.mkdirSync(dbPath, { recursive: true });
   }
-  return join(dbPath, 'snippets.db');
+  return join(dbPath, "snippets.db");
 }
 
 function checkpointDatabase() {
   if (!db) return;
 
   try {
-    Logger.debug('Starting database checkpoint...');
+    Logger.debug("Starting database checkpoint...");
     const start = Date.now();
 
-    db.pragma('wal_checkpoint(PASSIVE)');
+    db.pragma("wal_checkpoint(PASSIVE)");
 
     const duration = Date.now() - start;
     Logger.debug(`Database checkpoint completed in ${duration}ms`);
   } catch (error) {
-    Logger.error('Error during database checkpoint:', error);
+    Logger.error("Error during database checkpoint:", error);
   }
 }
 
@@ -73,14 +74,17 @@ function backupDatabase(dbPath) {
     }
     return true;
   } catch (error) {
-    Logger.error('Failed to create database backup:', error);
+    Logger.error("Failed to create database backup:", error);
     throw error;
   }
 }
 
 function createInitialSchema(db) {
-  const initSQL = fs.readFileSync(path.join(__dirname, 'schema/init.sql'), 'utf8');
-  Logger.debug('Init SQL Path:', path.join(__dirname, 'schema/init.sql'));
+  const initSQL = fs.readFileSync(
+    path.join(__dirname, "schema/init.sql"),
+    "utf8"
+  );
+  Logger.debug("Init SQL Path:", path.join(__dirname, "schema/init.sql"));
   db.exec(initSQL);
   Logger.debug("✅ Initial schema executed");
 }
@@ -94,19 +98,19 @@ function initializeDatabase() {
 
     db = new Database(dbPath, {
       verbose: Logger.debug,
-      fileMustExist: false
+      fileMustExist: false,
     });
 
-    db.pragma('foreign_keys = ON');
-    db.pragma('journal_mode = WAL');
+    db.pragma("foreign_keys = ON");
+    db.pragma("journal_mode = WAL");
 
     backupDatabase(dbPath);
 
     if (!dbExists) {
-      Logger.debug('Creating new database with initial schema...');
+      Logger.debug("Creating new database with initial schema...");
       createInitialSchema(db);
     } else {
-      Logger.debug('Database file exists, checking for needed migrations...');
+      Logger.debug("Database file exists, checking for needed migrations...");
       up_v1_4_0(db);
       up_v1_5_0(db);
       up_v1_5_0_public(db);
@@ -114,22 +118,25 @@ function initializeDatabase() {
       up_v1_5_0_usernames(db);
       up_v1_5_1_api_keys(db);
       up_v1_6_0_snippet_expiry(db);
-      Logger.debug('All migrations applied successfully');
+      up_v1_7_0_snippet_pin_favorite(db);
+      Logger.debug("All migrations applied successfully");
     }
 
     startCheckpointInterval();
 
-    Logger.debug('Database initialization completed successfully');
+    Logger.debug("Database initialization completed successfully");
     return db;
   } catch (error) {
-    Logger.error('Database initialization error:', error);
+    Logger.error("Database initialization error:", error);
     throw error;
   }
 }
 
 function getDb() {
   if (!db) {
-    throw new Error('Database not initialized. Call initializeDatabase() first.');
+    throw new Error(
+      "Database not initialized. Call initializeDatabase() first."
+    );
   }
   return db;
 }
@@ -137,16 +144,16 @@ function getDb() {
 function shutdownDatabase() {
   if (db) {
     try {
-      Logger.debug('Performing final database checkpoint...');
-      db.pragma('wal_checkpoint(TRUNCATE)');
+      Logger.debug("Performing final database checkpoint...");
+      db.pragma("wal_checkpoint(TRUNCATE)");
 
       stopCheckpointInterval();
       db.close();
       db = null;
 
-      Logger.debug('Database shutdown completed successfully');
+      Logger.debug("Database shutdown completed successfully");
     } catch (error) {
-      Logger.error('Error during database shutdown:', error);
+      Logger.error("Error during database shutdown:", error);
       throw error;
     }
   }

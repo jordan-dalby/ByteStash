@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { useTheme } from '../contexts/ThemeContext';
+import { useState, useEffect } from "react";
+import { useTheme } from "../contexts/ThemeContext";
 
-type Theme = 'light' | 'dark' | 'system';
+type Theme = "light" | "dark" | "system";
 
 interface Settings {
   compactView: boolean;
@@ -12,61 +12,85 @@ interface Settings {
   expandCategories: boolean;
   showLineNumbers: boolean;
   theme: Theme;
+  showFavorites?: boolean;
 }
 
 export const useSettings = () => {
   const { setTheme: setThemeContext } = useTheme();
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => 
-    (localStorage.getItem('viewMode') as 'grid' | 'list') || 'grid'
+  const [viewMode, setViewMode] = useState<"grid" | "list">(
+    () => (localStorage.getItem("viewMode") as "grid" | "list") || "grid"
   );
-  const [compactView, setCompactView] = useState(() => localStorage.getItem('compactView') === 'true');
-  const [showCodePreview, setShowCodePreview] = useState(() => localStorage.getItem('showCodePreview') !== 'false');
-  const [previewLines, setPreviewLines] = useState(() => parseInt(localStorage.getItem('previewLines') || '4', 10));
-  const [includeCodeInSearch, setIncludeCodeInSearch] = useState(() => localStorage.getItem('includeCodeInSearch') === 'true');
-  const [showCategories, setShowCategories] = useState(() => localStorage.getItem('showCategories') !== 'false');
-  const [expandCategories, setExpandCategories] = useState(() => localStorage.getItem('expandCategories') === 'true');
-  const [showLineNumbers, setShowLineNumbers] = useState(() => localStorage.getItem('showLineNumbers') === 'true');
+  const [compactView, setCompactView] = useState(
+    () => localStorage.getItem("compactView") === "true"
+  );
+  const [showCodePreview, setShowCodePreview] = useState(
+    () => localStorage.getItem("showCodePreview") !== "false"
+  );
+  const [previewLines, setPreviewLines] = useState(() =>
+    parseInt(localStorage.getItem("previewLines") || "4", 10)
+  );
+  const [includeCodeInSearch, setIncludeCodeInSearch] = useState(
+    () => localStorage.getItem("includeCodeInSearch") === "true"
+  );
+  const [showCategories, setShowCategories] = useState(
+    () => localStorage.getItem("showCategories") !== "false"
+  );
+  const [expandCategories, setExpandCategories] = useState(
+    () => localStorage.getItem("expandCategories") === "true"
+  );
+  const [showLineNumbers, setShowLineNumbers] = useState(
+    () => localStorage.getItem("showLineNumbers") === "true"
+  );
+  const [showFavorites, setShowFavorites] = useState(
+    () => localStorage.getItem("showFavorites") === "true"
+  );
   const [theme, setThemeState] = useState<Theme>(() => {
-    const savedTheme = localStorage.getItem('theme');
-    return (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system') 
-      ? savedTheme 
-      : 'system';
+    const savedTheme = localStorage.getItem("theme");
+    return savedTheme === "light" ||
+      savedTheme === "dark" ||
+      savedTheme === "system"
+      ? savedTheme
+      : "system";
   });
 
   useEffect(() => {
-    localStorage.setItem('viewMode', viewMode);
+    localStorage.setItem("viewMode", viewMode);
   }, [viewMode]);
 
   useEffect(() => {
-    localStorage.setItem('compactView', compactView.toString());
+    localStorage.setItem("compactView", compactView.toString());
   }, [compactView]);
 
   useEffect(() => {
-    localStorage.setItem('showCodePreview', showCodePreview.toString());
+    localStorage.setItem("showCodePreview", showCodePreview.toString());
   }, [showCodePreview]);
 
   useEffect(() => {
-    localStorage.setItem('previewLines', previewLines.toString());
+    localStorage.setItem("previewLines", previewLines.toString());
   }, [previewLines]);
 
   useEffect(() => {
-    localStorage.setItem('includeCodeInSearch', includeCodeInSearch.toString());
+    localStorage.setItem("includeCodeInSearch", includeCodeInSearch.toString());
   }, [includeCodeInSearch]);
 
   useEffect(() => {
-    localStorage.setItem('showCategories', showCategories.toString());
+    localStorage.setItem("showCategories", showCategories.toString());
   }, [showCategories]);
 
   useEffect(() => {
-    localStorage.setItem('expandCategories', expandCategories.toString());
+    localStorage.setItem("expandCategories", expandCategories.toString());
   }, [expandCategories]);
 
   useEffect(() => {
-    localStorage.setItem('showLineNumbers', showLineNumbers.toString());
+    localStorage.setItem("showLineNumbers", showLineNumbers.toString());
   }, [showLineNumbers]);
 
   useEffect(() => {
-    localStorage.setItem('theme', theme);
+    localStorage.setItem("showFavorites", showFavorites.toString());
+  }, [showFavorites]);
+
+  useEffect(() => {
+    localStorage.setItem("theme", theme);
     setThemeContext(theme);
   }, [theme, setThemeContext]);
 
@@ -78,6 +102,9 @@ export const useSettings = () => {
     setShowCategories(newSettings.showCategories);
     setExpandCategories(newSettings.expandCategories);
     setShowLineNumbers(newSettings.showLineNumbers);
+    if (newSettings.showFavorites) {
+      setShowFavorites(newSettings.showFavorites);
+    }
     setThemeState(newSettings.theme);
   };
 
@@ -92,6 +119,8 @@ export const useSettings = () => {
     expandCategories,
     updateSettings,
     showLineNumbers,
-    theme
+    showFavorites,
+    setShowFavorites,
+    theme,
   };
 };

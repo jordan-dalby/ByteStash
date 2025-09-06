@@ -1,10 +1,10 @@
-import React from 'react';
-import { SnippetCard } from './SnippetCard';
-import { Snippet } from '../../../types/snippets';
+import React from "react";
+import { SnippetCard } from "./SnippetCard";
+import { Snippet } from "../../../types/snippets";
 
 export interface SnippetListProps {
   snippets: Snippet[];
-  viewMode: 'grid' | 'list';
+  viewMode: "grid" | "list";
   onOpen: (snippet: Snippet) => void;
   onDelete: (id: string) => void;
   onRestore: (id: string) => void;
@@ -21,47 +21,56 @@ export interface SnippetListProps {
   isPublicView: boolean;
   isRecycleView: boolean;
   isAuthenticated: boolean;
+  pinSnippet?: (id: string, isPinned: boolean) => Promise<Snippet | undefined>;
+  favoriteSnippet?: (
+    id: string,
+    isFavorite: boolean
+  ) => Promise<Snippet | undefined>;
 }
 
-const SnippetList: React.FC<SnippetListProps> = ({ 
-  snippets, 
-  viewMode, 
-  onOpen, 
+const SnippetList: React.FC<SnippetListProps> = ({
+  snippets,
+  viewMode,
+  onOpen,
   onDelete,
-  onRestore, 
+  onRestore,
   onEdit,
   onShare,
   onDuplicate,
   onCategoryClick,
-  compactView, 
-  showCodePreview, 
+  compactView,
+  showCodePreview,
   previewLines,
   showCategories,
   expandCategories,
   showLineNumbers,
   isPublicView,
   isRecycleView,
-  isAuthenticated
+  isAuthenticated,
+  pinSnippet,
+  favoriteSnippet,
 }) => {
   if (snippets.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-xl text-light-text-secondary dark:text-dark-text-secondary mb-4">
+      <div className="py-12 text-center">
+        <p className="mb-4 text-xl text-light-text-secondary dark:text-dark-text-secondary">
           No snippets match your search criteria.
         </p>
       </div>
     );
   }
-
   return (
-    <div className={viewMode === 'grid' 
-      ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' 
-      : 'space-y-6'
-    }>
-      {snippets.map(snippet => (
-        <SnippetCard 
-          key={snippet.id} 
-          snippet={snippet} 
+    <div
+      className={
+        viewMode === "grid"
+          ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          : "space-y-6"
+      }
+    >
+      {snippets.map((snippet) => (
+        <SnippetCard
+          key={snippet.id}
+          snippet={snippet}
           viewMode={viewMode}
           onOpen={onOpen}
           onDelete={onDelete}
@@ -79,6 +88,8 @@ const SnippetList: React.FC<SnippetListProps> = ({
           isPublicView={isPublicView}
           isRecycleView={isRecycleView}
           isAuthenticated={isAuthenticated}
+          pinSnippet={pinSnippet}
+          favoriteSnippet={favoriteSnippet}
         />
       ))}
     </div>

@@ -12,12 +12,14 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS snippets (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
+    title TEXT NOT NULL, 
     description TEXT,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     expiry_date DATETIME DEFAULT NULL,
-    user_id INTEGER REFERENCES users (id),
-    is_public BOOLEAN DEFAULT FALSE
+    user_id INTEGER REFERENCES users (id), 
+    is_public BOOLEAN DEFAULT FALSE,
+    is_pinned BOOLEAN DEFAULT FALSE,
+    is_favorite BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS categories (
