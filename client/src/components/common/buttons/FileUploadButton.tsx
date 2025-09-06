@@ -43,7 +43,6 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({
     if (!files || files.length === 0) return;
 
     let successCount = 0;
-    let errorCount = 0;
     let duplicateCount = 0;
 
     for (let i = 0; i < files.length; i++) {
@@ -70,7 +69,6 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({
         }`;
         onError(errorMessage);
         addToast(errorMessage, "error");
-        errorCount++;
       }
     }
 
