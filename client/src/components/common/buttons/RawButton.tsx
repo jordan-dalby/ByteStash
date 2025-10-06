@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Check, Code } from 'lucide-react';
-
+import { basePath } from '../../../utils/api/basePath';
 export interface RawButtonProps {
   isPublicView: boolean;
   snippetId: string;
@@ -14,9 +14,9 @@ const RawButton: React.FC<RawButtonProps> = ({ isPublicView, snippetId, fragment
     e.stopPropagation();
     try {
       if (isPublicView) {
-        window.open(`/api/public/snippets/${snippetId}/${fragmentId}/raw`, '_blank');
+        window.open(`${basePath}/api/public/snippets/${snippetId}/${fragmentId}/raw`, '_blank');
       } else {
-        window.open(`/api/snippets/${snippetId}/${fragmentId}/raw`, '_blank');
+        window.open(`${basePath}/api/snippets/${snippetId}/${fragmentId}/raw`, '_blank');
       }
     } catch (err) {
       console.error('Failed to open raw: ', err);
