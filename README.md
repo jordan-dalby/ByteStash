@@ -37,6 +37,7 @@ services:
       - "5000:5000"
     environment:
       # See https://github.com/jordan-dalby/ByteStash/wiki/FAQ#environment-variables
+      #ALLOWED_HOSTS: localhost,my.domain.com,my.domain.net
       BASE_PATH: ""
       JWT_SECRET: your-secret
       TOKEN_EXPIRY: 24h
