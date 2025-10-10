@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   AlertCircle,
   BookOpen,
@@ -94,6 +94,27 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { addToast } = useToast();
+
+  // Scroll preservation setup
+  const modalContentRef = useRef<HTMLDivElement | null>(null);
+  const scrollPosition = useRef(0);
+
+  useEffect(() => {
+    const modalEl = modalContentRef.current;
+    if (!modalEl) return;
+
+    const handleScroll = () => {
+      scrollPosition.current = modalEl.scrollTop;
+    };
+
+    modalEl.addEventListener("scroll", handleScroll);
+    return () => modalEl.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const modalEl = modalContentRef.current;
+    if (modalEl) modalEl.scrollTop = scrollPosition.current;
+  });
 
   const handleSave = () => {
     onSettingsChange({
@@ -344,6 +365,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
           Settings
         </h2>
       }
+      contentRef={modalContentRef}
     >
       <div className="pb-4">
         <div className="space-y-4">
