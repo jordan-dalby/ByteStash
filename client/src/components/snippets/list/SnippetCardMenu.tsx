@@ -92,6 +92,23 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
         label="Edit snippet"
       />
       <IconButton
+        icon={
+          isFavorite ? (
+            <StarOff size={16} className="hover:text-yellow-500" />
+          ) : (
+            <Star size={16} className="hover:text-yellow-500" />
+          )
+        }
+        onClick={(e: React.MouseEvent) => {
+          e.stopPropagation();
+          handleFavorite(e);
+        }}
+        variant="custom"
+        size="sm"
+        className="bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more"
+        label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+      />
+      <IconButton
         icon={<Trash2 size={16} className="hover:text-red-500" />}
         onClick={(e: React.MouseEvent) => {
           e.stopPropagation();
@@ -102,7 +119,6 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
         className="bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more"
         label="Delete snippet"
       />
-
       <div className="relative">
         <IconButton
           ref={buttonRef}
@@ -176,26 +192,6 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
             >
               <Copy size={16} />
               Duplicate snippet
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleFavorite(e);
-                setIsDropdownOpen(false);
-              }}
-              className="flex items-center w-full gap-2 px-4 py-2 text-sm text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover"
-            >
-              {isFavorite ? (
-                <>
-                  <StarOff size={16} />
-                  Remove from favorites
-                </>
-              ) : (
-                <>
-                  <Star size={16} />
-                  Add to favorites
-                </>
-              )}
             </button>
           </div>
         )}
