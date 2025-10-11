@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { ArrowLeftToLine, Loader2 } from "lucide-react";
 import { Snippet } from "../../../../types/snippets";
 import { getLanguageLabel } from "../../../../utils/language/languageUtils";
@@ -70,26 +71,62 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
   handleShowFavorites,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("");
   const [selectedSnippet, setSelectedSnippet] = useState<Snippet | null>(null);
   const [sortOrder, setSortOrder] = useState<
     "newest" | "oldest" | "alpha-asc" | "alpha-desc"
   >("newest");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const handleSearchTermChange = useCallback((term: string) => {
     setSearchTerm(term);
   }, []);
 
-  const handleCategoryClick = useCallback((category: string) => {
-    setSelectedCategories((prev) => {
-      if (prev.includes(category)) {
-        return prev.filter((c) => c !== category);
-      }
-      return [...prev, category];
-    });
-  }, []);
+  const handleCategoryClick = useCallback(
+    (category: string) => {
+      setSelectedCategories((prev) => {
+        let updatedCategories: string[];
+        const language = selectedLanguage;
+
+        if (prev.includes(category)) {
+          updatedCategories = prev.filter((c) => c !== category);
+        } else {
+          updatedCategories = [...prev, category];
+        }
+
+        // Build URL params properly
+        const params: any = {};
+        if (updatedCategories.length > 0) {
+          params.categories = updatedCategories.join(",");
+        }
+        if (language) {
+          params.language = language;
+        }
+
+        setSearchParams(params);
+
+        return updatedCategories;
+      });
+    },
+    [selectedLanguage, setSearchParams]
+  );
+
+  const handleLanguageChange = useCallback(
+    (language: string) => {
+      setSelectedLanguage(language);
+
+      const categories = selectedCategories.join(",");
+      const params: any = {};
+
+      if (categories) params.categories = categories;
+      if (language) params.language = language;
+
+      setSearchParams(params);
+    },
+    [selectedCategories, setSearchParams]
+  );
 
   const languages = useMemo(() => {
     const langSet = new Set<string>();
@@ -190,6 +227,20 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
   );
   const closeSnippet = useCallback(() => setSelectedSnippet(null), []);
 
+  useEffect(() => {
+    const urlCategories = searchParams.get("categories");
+    if (urlCategories) {
+      setSelectedCategories(urlCategories.split(","));
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    const urlLanguage = searchParams.get("language");
+    if (urlLanguage) {
+      setSelectedLanguage(urlLanguage);
+    }
+  }, [searchParams]);
+
   if (isLoading) {
     return (
       <PageContainer>
@@ -219,7 +270,7 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
         searchTerm={searchTerm}
         setSearchTerm={handleSearchTermChange}
         selectedLanguage={selectedLanguage}
-        setSelectedLanguage={setSelectedLanguage}
+        onLanguageChange={handleLanguageChange}
         languages={languages}
         sortOrder={sortOrder}
         setSortOrder={setSortOrder}

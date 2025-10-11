@@ -25,7 +25,7 @@ export interface SearchAndFilterProps {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   selectedLanguage: string;
-  setSelectedLanguage: (language: string) => void;
+  onLanguageChange: (language: string) => void;
   languages: string[];
   sortOrder: SortOrder;
   setSortOrder: (order: SortOrder) => void;
@@ -46,7 +46,7 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
   searchTerm,
   setSearchTerm,
   selectedLanguage,
-  setSelectedLanguage,
+  onLanguageChange,
   languages,
   sortOrder,
   setSortOrder,
@@ -77,7 +77,7 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
         <select
           className="px-4 py-2 pr-10 rounded-lg appearance-none bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary"
           value={selectedLanguage}
-          onChange={(e) => setSelectedLanguage(e.target.value)}
+          onChange={(e) => onLanguageChange(e.target.value)}
         >
           <option value="">All Languages</option>
           {languages.map((lang) => (
