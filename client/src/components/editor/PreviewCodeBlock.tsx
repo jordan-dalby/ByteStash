@@ -1,11 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus, oneLight } from 'react-syntax-highlighter/dist/cjs/styles/prism';
-import { getLanguageLabel, getMonacoLanguage } from '../../utils/language/languageUtils';
-import CopyButton from '../common/buttons/CopyButton';
-import { useTheme } from '../../contexts/ThemeContext';
-import RawButton from '../common/buttons/RawButton';
+import React, { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import {
+  vscDarkPlus,
+  oneLight,
+} from "react-syntax-highlighter/dist/cjs/styles/prism";
+import {
+  getLanguageLabel,
+  getMonacoLanguage,
+} from "../../utils/language/languageUtils";
+import CopyButton from "../common/buttons/CopyButton";
+import { useTheme } from "../../contexts/ThemeContext";
+import RawButton from "../common/buttons/RawButton";
+import Admonition from "../utils/Admonition";
+import { flattenToText } from "../../utils/markdownUtils";
 
 interface PreviewCodeBlockProps {
   code: string;
@@ -20,25 +28,31 @@ interface PreviewCodeBlockProps {
 
 export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
   code,
-  language = 'plaintext',
+  language = "plaintext",
   previewLines = 4,
   showLineNumbers = true,
   isPublicView,
   isRecycleView,
   snippetId,
-  fragmentId
+  fragmentId,
 }) => {
   const { theme } = useTheme();
-  const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark'>(
-    theme === 'system'
-      ? window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  const [effectiveTheme, setEffectiveTheme] = useState<"light" | "dark">(
+    theme === "system"
+      ? window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light"
       : theme
   );
 
   useEffect(() => {
     const updateEffectiveTheme = () => {
-      if (theme === 'system') {
-        setEffectiveTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      if (theme === "system") {
+        setEffectiveTheme(
+          window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light"
+        );
       } else {
         setEffectiveTheme(theme);
       }
@@ -46,38 +60,42 @@ export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
 
     updateEffectiveTheme();
 
-    if (theme === 'system') {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      mediaQuery.addEventListener('change', updateEffectiveTheme);
-      return () => mediaQuery.removeEventListener('change', updateEffectiveTheme);
+    if (theme === "system") {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      mediaQuery.addEventListener("change", updateEffectiveTheme);
+      return () =>
+        mediaQuery.removeEventListener("change", updateEffectiveTheme);
     }
   }, [theme]);
 
-  const isDark = effectiveTheme === 'dark';
-  const isMarkdown = getLanguageLabel(language) === 'markdown';
+  const isDark = effectiveTheme === "dark";
+  const isMarkdown = getLanguageLabel(language) === "markdown";
   const LINE_HEIGHT = 19;
   const visibleHeight = (previewLines + 2) * LINE_HEIGHT;
 
-  const truncatedCode = code.split('\n').slice(0, previewLines + 5).join('\n');
+  const truncatedCode = code
+    .split("\n")
+    .slice(0, previewLines + 5)
+    .join("\n");
 
   const baseTheme = isDark ? vscDarkPlus : oneLight;
-  const backgroundColor = isDark ? '#1E1E1E' : '#ffffff';
+  const backgroundColor = isDark ? "#1E1E1E" : "#ffffff";
   const customStyle = {
     ...baseTheme,
     'pre[class*="language-"]': {
       ...baseTheme['pre[class*="language-"]'],
       margin: 0,
-      fontSize: '13px',
+      fontSize: "13px",
       background: backgroundColor,
-      padding: '1rem',
+      padding: "1rem",
     },
     'code[class*="language-"]': {
       ...baseTheme['code[class*="language-"]'],
-      fontSize: '13px',
+      fontSize: "13px",
       background: backgroundColor,
-      display: 'block',
+      display: "block",
       textIndent: 0,
-    }
+    },
   };
 
   return (
@@ -96,19 +114,54 @@ export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
           .token-line:nth-child(n+${previewLines + 1}) {
             visibility: hidden;
           }
-          .react-syntax-highlighter-line-number:nth-child(n+${previewLines + 1}) {
+          .react-syntax-highlighter-line-number:nth-child(n+${
+            previewLines + 1
+          }) {
             visibility: hidden;
           }
           :root {
-            --text-color: ${isDark ? '#ffffff' : '#000000'};
+            --text-color: ${isDark ? "#ffffff" : "#000000"};
           }
         `}
       </style>
 
       <div className="relative">
         {isMarkdown ? (
-          <div className="markdown-content markdown-content-preview rounded-lg overflow-hidden" style={{ backgroundColor }}>
-            <ReactMarkdown className={`markdown prose ${isDark ? 'prose-invert' : ''} max-w-none`}>
+          <div
+            className="overflow-hidden rounded-lg markdown-content markdown-content-preview"
+            style={{ backgroundColor }}
+          >
+            <ReactMarkdown
+              className={`markdown prose ${
+                isDark ? "prose-invert" : ""
+              } max-w-none`}
+              components={{
+                blockquote: ({ children }) => {
+                  const text = flattenToText(children).trim();
+                  const match = text.match(
+                    /^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*([\s\S]*)$/
+                  );
+                  if (match) {
+                    return (
+                      <Admonition type={match[1]}>{match[2].trim()}</Admonition>
+                    );
+                  }
+                  return <blockquote>{children}</blockquote>;
+                },
+                p: ({ children }) => {
+                  const text = flattenToText(children).trim();
+                  const match = text.match(
+                    /^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*([\s\S]*)$/
+                  );
+                  if (match) {
+                    return (
+                      <Admonition type={match[1]}>{match[2].trim()}</Admonition>
+                    );
+                  }
+                  return <p>{children}</p>;
+                },
+              }}
+            >
               {truncatedCode}
             </ReactMarkdown>
           </div>
@@ -121,10 +174,10 @@ export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
               wrapLines={true}
               lineProps={{
                 style: {
-                  whiteSpace: 'pre',
-                  wordBreak: 'break-all',
-                  paddingLeft: 0
-                }
+                  whiteSpace: "pre",
+                  wordBreak: "break-all",
+                  paddingLeft: 0,
+                },
               }}
               customStyle={{
                 maxHeight: visibleHeight,
@@ -133,8 +186,8 @@ export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
                 marginTop: 0,
                 textIndent: 0,
                 paddingLeft: showLineNumbers ? 10 : 20,
-                borderRadius: '0.5rem',
-                overflow: 'hidden',
+                borderRadius: "0.5rem",
+                overflow: "hidden",
                 background: backgroundColor,
               }}
             >
@@ -144,22 +197,25 @@ export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
         )}
 
         <div
-          className="absolute inset-x-0 bottom-0 bg-gradient-to-t to-transparent pointer-events-none rounded-b-lg"
+          className="absolute inset-x-0 bottom-0 rounded-b-lg pointer-events-none bg-gradient-to-t to-transparent"
           style={{
             height: `${LINE_HEIGHT * 2}px`,
-            background: `linear-gradient(to top, ${backgroundColor}, transparent)`
+            background: `linear-gradient(to top, ${backgroundColor}, transparent)`,
           }}
         />
 
         <CopyButton text={code} />
-        {!isRecycleView && isPublicView !== undefined && snippetId !== undefined && fragmentId !== undefined && (
-          <RawButton
-            isPublicView={isPublicView}
-            snippetId={snippetId}
-            fragmentId={fragmentId}
-          />
-        )}
+        {!isRecycleView &&
+          isPublicView !== undefined &&
+          snippetId !== undefined &&
+          fragmentId !== undefined && (
+            <RawButton
+              isPublicView={isPublicView}
+              snippetId={snippetId}
+              fragmentId={fragmentId}
+            />
+          )}
       </div>
     </div>
   );
-}
+};
