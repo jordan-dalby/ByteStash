@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { ArrowLeftToLine, Loader2 } from "lucide-react";
+import { ArrowLeftToLine, Loader2, Trash2 } from "lucide-react";
 import { Snippet } from "../../../../types/snippets";
 import { getLanguageLabel } from "../../../../utils/language/languageUtils";
 import { SearchAndFilter } from "../../../search/SearchAndFilter";
@@ -9,6 +9,9 @@ import SnippetModal from "../SnippetModal";
 import { PageContainer } from "../../../common/layout/PageContainer";
 import { useNavigate } from "react-router-dom";
 import StorageHeader from "./StorageHeader";
+import { IconButton } from "../../../common/buttons/IconButton";
+import { ConfirmationModal } from "../../../common/modals/ConfirmationModal";
+import { useToast } from "../../../../hooks/useToast";
 
 interface BaseSnippetStorageProps {
   snippets: Snippet[];
@@ -25,6 +28,7 @@ interface BaseSnippetStorageProps {
   onSettingsOpen: () => void;
   onNewSnippet: () => void;
   onDelete?: (id: string) => Promise<void>;
+  onPermanentDeleteAll?: (snippets: Snippet[]) => Promise<void>;
   onRestore?: (id: string) => Promise<void>;
   onEdit?: (snippet: Snippet) => void;
   onShare?: (snippet: Snippet) => void;
@@ -57,6 +61,7 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
   onSettingsOpen,
   onNewSnippet,
   onDelete,
+  onPermanentDeleteAll,
   onRestore,
   onEdit,
   onShare,
@@ -78,7 +83,10 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
   >("newest");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [isPermanentDeleteAllModalOpen, setIsPermanentDeleteAllModalOpen] =
+    useState(false);
   const navigate = useNavigate();
+  const { addToast } = useToast();
 
   const handleSearchTermChange = useCallback((term: string) => {
     setSearchTerm(term);
@@ -227,6 +235,24 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
   );
   const closeSnippet = useCallback(() => setSelectedSnippet(null), []);
 
+  const openPermanentDeleteAllModal = () => {
+    if (snippets.length === 0) {
+      addToast("No snippets in the recycle bin to clear.", "info");
+      return;
+    }
+    setIsPermanentDeleteAllModalOpen(true);
+  };
+
+  const closePermanentDeleteAllModal = () =>
+    setIsPermanentDeleteAllModalOpen(false);
+
+  const handlePermanentDeleteAllConfirm = async () => {
+    closePermanentDeleteAllModal();
+    if (onPermanentDeleteAll) {
+      await onPermanentDeleteAll(snippets);
+    }
+  };
+
   useEffect(() => {
     const urlCategories = searchParams.get("categories");
     if (urlCategories) {
@@ -296,12 +322,23 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
             <ArrowLeftToLine size={18} /> Back to Snippets
           </button>
 
-          <div className="text-sm text-light-text-primary dark:text-dark-text-secondary">
-            <h1 className="text-2xl font-semibold text-white">Recycle Bin</h1>
-            <p className="text-sm">
-              Snippets in the recycle bin will be permanently deleted after 30
-              days.
-            </p>
+          <div className="flex items-center justify-between text-sm text-light-text-primary dark:text-dark-text-secondary">
+            <div>
+              <h1 className="text-2xl font-semibold text-white">Recycle Bin</h1>
+              <p className="text-sm">
+                Snippets in the recycle bin will be permanently deleted after 30
+                days.
+              </p>
+            </div>
+
+            <IconButton
+              icon={<Trash2 size={18} />}
+              label="Clear all"
+              showLabel={true}
+              variant="danger"
+              size="sm"
+              onClick={openPermanentDeleteAllModal}
+            />
           </div>
         </div>
       )}
@@ -359,6 +396,17 @@ const BaseSnippetStorage: React.FC<BaseSnippetStorageProps> = ({
         showLineNumbers={showLineNumbers}
         isPublicView={isPublicView}
         isRecycleView={false}
+      />
+
+      <ConfirmationModal
+        isOpen={isPermanentDeleteAllModalOpen}
+        onClose={closePermanentDeleteAllModal}
+        onConfirm={handlePermanentDeleteAllConfirm}
+        title="Confirm Deletion"
+        message={`Are you sure you want to permanently clear all snippets in the recycle bin? This action cannot be undone.`}
+        confirmLabel="Delete Permanently"
+        cancelLabel="Cancel"
+        variant="danger"
       />
     </div>
   );
