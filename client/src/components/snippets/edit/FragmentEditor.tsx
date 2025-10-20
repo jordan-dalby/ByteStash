@@ -51,7 +51,7 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
     };
   
     return (
-      <div className="bg-light-surface dark:bg-dark-surface rounded-lg border border-light-border dark:border-dark-border shadow-lg">
+      <div className="border rounded-lg shadow-lg bg-light-surface dark:bg-dark-surface border-light-border dark:border-dark-border">
         <div className="flex items-center gap-2 p-3 bg-light-hover dark:bg-dark-hover">
           <div className="flex items-center gap-0.5">
             <IconButton
@@ -74,16 +74,13 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
             />
           </div>
   
-          <div className="flex-1 flex items-center gap-3">
+          <div className="flex items-center flex-1 gap-3">
             <div className="w-1/3">
               <input
                 type="text"
                 value={fragment.file_name}
                 onChange={handleFileNameChange}
-                className="w-full bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text px-3 py-2 rounded text-sm 
-                  border border-light-border dark:border-dark-border
-                  focus:border-light-primary dark:focus:border-dark-primary focus:ring-1 focus:ring-light-primary dark:focus:ring-dark-primary 
-                  transition-colors"
+                className="w-full px-3 py-2 text-sm transition-colors border rounded bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text border-light-border dark:border-dark-border focus:border-light-primary dark:focus:border-dark-primary focus:ring-1 focus:ring-light-primary dark:focus:ring-dark-primary"
                 placeholder="File name"
                 required
               />

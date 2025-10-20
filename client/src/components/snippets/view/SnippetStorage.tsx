@@ -10,6 +10,7 @@ import { UserDropdown } from "../../auth/UserDropdown";
 import BaseSnippetStorage from "./common/BaseSnippetStorage";
 import { Snippet } from "../../../types/snippets";
 import { useAuth } from "../../../hooks/useAuth";
+import { saveLanguagesUsage } from "../../../utils/language/languageUtils";
 
 const SnippetStorage: React.FC = () => {
   const {
@@ -51,6 +52,12 @@ const SnippetStorage: React.FC = () => {
   useEffect(() => {
     initializeMonaco();
   }, []);
+
+  useEffect(() => {
+    if (snippets && snippets.length > 0) {
+      saveLanguagesUsage(snippets);
+    }
+  }, [snippets]);
 
   const openEditSnippetModal = (snippet: Snippet | null = null) => {
     setSnippetToEdit(snippet);
