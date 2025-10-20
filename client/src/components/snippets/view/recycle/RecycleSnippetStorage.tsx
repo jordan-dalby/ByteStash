@@ -1,21 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { useSettings } from '../../../../hooks/useSettings';
-import { useToast } from '../../../../hooks/useToast';
-import { useAuth } from '../../../../hooks/useAuth';
-import { initializeMonaco } from '../../../../utils/language/languageUtils';
-import SettingsModal from '../../../settings/SettingsModal';
-import BaseSnippetStorage from '../common/BaseSnippetStorage';
-import { getRecycleSnippets } from '../../../../utils/api/snippets';
-import { useSnippets } from '../../../../hooks/useSnippets';
-import { Snippet } from '../../../../types/snippets';
-import { UserDropdown } from '../../../auth/UserDropdown';
+import React, { useState, useEffect } from "react";
+import { useSettings } from "../../../../hooks/useSettings";
+import { useToast } from "../../../../hooks/useToast";
+import { useAuth } from "../../../../hooks/useAuth";
+import { initializeMonaco } from "../../../../utils/language/languageUtils";
+import SettingsModal from "../../../settings/SettingsModal";
+import BaseSnippetStorage from "../common/BaseSnippetStorage";
+import { getRecycleSnippets } from "../../../../utils/api/snippets";
+import { useSnippets } from "../../../../hooks/useSnippets";
+import { Snippet } from "../../../../types/snippets";
+import { UserDropdown } from "../../../auth/UserDropdown";
 
 const RecycleSnippetStorage: React.FC = () => {
-  const { 
-    viewMode, setViewMode, compactView, showCodePreview, 
-    previewLines, includeCodeInSearch, updateSettings,
-    showCategories, expandCategories, showLineNumbers,
-    theme
+  const {
+    viewMode,
+    setViewMode,
+    compactView,
+    showCodePreview,
+    previewLines,
+    includeCodeInSearch,
+    updateSettings,
+    showCategories,
+    expandCategories,
+    showLineNumbers,
+    theme,
   } = useSettings();
 
   const { isAuthenticated } = useAuth();
@@ -23,7 +30,8 @@ const RecycleSnippetStorage: React.FC = () => {
   const [snippets, setSnippets] = useState<Snippet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
-  const { permanentDeleteSnippet, restoreSnippet } = useSnippets();
+  const { permanentDeleteSnippet, restoreSnippet, permanentDeleteAllSnippets } =
+    useSnippets();
 
   useEffect(() => {
     initializeMonaco();
@@ -35,8 +43,8 @@ const RecycleSnippetStorage: React.FC = () => {
       const fetchedSnippets = await getRecycleSnippets();
       setSnippets(fetchedSnippets);
     } catch (error) {
-      console.error('Failed to load recycled snippets:', error);
-      addToast('Failed to load recycled snippets', 'error');
+      console.error("Failed to load recycled snippets:", error);
+      addToast("Failed to load recycled snippets", "error");
     } finally {
       setIsLoading(false);
     }
@@ -58,6 +66,10 @@ const RecycleSnippetStorage: React.FC = () => {
           await permanentDeleteSnippet(id);
           loadSnippets(); // refresh after delete
         }}
+        onPermanentDeleteAll={async () => {
+          await permanentDeleteAllSnippets(snippets);
+          loadSnippets(); // refresh after delete all
+        }}
         onRestore={restoreSnippet}
         expandCategories={expandCategories}
         showLineNumbers={showLineNumbers}
@@ -72,15 +84,15 @@ const RecycleSnippetStorage: React.FC = () => {
       <SettingsModal
         isOpen={isSettingsModalOpen}
         onClose={() => setIsSettingsModalOpen(false)}
-        settings={{ 
-          compactView, 
-          showCodePreview, 
-          previewLines, 
-          includeCodeInSearch, 
-          showCategories, 
-          expandCategories, 
+        settings={{
+          compactView,
+          showCodePreview,
+          previewLines,
+          includeCodeInSearch,
+          showCategories,
+          expandCategories,
           showLineNumbers,
-          theme
+          theme,
         }}
         onSettingsChange={updateSettings}
         snippets={[]}

@@ -232,6 +232,23 @@ export const useSnippets = () => {
     loadSnippets(true);
   }, [loadSnippets]);
 
+  const permanentDeleteAllSnippets = useCallback(
+    async (recycleBinSnippets: Snippet[]) => {
+      try {
+        await Promise.all(recycleBinSnippets.map((s) => deleteSnippet(s.id)));
+        setSnippets((prev) =>
+          prev.filter((s) => !recycleBinSnippets.some((r) => r.id === s.id))
+        );
+        addToast("All snippets in the recycle bin are cleared.", "success");
+      } catch (error: any) {
+        console.error("Failed to clear all recycle bin snippets:", error);
+        handleAuthError(error);
+        addToast("Failed to clear recycle bin. Please try again.", "error");
+      }
+    },
+    [addToast, handleAuthError]
+  );
+
   useEffect(() => {
     mountedRef.current = true;
 
@@ -252,6 +269,7 @@ export const useSnippets = () => {
       updateSnippet,
       removeSnippet,
       permanentDeleteSnippet,
+      permanentDeleteAllSnippets,
       restoreSnippet,
       pinSnippet,
       favoriteSnippet,
