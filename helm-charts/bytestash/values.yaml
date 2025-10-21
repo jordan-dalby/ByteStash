@@ -22,6 +22,11 @@ serviceAccount:
 ###
 replicaCount: 1
 
+### Deployment strategy (default: RollingUpdate)
+### Set to Recreate if using persistence with ReadWriteOnce volumes
+strategy:
+  type: RollingUpdate
+
 ### Enabling this will persist the `/data` directory with a Persistent Volume
 persistence:
   enabled: false
