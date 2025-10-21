@@ -573,36 +573,40 @@ export const getLanguagesUsage = (
 export const saveLanguagesUsage = (snippets: Snippet[]): void => {
   const usage = getLanguagesUsage(snippets);
   localStorage.setItem("languagesUsage", JSON.stringify(usage));
+  getLanguageDropdownSections();
 };
 
-export const getLanguageDropdownSections = (
-  snippets: Snippet[]
-): DropdownSections => {
-  const languageCount: Record<string, number> = {};
+export const getLanguageDropdownSections = (): DropdownSections => {
+  let languageUsage: Record<string, number> = {};
 
-  // Count languages used in snippets
-  for (const snippet of snippets || []) {
-    for (const fragment of snippet.fragments || []) {
-      const lang = fragment.language?.trim().toLowerCase();
-      if (!lang) continue;
-      languageCount[lang] = (languageCount[lang] || 0) + 1;
+  try {
+    const stored = localStorage.getItem("languagesUsage");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (parsed && typeof parsed === "object") {
+        languageUsage = parsed as Record<string, number>;
+      }
     }
+  } catch {
+    languageUsage = {};
   }
 
-  // Sort used languages by count descending, then alphabetically
-  const used = Object.entries(languageCount)
-    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-    .map(([lang]) => lang);
+  const allLanguages: string[] = Object.keys(LANGUAGE_MAPPING);
 
-  // Get all supported languages
-  const allLanguages = getSupportedLanguages().map((lang) =>
-    lang.language.toLowerCase()
-  );
+  // Used languages sorted by usage count (descending) then alphabetically
+  const used: string[] = allLanguages
+    .filter((lang) => (languageUsage[lang] ?? 0) > 0)
+    .sort((a, b) => {
+      const countA = languageUsage[a] ?? 0;
+      const countB = languageUsage[b] ?? 0;
+      return countB - countA || a.localeCompare(b);
+    });
 
-  // Other languages = supported languages not in used
-  const other = allLanguages.filter((lang) => !used.includes(lang));
-  console.log("Used languages:", used);
-  console.log("Other languages:", other);
+  // Other languages sorted alphabetically
+  const other: string[] = allLanguages
+    .filter((lang) => !used.includes(lang))
+    .sort((a, b) => a.localeCompare(b));
+
   return { used, other };
 };
 
