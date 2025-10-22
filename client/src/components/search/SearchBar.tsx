@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
-import BaseDropdown from '../common/dropdowns/BaseDropdown';
+import BaseDropdown, { BaseDropdownRef } from '../common/dropdowns/BaseDropdown';
 import { IconButton } from '../common/buttons/IconButton';
+import { useKeyboardShortcut } from '../../hooks/useKeyboardShortcut';
 
 interface SearchBarProps {
   value: string;
@@ -22,6 +23,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 }) => {
   const [inputValue, setInputValue] = useState(value);
   const lastValueRef = useRef(value);
+  const inputRef = useRef<BaseDropdownRef>(null);
 
   useEffect(() => {
     if (value !== lastValueRef.current) {
@@ -29,6 +31,16 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       lastValueRef.current = value;
     }
   }, [value]);
+
+  // Focus the search input when "/" key is pressed
+  useKeyboardShortcut({
+    key: '/',
+    callback: () => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    },
+  });
 
   const getSections = (searchTerm: string) => {
     if (!searchTerm.includes('#')) return [];
@@ -79,6 +91,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   return (
     <div className="relative flex-grow">
       <BaseDropdown
+        ref={inputRef}
         value={inputValue}
         onChange={(value) => {
           setInputValue(value);

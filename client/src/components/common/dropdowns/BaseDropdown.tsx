@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react";
 import { ChevronDown } from "lucide-react";
 
 interface Section {
@@ -19,7 +19,15 @@ export interface BaseDropdownProps {
   showChevron?: boolean;
 }
 
-const BaseDropdown: React.FC<BaseDropdownProps> = ({
+/**
+ * Ref interface for BaseDropdown component
+ */
+export interface BaseDropdownRef {
+  /** Focus the dropdown input */
+  focus: () => void;
+}
+
+const BaseDropdown = forwardRef<BaseDropdownRef, BaseDropdownProps>(({
   value,
   onChange,
   onSelect,
@@ -30,7 +38,7 @@ const BaseDropdown: React.FC<BaseDropdownProps> = ({
   disabled = false,
   maxLength,
   showChevron = true,
-}) => {
+}, ref) => {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
   const [internalValue, setInternalValue] = useState(value);
@@ -38,6 +46,14 @@ const BaseDropdown: React.FC<BaseDropdownProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const lastInteractionWasMouse = useRef(false);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    },
+  }));
 
   useEffect(() => {
     setInternalValue(value);
@@ -237,6 +253,8 @@ const BaseDropdown: React.FC<BaseDropdownProps> = ({
       )}
     </div>
   );
-};
+});
+
+BaseDropdown.displayName = 'BaseDropdown';
 
 export default BaseDropdown;
