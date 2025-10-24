@@ -27,7 +27,9 @@ router.get('/:id/:fragmentId/raw', async (req, res) => {
         res.status(404).send('Fragment not found');
       } else {
         res.set('Content-Type', 'text/plain; charset=utf-8');
-        res.send(fragment.code);
+        // Remove carriage returns to fix bash script execution issues
+        const normalizedCode = fragment.code.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        res.send(normalizedCode);
       }
     }
   } catch (error) {
