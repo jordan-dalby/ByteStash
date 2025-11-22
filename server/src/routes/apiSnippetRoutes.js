@@ -7,14 +7,41 @@ import {authenticateApiKey} from '../middleware/apiKeyAuth.js';
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
+const parsePaginationParams = (query) => {
+  const DEFAULT_LIMIT = 50;
+  const MAX_LIMIT = 100;
+
+  let limit = parseInt(query.limit) || DEFAULT_LIMIT;
+  let offset = parseInt(query.offset) || 0;
+
+  // Validate and constrain values
+  if (limit < 1) limit = DEFAULT_LIMIT;
+  if (limit > MAX_LIMIT) limit = MAX_LIMIT;
+  if (offset < 0) offset = 0;
+
+  return { limit, offset };
+};
+
 router.get('/', authenticateApiKey, async (req, res) => {
   try {
     if (!req.user) {
       return res.status(401).json({ error: 'API key required' });
     }
 
-    const snippets = await snippetService.getAllSnippets(req.user.id);
-    res.status(200).json(snippets);
+    const { limit, offset } = parsePaginationParams(req.query);
+    const allSnippets = await snippetService.getAllSnippets(req.user.id);
+    const total = allSnippets.length;
+    const snippets = allSnippets.slice(offset, offset + limit);
+
+    res.status(200).json({
+      data: snippets,
+      pagination: {
+        total,
+        offset,
+        limit,
+        hasMore: offset + limit < total
+      }
+    });
   } catch (error) {
     Logger.error('Error in GET /api/v1/snippets:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -28,6 +55,7 @@ router.get('/search', authenticateApiKey, async (req, res) => {
     }
     const snippets = await snippetService.getAllSnippets(req.user.id)
     const { q, sort, searchCode } = req.query;
+    const { limit, offset } = parsePaginationParams(req.query);
     const searchTerm = q || '';
     const filteredSnippets = snippets.filter(snippet => {
         const basicMatch = (
@@ -55,7 +83,19 @@ router.get('/search', authenticateApiKey, async (req, res) => {
             return 0;
         }
       });
-    res.status(200).json(filteredSnippets);
+
+    const total = filteredSnippets.length;
+    const paginatedSnippets = filteredSnippets.slice(offset, offset + limit);
+
+    res.status(200).json({
+      data: paginatedSnippets,
+      pagination: {
+        total,
+        offset,
+        limit,
+        hasMore: offset + limit < total
+      }
+    });
   } catch (error) {
     Logger.error('Error in GET /api/v1/snippets/search:', error);
     res.status(500).json({ error: 'Internal server error' });
