@@ -393,6 +393,18 @@ const LANGUAGE_MAPPING: LanguageMapping = {
     label: "vyper",
   },
 
+  // Hardware Description Languages
+  verilog: {
+    aliases: ['v', 'vh', 'verilog-hdl', 'hdl'],
+    monacoAlias: 'systemverilog',
+    label: 'verilog'
+  },
+  systemverilog: {
+    aliases: ['sv', 'svh', 'systemverilog-hdl', 'sv-hdl'],
+    monacoAlias: 'systemverilog',
+    label: 'systemverilog'
+  },
+
   // Scientific & Math
   latex: {
     aliases: ["tex", "context", "ltx", "bibtex", "texinfo"],
