@@ -38,7 +38,13 @@ export const FullCodeView: React.FC<FullCodeViewProps> = ({
 
   const getRelativeUpdateTime = (updatedAt: string): string => {
     try {
+      if (!updatedAt) {
+        return "Unknown";
+      }
       const updateDate = new Date(updatedAt);
+      if (isNaN(updateDate.getTime())) {
+        return "Unknown";
+      }
       return formatDistanceToNow(updateDate);
     } catch (error) {
       console.error("Error formatting update date:", error);

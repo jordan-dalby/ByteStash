@@ -492,6 +492,7 @@ class SnippetRepository {
           s.title,
           s.description,
           datetime(s.updated_at) || 'Z' as updated_at,
+          CASE WHEN s.expiry_date IS NOT NULL THEN datetime(s.expiry_date) || 'Z' ELSE NULL END as expiry_date,
           s.user_id,
           s.is_public,
           s.is_pinned,

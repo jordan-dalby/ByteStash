@@ -76,7 +76,13 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
 
   const getRelativeUpdateTime = (updatedAt: string): string => {
     try {
+      if (!updatedAt) {
+        return "Unknown";
+      }
       const updateDate = new Date(updatedAt);
+      if (isNaN(updateDate.getTime())) {
+        return "Unknown";
+      }
       return formatDistanceToNow(updateDate);
     } catch (error) {
       console.error("Error formatting update date:", error);
@@ -220,10 +226,12 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
               <Clock size={12} />
               {!isRecycleView ? (
                 <span>{getRelativeUpdateTime(snippet.updated_at)} ago</span>
-              ) : (
+              ) : snippet.expiry_date ? (
                 <span>
-                  {getRelativeUpdateTime(snippet.expiry_date || "")} left
+                  {getRelativeUpdateTime(snippet.expiry_date)} left
                 </span>
+              ) : (
+                <span>Expiring soon</span>
               )}
             </div>
           </div>
