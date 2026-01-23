@@ -203,6 +203,54 @@ class SnippetService {
       throw error;
     }
   }
+
+  async getSnippetsPaginated({ userId, filters, sort, limit, offset }) {
+    try {
+      Logger.debug(
+        "Service: Getting paginated snippets for user:",
+        userId,
+        "with filters:",
+        filters,
+        "sort:",
+        sort,
+        "limit:",
+        limit,
+        "offset:",
+        offset
+      );
+      const result = await snippetRepository.findAllPaginated({
+        userId,
+        filters,
+        sort,
+        limit,
+        offset
+      });
+      Logger.debug(
+        `Service: Retrieved ${result.snippets.length} snippets, total: ${result.total}`
+      );
+      return result;
+    } catch (error) {
+      Logger.error("Service Error - getSnippetsPaginated:", error);
+      throw error;
+    }
+  }
+
+  async getMetadata(userId = null) {
+    try {
+      Logger.debug(
+        "Service: Getting metadata for",
+        userId !== null ? `user: ${userId}` : "public snippets"
+      );
+      const result = await snippetRepository.getMetadata(userId);
+      Logger.debug(
+        `Service: Retrieved ${result.categories.length} categories, ${result.languages.length} languages`
+      );
+      return result;
+    } catch (error) {
+      Logger.error("Service Error - getMetadata:", error);
+      throw error;
+    }
+  }
 }
 
 export default new SnippetService();

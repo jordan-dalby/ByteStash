@@ -8,7 +8,6 @@ import publicRoutes from "./routes/publicRoutes.js";
 import oidcRoutes from "./routes/oidcRoutes.js";
 import embedRoutes from "./routes/embedRoutes.js";
 import apiKeyRoutes from "./routes/apiKeyRoutes.js";
-import apiSnippetRoutes from "./routes/apiSnippetRoutes.js";
 import { authenticateToken } from "./middleware/auth.js";
 import { authenticateApiKey } from "./middleware/apiKeyAuth.js";
 import { fileURLToPath } from "url";
@@ -52,7 +51,6 @@ app.use(
 app.use(`${basePath}/api/share`, shareRoutes);
 app.use(`${basePath}/api/public/snippets`, publicRoutes);
 app.use(`${basePath}/api/embed`, embedRoutes);
-app.use(`${basePath}/api/v1/snippets`, apiSnippetRoutes);
 
 app.use(
   `${basePath}/manifest.json`,

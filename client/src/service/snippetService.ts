@@ -75,4 +75,85 @@ export const snippetService = {
       { requiresAuth: true }
     );
   },
+
+  async getSnippetsPaginated(params: {
+    limit?: number;
+    offset?: number;
+    search?: string;
+    searchCode?: boolean;
+    language?: string;
+    category?: string;  // comma-separated
+    favorites?: boolean;
+    pinned?: boolean;
+    recycled?: boolean;
+    sort?: string;
+  }): Promise<{
+    data: Snippet[];
+    pagination: {
+      total: number;
+      offset: number;
+      limit: number;
+      hasMore: boolean;
+    };
+  }> {
+    const queryString = new URLSearchParams(
+      Object.entries(params)
+        .filter(([_, v]) => v !== undefined && v !== null && v !== '')
+        .map(([k, v]) => [k, String(v)])
+    ).toString();
+
+    return apiClient.get<any>(
+      `${API_ENDPOINTS.SNIPPETS}${queryString ? '?' + queryString : ''}`,
+      { requiresAuth: true }
+    );
+  },
+
+  async getSnippetsMetadata(): Promise<{
+    categories: string[];
+    languages: string[];
+    counts: { total: number };
+  }> {
+    return apiClient.get<any>(
+      `${API_ENDPOINTS.SNIPPETS}/metadata`,
+      { requiresAuth: true }
+    );
+  },
+
+  async getPublicSnippetsPaginated(params: {
+    limit?: number;
+    offset?: number;
+    search?: string;
+    searchCode?: boolean;
+    language?: string;
+    category?: string;
+    sort?: string;
+  }): Promise<{
+    data: Snippet[];
+    pagination: {
+      total: number;
+      offset: number;
+      limit: number;
+      hasMore: boolean;
+    };
+  }> {
+    const queryString = new URLSearchParams(
+      Object.entries(params)
+        .filter(([_, v]) => v !== undefined && v !== null && v !== '')
+        .map(([k, v]) => [k, String(v)])
+    ).toString();
+
+    return apiClient.get<any>(
+      `${API_ENDPOINTS.PUBLIC}${queryString ? '?' + queryString : ''}`
+    );
+  },
+
+  async getPublicSnippetsMetadata(): Promise<{
+    categories: string[];
+    languages: string[];
+    counts: { total: number };
+  }> {
+    return apiClient.get<any>(
+      `${API_ENDPOINTS.PUBLIC}/metadata`
+    );
+  },
 };

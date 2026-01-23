@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo, memo, useImperativeHandle, forwardRef } from 'react';
 import { Search, X } from 'lucide-react';
 import BaseDropdown, { BaseDropdownRef } from '../common/dropdowns/BaseDropdown';
 import { IconButton } from '../common/buttons/IconButton';
 import { useKeyboardShortcut } from '../../hooks/useKeyboardShortcut';
+import { debounce } from '../../utils/helpers/debounce';
 
 interface SearchBarProps {
-  value: string;
+  value?: string;
   onChange: (value: string) => void;
   onCategorySelect: (category: string) => void;
   existingCategories: string[];
@@ -13,24 +14,47 @@ interface SearchBarProps {
   placeholder?: string;
 }
 
-export const SearchBar: React.FC<SearchBarProps> = ({
-  value,
+export interface SearchBarRef {
+  clear: () => void;
+  getValue: () => string;
+}
+
+export const SearchBar = memo(forwardRef<SearchBarRef, SearchBarProps>(({
+  value = '',
   onChange,
   onCategorySelect,
   existingCategories,
   selectedCategories,
   placeholder = "Search snippets... (Type # to see all available categories)"
-}) => {
+}, ref) => {
   const [inputValue, setInputValue] = useState(value);
-  const lastValueRef = useRef(value);
   const inputRef = useRef<BaseDropdownRef>(null);
 
   useEffect(() => {
-    if (value !== lastValueRef.current) {
-      setInputValue(value);
-      lastValueRef.current = value;
-    }
+    setInputValue(value);
   }, [value]);
+
+  const debouncedOnChange = useMemo(
+    () => debounce((value: string) => {
+      onChange(value);
+    }, 300),
+    [onChange]
+  );
+
+  useEffect(() => {
+    return () => {
+      debouncedOnChange.cancel();
+    };
+  }, [debouncedOnChange]);
+
+  useImperativeHandle(ref, () => ({
+    clear: () => {
+      setInputValue('');
+      debouncedOnChange.cancel();
+      onChange('');
+    },
+    getValue: () => inputValue
+  }), [inputValue, debouncedOnChange, onChange]);
 
   // Focus the search input when "/" key is pressed
   useKeyboardShortcut({
@@ -47,7 +71,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
     const term = searchTerm.slice(searchTerm.lastIndexOf('#') + 1).trim().toLowerCase();
     const sections = [];
-    
+
     const availableCategories = existingCategories.filter(
       cat => !selectedCategories.includes(cat.toLowerCase())
     );
@@ -73,19 +97,44 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     return sections;
   };
 
+  const handleInputChange = (value: string) => {
+    setInputValue(value);
+
+    // Don't trigger onChange while typing category (after #)
+    // This prevents the hashtag portion from being sent to the backend
+    if (!value.includes('#')) {
+      debouncedOnChange(value);
+    } else {
+      // Cancel any pending debounced changes when # is typed
+      debouncedOnChange.cancel();
+    }
+  };
+
   const handleSelect = (option: string) => {
-    const newCategory = option.startsWith('Add new:') 
-      ? option.slice(9).trim() 
+    const newCategory = option.startsWith('Add new:')
+      ? option.slice(9).trim()
       : option;
 
+    // Remove the hashtag portion from the search
     const hashtagIndex = inputValue.lastIndexOf('#');
-    if (hashtagIndex !== -1) {
-      const newValue = inputValue.substring(0, hashtagIndex).trim();
-      setInputValue(newValue);
-      onChange(newValue);
-    }
+    const newValue = hashtagIndex !== -1
+      ? inputValue.substring(0, hashtagIndex).trim()
+      : inputValue;
 
+    // Update input value
+    setInputValue(newValue);
+
+    // Immediately call onChange with the cleaned value (no debounce)
+    onChange(newValue);
+
+    // Select the category
     onCategorySelect(newCategory.toLowerCase());
+  };
+
+  const handleClear = () => {
+    setInputValue('');
+    debouncedOnChange.cancel();
+    onChange('');
   };
 
   return (
@@ -93,10 +142,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       <BaseDropdown
         ref={inputRef}
         value={inputValue}
-        onChange={(value) => {
-          setInputValue(value);
-          onChange(value);
-        }}
+        onChange={handleInputChange}
         onSelect={handleSelect}
         getSections={getSections}
         placeholder={placeholder}
@@ -106,19 +152,18 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       {inputValue && (
         <IconButton
           icon={<X size={20} />}
-        onClick={() => {
-          setInputValue('');
-          onChange('');
-        }}
-        variant="secondary"
-        className="absolute right-3 top-1/2 -translate-y-1/2 mr-4 text-light-text-secondary dark:text-dark-text-secondary"
-        label="Clear search"
+          onClick={handleClear}
+          variant="secondary"
+          className="absolute right-3 top-1/2 -translate-y-1/2 mr-4 text-light-text-secondary dark:text-dark-text-secondary"
+          label="Clear search"
         />
       )}
-      <Search 
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-light-text-secondary dark:text-dark-text-secondary pointer-events-none" 
-        size={16} 
+      <Search
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-light-text-secondary dark:text-dark-text-secondary pointer-events-none"
+        size={16}
       />
     </div>
   );
-};
+}));
+
+SearchBar.displayName = 'SearchBar';

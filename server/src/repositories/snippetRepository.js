@@ -474,6 +474,188 @@ class SnippetRepository {
       throw error;
     }
   }
+
+  findAllPaginated({
+    userId = null,
+    filters = {},
+    sort = 'newest',
+    limit = 50,
+    offset = 0
+  }) {
+    this.#initializeStatements();
+
+    try {
+      // Build base query
+      let sql = `
+        SELECT
+          s.id,
+          s.title,
+          s.description,
+          datetime(s.updated_at) || 'Z' as updated_at,
+          s.user_id,
+          s.is_public,
+          s.is_pinned,
+          s.is_favorite,
+          u.username,
+          GROUP_CONCAT(DISTINCT c.name) as categories,
+          (SELECT COUNT(*) FROM shared_snippets WHERE snippet_id = s.id) as share_count,
+          COUNT(*) OVER() as total_count
+        FROM snippets s
+        LEFT JOIN categories c ON s.id = c.snippet_id
+        LEFT JOIN users u ON s.user_id = u.id
+        WHERE 1=1
+      `;
+
+      const params = [];
+
+      // Apply filters dynamically
+      if (userId !== null) {
+        sql += ` AND s.user_id = ?`;
+        params.push(userId);
+      } else {
+        sql += ` AND s.is_public = 1`;
+      }
+
+      if (filters.recycled) {
+        sql += ` AND s.expiry_date IS NOT NULL`;
+      } else {
+        sql += ` AND s.expiry_date IS NULL`;
+      }
+
+      if (filters.favorites) {
+        sql += ` AND s.is_favorite = 1`;
+      }
+
+      if (filters.pinned) {
+        sql += ` AND s.is_pinned = 1`;
+      }
+
+      if (filters.search) {
+        sql += ` AND (s.title LIKE ? OR s.description LIKE ?`;
+        params.push(`%${filters.search}%`, `%${filters.search}%`);
+
+        if (filters.searchCode) {
+          sql += ` OR EXISTS (
+            SELECT 1 FROM fragments f
+            WHERE f.snippet_id = s.id AND f.code LIKE ?
+          )`;
+          params.push(`%${filters.search}%`);
+        }
+        sql += `)`;
+      }
+
+      if (filters.language) {
+        sql += ` AND EXISTS (
+          SELECT 1 FROM fragments f
+          WHERE f.snippet_id = s.id AND f.language = ?
+        )`;
+        params.push(filters.language);
+      }
+
+      sql += ` GROUP BY s.id`;
+
+      // Category AND logic: must have ALL selected categories
+      if (filters.categories && filters.categories.length > 0) {
+        sql += ` HAVING COUNT(DISTINCT CASE WHEN c.name IN (${filters.categories.map(() => '?').join(',')}) THEN c.name END) = ?`;
+        params.push(...filters.categories, filters.categories.length);
+      }
+
+      // Apply sorting
+      sql += ` ORDER BY `;
+      switch (sort) {
+        case 'oldest':
+          sql += `s.updated_at ASC`;
+          break;
+        case 'alpha-asc':
+          sql += `s.title ASC`;
+          break;
+        case 'alpha-desc':
+          sql += `s.title DESC`;
+          break;
+        case 'newest':
+        default:
+          sql += `s.updated_at DESC`;
+      }
+
+      sql += ` LIMIT ? OFFSET ?`;
+      params.push(limit, offset);
+
+      const db = getDb();
+      const stmt = db.prepare(sql);
+      const rows = stmt.all(...params);
+
+      const total = rows.length > 0 ? rows[0].total_count : 0;
+      const snippets = rows.map(this.#processSnippet.bind(this));
+
+      return { snippets, total };
+    } catch (error) {
+      Logger.error("Error in findAllPaginated:", error);
+      throw error;
+    }
+  }
+
+  getMetadata(userId = null) {
+    this.#initializeStatements();
+    const db = getDb();
+
+    try {
+      // Get unique categories
+      let categorySql = `
+        SELECT DISTINCT c.name
+        FROM categories c
+        INNER JOIN snippets s ON c.snippet_id = s.id
+        WHERE s.expiry_date IS NULL
+      `;
+      const categoryParams = [];
+
+      if (userId !== null) {
+        categorySql += ` AND s.user_id = ?`;
+        categoryParams.push(userId);
+      } else {
+        categorySql += ` AND s.is_public = 1`;
+      }
+      categorySql += ` ORDER BY c.name`;
+
+      const categories = db.prepare(categorySql).all(...categoryParams).map(r => r.name);
+
+      // Get unique languages
+      let languageSql = `
+        SELECT DISTINCT f.language
+        FROM fragments f
+        INNER JOIN snippets s ON f.snippet_id = s.id
+        WHERE s.expiry_date IS NULL
+      `;
+      const languageParams = [];
+
+      if (userId !== null) {
+        languageSql += ` AND s.user_id = ?`;
+        languageParams.push(userId);
+      } else {
+        languageSql += ` AND s.is_public = 1`;
+      }
+      languageSql += ` ORDER BY f.language`;
+
+      const languages = db.prepare(languageSql).all(...languageParams).map(r => r.language);
+
+      // Get counts
+      let countSql = `SELECT COUNT(*) as count FROM snippets WHERE expiry_date IS NULL`;
+      const countParams = [];
+
+      if (userId !== null) {
+        countSql += ` AND user_id = ?`;
+        countParams.push(userId);
+      } else {
+        countSql += ` AND is_public = 1`;
+      }
+
+      const total = db.prepare(countSql).get(...countParams).count;
+
+      return { categories, languages, counts: { total } };
+    } catch (error) {
+      Logger.error("Error in getMetadata:", error);
+      throw error;
+    }
+  }
 }
 
 export default new SnippetRepository();

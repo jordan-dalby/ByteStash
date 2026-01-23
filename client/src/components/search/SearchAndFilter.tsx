@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo, useMemo } from "react";
 import {
   ChevronDown,
   Grid,
@@ -10,77 +10,88 @@ import {
 } from "lucide-react";
 import { SearchBar } from "./SearchBar";
 import { IconButton } from "../common/buttons/IconButton";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
-export type SortOrder = "newest" | "oldest" | "alpha-asc" | "alpha-desc";
-
-const sortOptions: { value: SortOrder; label: string }[] = [
-  { value: "newest", label: "Newest First" },
-  { value: "oldest", label: "Oldest First" },
-  { value: "alpha-asc", label: "Alphabetically A-Z" },
-  { value: "alpha-desc", label: "Alphabetically Z-A" },
+const sortOptions = [
+  { value: "newest" as const, label: "Newest First" },
+  { value: "oldest" as const, label: "Oldest First" },
+  { value: "alpha-asc" as const, label: "Alphabetically A-Z" },
+  { value: "alpha-desc" as const, label: "Alphabetically Z-A" },
 ];
 
 export interface SearchAndFilterProps {
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-  selectedLanguage: string;
+  metadata: { categories: string[]; languages: string[] };
+  onSearchChange: (search: string) => void;
   onLanguageChange: (language: string) => void;
-  languages: string[];
-  sortOrder: SortOrder;
-  setSortOrder: (order: SortOrder) => void;
+  onCategoryToggle: (category: string) => void;
+  onSortChange: (sort: string) => void;
   viewMode: "grid" | "list";
   setViewMode: (mode: "grid" | "list") => void;
   openSettingsModal: () => void;
   openNewSnippetModal: () => void;
-  allCategories: string[];
-  selectedCategories: string[];
-  onCategoryClick: (category: string) => void;
   hideNewSnippet?: boolean;
   hideRecycleBin?: boolean;
   showFavorites?: boolean;
   handleShowFavorites?: () => void;
+  isPublicView?: boolean;
 }
 
-export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
-  searchTerm,
-  setSearchTerm,
-  selectedLanguage,
+export const SearchAndFilter: React.FC<SearchAndFilterProps> = memo(({
+  metadata,
+  onSearchChange,
   onLanguageChange,
-  languages,
-  sortOrder,
-  setSortOrder,
+  onCategoryToggle,
+  onSortChange,
   viewMode,
   setViewMode,
   openSettingsModal,
   openNewSnippetModal,
-  allCategories,
-  selectedCategories,
-  onCategoryClick,
   hideNewSnippet = false,
   hideRecycleBin = false,
   showFavorites,
   handleShowFavorites,
 }) => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const selectedCategories = useMemo(() =>
+    searchParams.get("categories")?.split(",").filter(Boolean) || [],
+    [searchParams]
+  );
+
+  const currentLanguage = useMemo(() =>
+    searchParams.get("language") || "",
+    [searchParams]
+  );
+
+  const currentSort = useMemo(() =>
+    searchParams.get("sort") || "newest",
+    [searchParams]
+  );
+
+  const currentSearch = useMemo(() =>
+    searchParams.get("search") || "",
+    [searchParams]
+  );
+
   return (
     <div className="flex flex-wrap items-center gap-2 mb-6">
       <SearchBar
-        value={searchTerm}
-        onChange={setSearchTerm}
-        onCategorySelect={onCategoryClick}
-        existingCategories={allCategories}
+        value={currentSearch}
+        onChange={onSearchChange}
+        onCategorySelect={onCategoryToggle}
+        existingCategories={metadata.categories}
         selectedCategories={selectedCategories}
       />
 
       <div className="relative">
         <select
           className="px-4 py-2 pr-10 rounded-lg appearance-none bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary"
-          value={selectedLanguage}
+          value={currentLanguage}
           onChange={(e) => onLanguageChange(e.target.value)}
         >
           <option value="">All Languages</option>
-          {languages.map((lang) => (
+          {metadata.languages.map((lang) => (
             <option key={lang} value={lang}>
               {lang}
             </option>
@@ -95,8 +106,8 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
       <div className="relative">
         <select
           className="px-4 py-2 pr-10 rounded-lg appearance-none bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary"
-          value={sortOrder}
-          onChange={(e) => setSortOrder(e.target.value as SortOrder)}
+          value={currentSort}
+          onChange={(e) => onSortChange(e.target.value)}
         >
           {sortOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -167,4 +178,6 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
       </div>
     </div>
   );
-};
+});
+
+SearchAndFilter.displayName = 'SearchAndFilter';

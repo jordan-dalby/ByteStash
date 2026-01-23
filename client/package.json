@@ -4,6 +4,7 @@
   "license": "ISC",
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
+    "@tanstack/react-query": "^5.90.20",
     "date-fns": "^4.1.0",
     "framer-motion": "^11.11.9",
     "jszip": "^3.10.1",

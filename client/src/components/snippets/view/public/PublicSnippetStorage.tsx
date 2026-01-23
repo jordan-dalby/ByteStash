@@ -1,17 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useSettings } from "../../../../hooks/useSettings";
-import { useToast } from "../../../../hooks/useToast";
 import { useAuth } from "../../../../hooks/useAuth";
 import { initializeMonaco } from "../../../../utils/language/languageUtils";
-import SettingsModal from "../../../settings/SettingsModal";
-import BaseSnippetStorage from "../common/BaseSnippetStorage";
-import { fetchPublicSnippets } from "../../../../utils/api/snippets";
+import { snippetService } from "../../../../service/snippetService";
 import { Snippet } from "../../../../types/snippets";
+import SettingsModal from "../../../settings/SettingsModal";
+import { SearchAndFilter } from "../../../search/SearchAndFilter";
 import { UserDropdown } from "../../../auth/UserDropdown";
-import { ROUTES } from "../../../../constants/routes";
+import StorageHeader from "../common/StorageHeader";
+import PublicSnippetContentArea from "./PublicSnippetContentArea";
 
 const PublicSnippetStorage: React.FC = () => {
+  // URL-based filter state
+  const [, setSearchParams] = useSearchParams();
+
+  // Settings
   const {
     viewMode,
     setViewMode,
@@ -27,81 +31,124 @@ const PublicSnippetStorage: React.FC = () => {
   } = useSettings();
 
   const { isAuthenticated } = useAuth();
-  const { addToast } = useToast();
-  const navigate = useNavigate();
-  const [snippets, setSnippets] = useState<Snippet[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+
+  // Metadata - loaded once
+  const [metadata, setMetadata] = useState<{ categories: string[]; languages: string[] }>({
+    categories: [],
+    languages: []
+  });
+
+  // UI state
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
   useEffect(() => {
     initializeMonaco();
-    loadSnippets();
   }, []);
 
-  const loadSnippets = async () => {
-    try {
-      const fetchedSnippets = await fetchPublicSnippets();
-      setSnippets(fetchedSnippets);
-    } catch (error) {
-      console.error("Failed to load public snippets:", error);
-      addToast("Failed to load public snippets", "error");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Load metadata once
+  useEffect(() => {
+    const fetchMetadata = async () => {
+      try {
+        const data = await snippetService.getPublicSnippetsMetadata();
+        setMetadata(data);
+      } catch (error) {
+        console.error("Failed to fetch metadata:", error);
+      }
+    };
+    fetchMetadata();
+  }, []);
 
-  const handleDuplicate = async (snippet: Snippet) => {
-    if (!isAuthenticated) {
-      addToast("Please sign in to add this snippet to your collection", "info");
-      navigate(ROUTES.LOGIN);
-      return;
-    }
 
-    try {
-      const duplicatedSnippet: Omit<
-        Snippet,
-        "id" | "updated_at" | "share_count" | "username"
-      > = {
-        title: `${snippet.title}`,
-        description: snippet.description,
-        categories: [...snippet.categories],
-        fragments: snippet.fragments.map((f) => ({ ...f })),
-        is_public: 0,
-        is_pinned: 0,
-        is_favorite: 0,
-      };
+  // URL update handlers - stable callbacks
+  const handleSearchChange = useCallback((search: string) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      const trimmedSearch = search.trim();
+      if (trimmedSearch) {
+        next.set("search", trimmedSearch);
+      } else {
+        next.delete("search");
+      }
+      return next;
+    });
+  }, [setSearchParams]);
 
-      const { createSnippet } = await import("../../../../utils/api/snippets");
-      await createSnippet(duplicatedSnippet);
-      addToast("Snippet added to your collection", "success");
-    } catch (error) {
-      console.error("Failed to duplicate snippet:", error);
-      addToast("Failed to add snippet to your collection", "error");
-    }
-  };
+  const handleLanguageChange = useCallback((language: string) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (language) {
+        next.set("language", language);
+      } else {
+        next.delete("language");
+      }
+      return next;
+    });
+  }, [setSearchParams]);
+
+  const handleCategoryToggle = useCallback((category: string) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      const current = next.get("categories")?.split(",").filter(Boolean) || [];
+      const updated = current.includes(category)
+        ? current.filter(c => c !== category)
+        : [...current, category];
+
+      if (updated.length > 0) {
+        next.set("categories", updated.join(","));
+      } else {
+        next.delete("categories");
+      }
+      return next;
+    });
+  }, [setSearchParams]);
+
+  const handleSortChange = useCallback((sort: string) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set("sort", sort);
+      return next;
+    });
+  }, [setSearchParams]);
+
+  // Handlers
+  const handleSettingsOpen = useCallback(() => setIsSettingsModalOpen(true), []);
+  const handleNewSnippet = useCallback(() => null, []);
 
   return (
     <>
-      <BaseSnippetStorage
-        snippets={snippets}
-        isLoading={isLoading}
-        viewMode={viewMode}
-        setViewMode={setViewMode}
-        compactView={compactView}
-        showCodePreview={showCodePreview}
-        previewLines={previewLines}
-        includeCodeInSearch={includeCodeInSearch}
-        showCategories={showCategories}
-        expandCategories={expandCategories}
-        showLineNumbers={showLineNumbers}
-        onSettingsOpen={() => setIsSettingsModalOpen(true)}
-        onNewSnippet={() => null}
-        onDuplicate={handleDuplicate}
-        headerRight={<UserDropdown />}
-        isPublicView={true}
-        isRecycleView={false}
-        isAuthenticated={isAuthenticated}
-      />
+      <div className="min-h-screen p-8 bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text">
+        <div className="flex items-start justify-between mb-4">
+          <StorageHeader isPublicView={true} />
+          <UserDropdown />
+        </div>
+
+        <SearchAndFilter
+          metadata={metadata}
+          onSearchChange={handleSearchChange}
+          onLanguageChange={handleLanguageChange}
+          onCategoryToggle={handleCategoryToggle}
+          onSortChange={handleSortChange}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          openSettingsModal={handleSettingsOpen}
+          openNewSnippetModal={handleNewSnippet}
+          hideNewSnippet={true}
+          hideRecycleBin={false}
+        />
+
+        <PublicSnippetContentArea
+          includeCodeInSearch={includeCodeInSearch}
+          viewMode={viewMode}
+          compactView={compactView}
+          showCodePreview={showCodePreview}
+          previewLines={previewLines}
+          showCategories={showCategories}
+          expandCategories={expandCategories}
+          showLineNumbers={showLineNumbers}
+          isAuthenticated={isAuthenticated}
+          onCategoryClick={handleCategoryToggle}
+        />
+      </div>
 
       <SettingsModal
         isOpen={isSettingsModalOpen}

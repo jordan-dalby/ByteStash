@@ -4,24 +4,6 @@ import { apiClient } from "./apiClient";
 import { API_ENDPOINTS } from "../../constants/api";
 import { createCustomEvent, EVENTS } from "../../constants/events";
 
-export const fetchSnippets = async (): Promise<Snippet[]> => {
-  try {
-    return await snippetService.getAllSnippets();
-  } catch (error) {
-    console.error("Error fetching snippets:", error);
-    throw error;
-  }
-};
-
-export const fetchPublicSnippets = async (): Promise<Snippet[]> => {
-  try {
-    return await apiClient.get<Snippet[]>(`${API_ENDPOINTS.PUBLIC}`);
-  } catch (error) {
-    console.error("Error fetching public snippets:", error);
-    throw error;
-  }
-};
-
 export const createSnippet = async (
   snippet: Omit<Snippet, "id" | "updated_at">
 ): Promise<Snippet> => {
