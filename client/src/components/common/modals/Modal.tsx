@@ -124,12 +124,14 @@ const Modal: React.FC<ModalProps> = ({
                 label="Delete"
               />
             )}
-            <button
+            <div className="h-6 w-px bg-light-border dark:bg-dark-border mx-2" />
+            <IconButton
+              icon={<X size={20} />}
               onClick={onClose}
-              className="flex-shrink-0 transition-colors text-light-text-secondary dark:text-dark-text-secondary hover:text-light-text dark:hover:text-dark-text"
-            >
-              <X size={24} />
-            </button>
+              variant="secondary"
+              size="sm"
+              label="Close"
+            />
           </div>
         </div>
 
