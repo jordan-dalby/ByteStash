@@ -130,6 +130,21 @@ const LANGUAGE_MAPPING: LanguageMapping = {
     monacoAlias: "csharp",
     label: "c#",
   },
+  vba: {
+    aliases: [
+      "vb",
+      "visualbasic",
+      "visual-basic",
+      "vbscript",
+      "vbs",
+      "excel-vba",
+      "word-vba",
+      "access-vba",
+      "office-vba",
+    ],
+    monacoAlias: "vb",
+    label: "vba",
+  },
   rust: {
     aliases: ["rs", "rust-lang", "rustlang", "cargo", "rustc"],
     monacoAlias: "rust",
