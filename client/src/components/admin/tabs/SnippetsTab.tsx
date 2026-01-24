@@ -7,6 +7,7 @@ import { Trash2, Globe, Lock, AlertTriangle } from 'lucide-react';
 import { useDebounce } from '../../../hooks/useDebounce';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../constants/routes';
+import { IconButton } from '../../common/buttons/IconButton';
 import {
   FilterInput,
   FilterSelect,
@@ -183,62 +184,61 @@ export const SnippetsTab: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      {/* Action Bar */}
-      <div className="flex justify-between items-center">
-        <button
-          onClick={handleToggleOffensiveScan}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-            showOffensiveOnly
-              ? 'bg-red-600 text-white hover:bg-red-700'
-              : 'bg-light-bg-secondary dark:bg-dark-bg-secondary text-light-text dark:text-dark-text hover:bg-light-bg-tertiary dark:hover:bg-dark-bg-tertiary'
-          }`}
-        >
-          <AlertTriangle className="w-4 h-4" />
-          {showOffensiveOnly ? 'Show All Snippets' : 'Identify Offensive Snippets'}
-        </button>
-        {showOffensiveOnly && total > 0 && (
-          <span className="text-red-600 dark:text-red-400 font-medium">
-            Found {total} snippet{total !== 1 ? 's' : ''} with offensive content
-          </span>
-        )}
-      </div>
-
-      {/* Filters */}
-      {!showOffensiveOnly && (
-        <div className="flex flex-col sm:flex-row gap-4">
-          <FilterInput
-            value={search}
-            onChange={(value) => {
-              setSearch(value);
-              setOffset(0);
-            }}
-            placeholder="Search snippets..."
-            className="flex-1"
-            showSearchIcon
-          />
-          <FilterInput
-            value={userId}
-            onChange={(value) => {
-              setUserId(value);
-              setOffset(0);
-            }}
-            placeholder="User ID"
-            className="w-32"
-          />
-          <FilterSelect
-            value={isPublic}
-            onChange={(value) => {
-              setIsPublic(value);
-              setOffset(0);
-            }}
-            options={[
-              { value: 'true', label: 'Public' },
-              { value: 'false', label: 'Private' },
-            ]}
-            placeholder="All Visibility"
-          />
+      {/* Offensive Content Alert */}
+      {showOffensiveOnly && total > 0 && (
+        <div className="flex items-center gap-2 text-red-600 dark:text-red-400 font-medium">
+          <AlertTriangle className="w-5 h-5" />
+          <span>Found {total} snippet{total !== 1 ? 's' : ''} with offensive content</span>
         </div>
       )}
+
+      {/* Filters with Offensive Scan Toggle */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        {!showOffensiveOnly && (
+          <>
+            <FilterInput
+              value={search}
+              onChange={(value) => {
+                setSearch(value);
+                setOffset(0);
+              }}
+              placeholder="Search snippets..."
+              className="flex-1"
+              showSearchIcon
+            />
+            <FilterInput
+              value={userId}
+              onChange={(value) => {
+                setUserId(value);
+                setOffset(0);
+              }}
+              placeholder="User ID"
+              className="w-32"
+            />
+            <FilterSelect
+              value={isPublic}
+              onChange={(value) => {
+                setIsPublic(value);
+                setOffset(0);
+              }}
+              options={[
+                { value: 'true', label: 'Public' },
+                { value: 'false', label: 'Private' },
+              ]}
+              placeholder="All Visibility"
+            />
+          </>
+        )}
+        <IconButton
+          icon={<AlertTriangle className="w-4 h-4" />}
+          onClick={handleToggleOffensiveScan}
+          label={showOffensiveOnly ? 'Show All Snippets' : 'Scan for Offensive Content'}
+          variant={showOffensiveOnly ? 'danger' : 'secondary'}
+          showLabel
+          size="md"
+          className="px-4 whitespace-nowrap"
+        />
+      </div>
 
       {!showOffensiveOnly && (
         <ResultsCount offset={offset} limit={limit} total={total} entityName="snippets" />
