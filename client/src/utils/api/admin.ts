@@ -51,6 +51,9 @@ export const adminApi = {
       requiresAuth: true,
     }),
 
+  getSnippetDetails: (id: number) =>
+    apiClient.get<any>(`${BASE_URL}/snippets/${id}`, { requiresAuth: true }),
+
   deleteSnippet: (id: number) =>
     apiClient.delete<any>(`${BASE_URL}/snippets/${id}`, { requiresAuth: true }),
 

@@ -567,6 +567,59 @@ class AdminRepository {
       throw error;
     }
   }
+
+  async getSnippetDetails(snippetId) {
+    this.#initializeStatements();
+
+    try {
+      const db = getDb();
+
+      // Get snippet with full details (bypassing permission checks for admin)
+      const query = `
+        SELECT
+          s.id,
+          s.title,
+          s.description,
+          datetime(s.updated_at) || 'Z' as updated_at,
+          s.user_id,
+          s.is_public,
+          s.is_pinned,
+          s.is_favorite,
+          u.username,
+          GROUP_CONCAT(DISTINCT c.name) as categories,
+          (SELECT COUNT(*) FROM shared_snippets WHERE snippet_id = s.id) as share_count
+        FROM snippets s
+        LEFT JOIN categories c ON s.id = c.snippet_id
+        LEFT JOIN users u ON s.user_id = u.id
+        WHERE s.id = ?
+        GROUP BY s.id
+      `;
+
+      const snippet = db.prepare(query).get(snippetId);
+
+      if (!snippet) {
+        return null;
+      }
+
+      // Get fragments
+      const fragments = db.prepare(`
+        SELECT id, file_name, code, language, position
+        FROM fragments
+        WHERE snippet_id = ?
+        ORDER BY position
+      `).all(snippetId);
+
+      return {
+        ...snippet,
+        categories: snippet.categories ? snippet.categories.split(',') : [],
+        fragments: fragments.sort((a, b) => a.position - b.position),
+        share_count: snippet.share_count || 0,
+      };
+    } catch (error) {
+      Logger.error('Error getting snippet details:', error);
+      throw error;
+    }
+  }
 }
 
 export default new AdminRepository();

@@ -160,6 +160,19 @@ router.get('/snippets/scan/offensive', async (req, res) => {
   }
 });
 
+router.get('/snippets/:id', async (req, res) => {
+  try {
+    const snippet = await adminRepository.getSnippetDetails(req.params.id);
+    if (!snippet) {
+      return res.status(404).json({ message: 'Snippet not found' });
+    }
+    res.json(snippet);
+  } catch (error) {
+    Logger.error('Error getting snippet details:', error);
+    res.status(500).json({ message: 'Failed to retrieve snippet details' });
+  }
+});
+
 // API Key management
 router.get('/api-keys', async (req, res) => {
   try {

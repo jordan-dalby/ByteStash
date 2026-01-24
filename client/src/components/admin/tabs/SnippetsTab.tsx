@@ -3,11 +3,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '../../../utils/api/admin';
 import { useToast } from '../../../hooks/useToast';
 import { ConfirmationModal } from '../../common/modals/ConfirmationModal';
-import { Trash2, Globe, Lock, AlertTriangle } from 'lucide-react';
+import { Trash2, Globe, Lock, AlertTriangle, Eye } from 'lucide-react';
 import { useDebounce } from '../../../hooks/useDebounce';
-import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '../../../constants/routes';
 import { IconButton } from '../../common/buttons/IconButton';
+import { SnippetViewModal } from '../modals/SnippetViewModal';
 import {
   FilterInput,
   FilterSelect,
@@ -25,13 +24,13 @@ export const SnippetsTab: React.FC = () => {
   const [isPublic, setIsPublic] = useState('');
   const [offset, setOffset] = useState(0);
   const [deleteSnippetId, setDeleteSnippetId] = useState<number | null>(null);
+  const [viewSnippetId, setViewSnippetId] = useState<number | null>(null);
   const [showOffensiveOnly, setShowOffensiveOnly] = useState(false);
   const limit = 50;
 
   const debouncedSearch = useDebounce(search, 300);
   const { addToast } = useToast();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
 
   const { data, isLoading } = useQuery({
     queryKey: ['admin', 'snippets', offset, debouncedSearch, userId, isPublic, showOffensiveOnly],
@@ -106,7 +105,7 @@ export const SnippetsTab: React.FC = () => {
             </span>
           )}
           <button
-            onClick={() => navigate(`${ROUTES.SNIPPETS}/${snippet.id}`)}
+            onClick={() => setViewSnippetId(snippet.id)}
             className="text-light-text dark:text-dark-text hover:text-light-primary dark:hover:text-dark-primary hover:underline text-left max-w-xs truncate"
           >
             {snippet.title}
@@ -159,6 +158,13 @@ export const SnippetsTab: React.FC = () => {
       label: 'Actions',
       render: (snippet) => (
         <div className="flex items-center gap-2 whitespace-nowrap">
+          <button
+            onClick={() => setViewSnippetId(snippet.id)}
+            className="p-1 hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary rounded"
+            title="View snippet"
+          >
+            <Eye className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+          </button>
           <button
             onClick={() => togglePublicMutation.mutate(snippet.id)}
             className="p-1 hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary rounded"
@@ -273,6 +279,12 @@ export const SnippetsTab: React.FC = () => {
         confirmLabel="Delete"
         cancelLabel="Cancel"
         variant="danger"
+      />
+
+      {/* Snippet View Modal */}
+      <SnippetViewModal
+        snippetId={viewSnippetId}
+        onClose={() => setViewSnippetId(null)}
       />
     </div>
   );
