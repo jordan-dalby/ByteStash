@@ -31,7 +31,7 @@ export const FilterSelect: React.FC<FilterSelectProps> = ({
       <select
         value={value}
         onChange={handleChange}
-        className="w-full appearance-none px-4 py-2.5 pr-10 border border-light-border dark:border-dark-border rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary transition-shadow shadow-sm cursor-pointer"
+        className="block w-full appearance-none rounded-md bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text p-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary h-10 mt-0 cursor-pointer"
       >
         <option value="">{placeholder}</option>
         {options.map((option) => (
@@ -40,7 +40,10 @@ export const FilterSelect: React.FC<FilterSelectProps> = ({
           </option>
         ))}
       </select>
-      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-light-text-secondary dark:text-dark-text-secondary pointer-events-none" />
+      <ChevronDown
+        className="absolute right-2 top-1/2 -translate-y-1/2 text-light-text-secondary dark:text-dark-text-secondary pointer-events-none"
+        size={16}
+      />
     </div>
   );
 };

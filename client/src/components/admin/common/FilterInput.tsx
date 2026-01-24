@@ -1,5 +1,6 @@
 import React from 'react';
-import { Search } from 'lucide-react';
+import { Search, X } from 'lucide-react';
+import { IconButton } from '../../common/buttons/IconButton';
 
 export interface FilterInputProps {
   value: string;
@@ -28,20 +29,37 @@ export const FilterInput: React.FC<FilterInputProps> = ({
     }
   };
 
+  const handleClear = () => {
+    onChange('');
+    if (onReset) {
+      onReset();
+    }
+  };
+
   return (
-    <div className={`relative ${className}`}>
-      {showSearchIcon && (
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-light-text-secondary dark:text-dark-text-secondary pointer-events-none" />
-      )}
+    <div className={`relative flex-grow ${className}`}>
       <input
         type={type}
         placeholder={placeholder}
         value={value}
         onChange={handleChange}
-        className={`w-full px-4 py-2.5 border border-light-border dark:border-dark-border rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text placeholder:text-light-text-secondary dark:placeholder:text-dark-text-secondary focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary transition-shadow shadow-sm ${
-          showSearchIcon ? 'pl-10' : ''
-        }`}
+        className={`block w-full rounded-md bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text p-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary h-10 mt-0`}
       />
+      {value && (
+        <IconButton
+          icon={<X size={20} />}
+          onClick={handleClear}
+          variant="secondary"
+          className="absolute right-3 top-1/2 -translate-y-1/2 mr-4 text-light-text-secondary dark:text-dark-text-secondary"
+          label="Clear search"
+        />
+      )}
+      {showSearchIcon && (
+        <Search
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-light-text-secondary dark:text-dark-text-secondary pointer-events-none"
+          size={16}
+        />
+      )}
     </div>
   );
 };
