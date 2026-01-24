@@ -1,12 +1,13 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { LogOut, User, Key, Lock } from 'lucide-react';
+import { LogOut, User, Key, Lock, Shield } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useOutsideClick } from '../../hooks/useOutsideClick';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ApiKeysModal } from './ApiKeysModal';
 import { ChangePasswordModal } from './ChangePasswordModal';
 import { apiClient } from '../../utils/api/apiClient';
 import { OIDCConfig } from '../../types/auth';
+import { ROUTES } from '../../constants/routes';
 
 export const UserDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,6 +16,7 @@ export const UserDropdown: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { user, logout, authConfig } = useAuth();
   const [oidcConfig, setOIDCConfig] = useState<OIDCConfig | null>(null);
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -59,15 +61,28 @@ export const UserDropdown: React.FC = () => {
 
         {isOpen && (
           <div
-            className="absolute right-0 mt-1 w-48 bg-light-surface dark:bg-dark-surface rounded-md shadow-lg 
+            className="absolute right-0 mt-1 w-48 bg-light-surface dark:bg-dark-surface rounded-md shadow-lg
               border border-light-border dark:border-dark-border py-1 z-50"
           >
+            {user.is_admin && (
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  navigate(ROUTES.ADMIN);
+                }}
+                className="w-full px-4 py-2 text-sm text-left text-light-text dark:text-dark-text hover:bg-light-hover
+                  dark:hover:bg-dark-hover flex items-center gap-2"
+              >
+                <Shield size={16} />
+                <span>Admin Panel</span>
+              </button>
+            )}
             <button
               onClick={() => {
                 setIsOpen(false);
                 setIsApiKeysModalOpen(true);
               }}
-              className="w-full px-4 py-2 text-sm text-left text-light-text dark:text-dark-text hover:bg-light-hover 
+              className="w-full px-4 py-2 text-sm text-left text-light-text dark:text-dark-text hover:bg-light-hover
                 dark:hover:bg-dark-hover flex items-center gap-2"
             >
               <Key size={16} />

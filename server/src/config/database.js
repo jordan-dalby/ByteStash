@@ -12,6 +12,8 @@ import { up_v1_5_1_api_keys } from "./migrations/20241122-migration.js";
 import { up_v1_6_0_snippet_expiry } from "./migrations/20250601-migration.js";
 import { up_v1_7_0_snippet_pin_favorite } from "./migrations/20250905-migration.js";
 import { up_v1_8_0_pagination } from "./migrations/20260123-pagination.js";
+import { up_v1_9_0_admin_fields } from "./migrations/20260124-admin-fields.js";
+import { up_v1_9_0_cascade_delete } from "./migrations/20260124-cascade-delete.js";
 import path from "path";
 let db = null;
 let checkpointInterval = null;
@@ -121,6 +123,8 @@ function initializeDatabase() {
       up_v1_6_0_snippet_expiry(db);
       up_v1_7_0_snippet_pin_favorite(db);
       up_v1_8_0_pagination(db);
+      up_v1_9_0_admin_fields(db);
+      up_v1_9_0_cascade_delete(db);
       Logger.debug("All migrations applied successfully");
     }
 

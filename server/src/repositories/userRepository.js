@@ -23,13 +23,13 @@ class UserRepository {
       `);
 
       this.findByUsernameStmt = db.prepare(`
-        SELECT id, username, password_hash, created_at, email, name, oidc_id, oidc_provider
+        SELECT id, username, password_hash, created_at, email, name, oidc_id, oidc_provider, is_admin, is_active
         FROM users
         WHERE username_normalized = ? COLLATE NOCASE
       `);
 
       this.findByIdStmt = db.prepare(`
-        SELECT id, username, created_at, email, name, oidc_id
+        SELECT id, username, created_at, email, name, oidc_id, is_admin, is_active
         FROM users
         WHERE id = ?
       `);
@@ -41,7 +41,7 @@ class UserRepository {
       `);
 
       this.findByOIDCIdStmt = db.prepare(`
-        SELECT id, username, created_at, email, name
+        SELECT id, username, created_at, email, name, is_admin, is_active
         FROM users
         WHERE oidc_id = ? AND oidc_provider = ?
       `);
@@ -76,8 +76,14 @@ class UserRepository {
       `);
 
       this.updatePasswordStmt = db.prepare(`
-        UPDATE users 
-        SET password_hash = ? 
+        UPDATE users
+        SET password_hash = ?
+        WHERE id = ?
+      `);
+
+      this.updateLastLoginStmt = db.prepare(`
+        UPDATE users
+        SET last_login_at = CURRENT_TIMESTAMP
         WHERE id = ?
       `);
     }
@@ -205,20 +211,31 @@ class UserRepository {
 
   async updatePassword(userId, newPassword) {
     this.#initializeStatements();
-    
+
     try {
       const saltRounds = 10;
       const passwordHash = await bcrypt.hash(newPassword, saltRounds);
-      
+
       const result = this.updatePasswordStmt.run(passwordHash, userId);
-      
+
       if (result.changes === 0) {
         throw new Error('User not found or password not updated');
       }
-      
+
       return true;
     } catch (error) {
       Logger.error('Error updating password:', error);
+      throw error;
+    }
+  }
+
+  async updateLastLogin(userId) {
+    this.#initializeStatements();
+
+    try {
+      this.updateLastLoginStmt.run(userId);
+    } catch (error) {
+      Logger.error('Error updating last login:', error);
       throw error;
     }
   }

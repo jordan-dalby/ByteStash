@@ -17,6 +17,7 @@ import PublicSnippetStorage from './components/snippets/view/public/PublicSnippe
 import EmbedView from './components/snippets/embed/EmbedView';
 import RecycleSnippetStorage from './components/snippets/view/recycle/RecycleSnippetStorage';
 import { OIDCLogoutCallback } from './components/auth/oidc/OIDCLogoutCallback';
+import { AdminPage } from './components/admin/AdminPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -89,6 +90,7 @@ const App: React.FC = () => {
                   <Route path={ROUTES.RECYCLE} element={<RecycleSnippetStorage />} />
                   <Route path={ROUTES.EMBED} element={<EmbedViewWrapper />} />
                   <Route path={ROUTES.SNIPPET} element={<SnippetPage />} />
+                  <Route path={ROUTES.ADMIN} element={<AdminPage />} />
                   <Route path={ROUTES.HOME} element={<AuthenticatedApp />} />
                 </Routes>
               </AuthProvider>

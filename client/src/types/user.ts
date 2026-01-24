@@ -3,6 +3,9 @@ export interface User {
   username: string;
   created_at: string;
   oidc_id?: string;
+  is_admin?: number | boolean;
+  is_active?: number | boolean;
+  last_login_at?: string;
 }
 
 export interface AuthResponse {

@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import Logger from '../logger.js';
 import { getDb } from '../config/database.js';
 import { up_v1_5_0_snippets } from '../config/migrations/20241117-migration.js';
+import { isAdmin } from '../middleware/adminAuth.js';
 
 const router = express.Router();
 
@@ -137,6 +138,13 @@ router.get('/callback', async (req, res) => {
       userInfo,
       oidc.config.serverMetadata().issuer
     );
+
+    if (user.is_active === 0 || user.is_active === false) {
+      Logger.error('OIDC login blocked: Account deactivated');
+      return res.redirect('/login?error=account_deactivated&message=Your account has been deactivated');
+    }
+
+    await userRepository.updateLastLogin(user.id);
 
     if (!hasUsers) {
       await up_v1_5_0_snippets(db, user.id);

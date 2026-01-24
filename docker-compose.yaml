@@ -39,6 +39,9 @@ services:
       - OIDC_CLIENT_SECRET=
       # The OIDC scopes to request, e.g. "openid profile email groups"
       - OIDC_SCOPES=
+      # Optional: Comma-separated list of usernames that should have admin privileges
+      # e.g. "admin,jordan" - these users will have access to the admin panel
+      - ADMIN_USERNAMES=
     volumes:
       - ./data:/data/snippets
 # Uncomment to use docker secrets

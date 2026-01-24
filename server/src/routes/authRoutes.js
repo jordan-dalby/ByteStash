@@ -2,8 +2,10 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS, DISABLE_ACCOUNTS, DISABLE_INTERNAL_ACCOUNTS, getOrCreateAnonymousUser, authenticateToken, ALLOW_PASSWORD_CHANGES } from '../middleware/auth.js';
 import userService from '../services/userService.js';
+import userRepository from '../repositories/userRepository.js';
 import { getDb } from '../config/database.js';
 import { up_v1_5_0_snippets } from '../config/migrations/20241117-migration.js';
+import { isAdmin } from '../middleware/adminAuth.js';
 import Logger from '../logger.js';
 
 const router = express.Router();
@@ -56,12 +58,13 @@ router.post('/register', async (req, res) => {
       TOKEN_EXPIRY ? { expiresIn: TOKEN_EXPIRY } : undefined
     );    
 
-    res.json({ 
+    res.json({
       token,
       user: {
         id: user.id,
         username: user.username,
-        created_at: user.created_at
+        created_at: user.created_at,
+        is_admin: isAdmin(user.username)
       }
     });
   } catch (error) {
@@ -83,14 +86,25 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ 
-      id: user.id,
-      username: user.username 
-    }, JWT_SECRET, 
-      TOKEN_EXPIRY ? { expiresIn: TOKEN_EXPIRY } : undefined
-    );    
+    if (user.is_active === 0 || user.is_active === false) {
+      return res.status(403).json({ error: 'Account has been deactivated' });
+    }
 
-    res.json({ token, user });
+    await userRepository.updateLastLogin(user.id);
+
+    const token = jwt.sign({
+      id: user.id,
+      username: user.username
+    }, JWT_SECRET,
+      TOKEN_EXPIRY ? { expiresIn: TOKEN_EXPIRY } : undefined
+    );
+
+    const userResponse = {
+      ...user,
+      is_admin: isAdmin(user.username)
+    };
+
+    res.json({ token, user: userResponse });
   } catch (error) {
     Logger.error('Login error:', error);
     res.status(500).json({ error: 'An error occurred during login' });
@@ -113,12 +127,13 @@ router.get('/verify', async (req, res) => {
       return res.status(401).json({ valid: false });
     }
 
-    res.status(200).json({ 
+    res.status(200).json({
       valid: true,
       user: {
         id: user.id,
         username: user.username,
-        created_at: user.created_at
+        created_at: user.created_at,
+        is_admin: isAdmin(user.username)
       }
     });
   } catch (err) {

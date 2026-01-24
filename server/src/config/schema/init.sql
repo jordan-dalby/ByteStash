@@ -7,16 +7,19 @@ CREATE TABLE IF NOT EXISTS users (
     oidc_provider TEXT,
     email TEXT,
     name TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    is_admin BOOLEAN DEFAULT FALSE,
+    last_login_at DATETIME,
+    is_active BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE IF NOT EXISTS snippets (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL, 
+    title TEXT NOT NULL,
     description TEXT,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     expiry_date DATETIME DEFAULT NULL,
-    user_id INTEGER REFERENCES users (id), 
+    user_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
     is_public BOOLEAN DEFAULT FALSE,
     is_pinned BOOLEAN DEFAULT FALSE,
     is_favorite BOOLEAN DEFAULT FALSE

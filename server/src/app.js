@@ -8,8 +8,10 @@ import publicRoutes from "./routes/publicRoutes.js";
 import oidcRoutes from "./routes/oidcRoutes.js";
 import embedRoutes from "./routes/embedRoutes.js";
 import apiKeyRoutes from "./routes/apiKeyRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 import { authenticateToken } from "./middleware/auth.js";
 import { authenticateApiKey } from "./middleware/apiKeyAuth.js";
+import { requireAdmin } from "./middleware/adminAuth.js";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import fs from "fs";
@@ -51,6 +53,7 @@ app.use(
 app.use(`${basePath}/api/share`, shareRoutes);
 app.use(`${basePath}/api/public/snippets`, publicRoutes);
 app.use(`${basePath}/api/embed`, embedRoutes);
+app.use(`${basePath}/api/admin`, authenticateToken, requireAdmin, adminRoutes);
 
 app.use(
   `${basePath}/manifest.json`,
