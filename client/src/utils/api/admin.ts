@@ -64,6 +64,9 @@ export const adminApi = {
   toggleSnippetPublic: (id: number) =>
     apiClient.patch<any>(`${BASE_URL}/snippets/${id}/toggle-public`, {}, { requiresAuth: true }),
 
+  scanSnippetsForOffensive: () =>
+    apiClient.get<any>(`${BASE_URL}/snippets/scan/offensive`, { requiresAuth: true }),
+
   // API Keys
   getApiKeys: (params: {
     offset?: number;

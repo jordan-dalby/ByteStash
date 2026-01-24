@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bad-words": "^4.0.0",
     "bcrypt": "^5.1.1",
     "better-sqlite3": "^11.5.0",
     "body-parser": "^1.20.3",

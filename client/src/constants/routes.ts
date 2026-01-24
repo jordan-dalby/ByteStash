@@ -11,4 +11,8 @@ export const ROUTES = {
   EMBED: '/embed/:shareId',
   RECYCLE: '/recycle/snippets',
   ADMIN: '/admin',
+  ADMIN_USERS: '/admin/users',
+  ADMIN_SNIPPETS: '/admin/snippets',
+  ADMIN_API_KEYS: '/admin/api-keys',
+  ADMIN_SHARES: '/admin/shares',
 } as const;

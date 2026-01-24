@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import React from 'react';
+import { Navigate, Link, useLocation, Routes, Route } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { ROUTES } from '../../constants/routes';
 import { UsersTab } from './tabs/UsersTab';
@@ -7,21 +7,19 @@ import { SnippetsTab } from './tabs/SnippetsTab';
 import { ApiKeysTab } from './tabs/ApiKeysTab';
 import { SharesTab } from './tabs/SharesTab';
 
-type TabType = 'users' | 'snippets' | 'api-keys' | 'shares';
-
 export const AdminPage: React.FC = () => {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<TabType>('users');
+  const location = useLocation();
 
   if (!user?.is_admin) {
     return <Navigate to={ROUTES.HOME} replace />;
   }
 
-  const tabs: { id: TabType; label: string }[] = [
-    { id: 'users', label: 'Users' },
-    { id: 'snippets', label: 'Snippets' },
-    { id: 'api-keys', label: 'API Keys' },
-    { id: 'shares', label: 'Shares' },
+  const tabs: { path: string; label: string }[] = [
+    { path: ROUTES.ADMIN_USERS, label: 'Users' },
+    { path: ROUTES.ADMIN_SNIPPETS, label: 'Snippets' },
+    { path: ROUTES.ADMIN_API_KEYS, label: 'API Keys' },
+    { path: ROUTES.ADMIN_SHARES, label: 'Shares' },
   ];
 
   return (
@@ -41,30 +39,33 @@ export const AdminPage: React.FC = () => {
         <div className="border-b border-light-border dark:border-dark-border mb-6">
           <nav className="flex space-x-8">
             {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+              <Link
+                key={tab.path}
+                to={tab.path}
                 className={`
                   pb-4 px-1 border-b-2 font-medium text-sm transition-colors
                   ${
-                    activeTab === tab.id
+                    location.pathname === tab.path
                       ? 'border-light-primary dark:border-dark-primary text-light-primary dark:text-dark-primary'
                       : 'border-transparent text-light-text-secondary dark:text-dark-text-secondary hover:text-light-text dark:hover:text-dark-text hover:border-light-border dark:hover:border-dark-border'
                   }
                 `}
               >
                 {tab.label}
-              </button>
+              </Link>
             ))}
           </nav>
         </div>
 
         {/* Tab Content */}
         <div>
-          {activeTab === 'users' && <UsersTab />}
-          {activeTab === 'snippets' && <SnippetsTab />}
-          {activeTab === 'api-keys' && <ApiKeysTab />}
-          {activeTab === 'shares' && <SharesTab />}
+          <Routes>
+            <Route index element={<Navigate to={ROUTES.ADMIN_USERS} replace />} />
+            <Route path="users" element={<UsersTab />} />
+            <Route path="snippets" element={<SnippetsTab />} />
+            <Route path="api-keys" element={<ApiKeysTab />} />
+            <Route path="shares" element={<SharesTab />} />
+          </Routes>
         </div>
       </div>
     </div>

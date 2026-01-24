@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '../../../utils/api/admin';
 import { useToast } from '../../../hooks/useToast';
 import { ConfirmationModal } from '../../common/modals/ConfirmationModal';
-import { Trash2, Globe, Lock } from 'lucide-react';
+import { Trash2, Globe, Lock, AlertTriangle } from 'lucide-react';
 import { useDebounce } from '../../../hooks/useDebounce';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../constants/routes';
@@ -24,6 +24,7 @@ export const SnippetsTab: React.FC = () => {
   const [isPublic, setIsPublic] = useState('');
   const [offset, setOffset] = useState(0);
   const [deleteSnippetId, setDeleteSnippetId] = useState<number | null>(null);
+  const [showOffensiveOnly, setShowOffensiveOnly] = useState(false);
   const limit = 50;
 
   const debouncedSearch = useDebounce(search, 300);
@@ -32,15 +33,19 @@ export const SnippetsTab: React.FC = () => {
   const navigate = useNavigate();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['admin', 'snippets', offset, debouncedSearch, userId, isPublic],
-    queryFn: () =>
-      adminApi.getSnippets({
+    queryKey: ['admin', 'snippets', offset, debouncedSearch, userId, isPublic, showOffensiveOnly],
+    queryFn: () => {
+      if (showOffensiveOnly) {
+        return adminApi.scanSnippetsForOffensive();
+      }
+      return adminApi.getSnippets({
         offset,
         limit,
         search: debouncedSearch,
         userId,
         isPublic,
-      }),
+      });
+    },
   });
 
   const deleteMutation = useMutation({
@@ -71,6 +76,11 @@ export const SnippetsTab: React.FC = () => {
   const snippets = data?.snippets || [];
   const total = data?.total || 0;
 
+  const handleToggleOffensiveScan = () => {
+    setShowOffensiveOnly(!showOffensiveOnly);
+    setOffset(0);
+  };
+
   const columns: TableColumn<any>[] = [
     {
       key: 'id',
@@ -85,12 +95,22 @@ export const SnippetsTab: React.FC = () => {
       key: 'title',
       label: 'Title',
       render: (snippet) => (
-        <button
-          onClick={() => navigate(`${ROUTES.SNIPPETS}/${snippet.id}`)}
-          className="text-light-text dark:text-dark-text hover:text-light-primary dark:hover:text-dark-primary hover:underline text-left max-w-xs truncate"
-        >
-          {snippet.title}
-        </button>
+        <div className="flex items-center gap-2">
+          {snippet.flagged_words && snippet.flagged_words.length > 0 && (
+            <span
+              className="text-red-600 dark:text-red-400"
+              title={`Contains offensive words: ${snippet.flagged_words.join(', ')}`}
+            >
+              <AlertTriangle className="w-4 h-4" />
+            </span>
+          )}
+          <button
+            onClick={() => navigate(`${ROUTES.SNIPPETS}/${snippet.id}`)}
+            className="text-light-text dark:text-dark-text hover:text-light-primary dark:hover:text-dark-primary hover:underline text-left max-w-xs truncate"
+          >
+            {snippet.title}
+          </button>
+        </div>
       ),
     },
     {
@@ -163,42 +183,66 @@ export const SnippetsTab: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <FilterInput
-          value={search}
-          onChange={(value) => {
-            setSearch(value);
-            setOffset(0);
-          }}
-          placeholder="Search snippets..."
-          className="flex-1"
-          showSearchIcon
-        />
-        <FilterInput
-          value={userId}
-          onChange={(value) => {
-            setUserId(value);
-            setOffset(0);
-          }}
-          placeholder="User ID"
-          className="w-32"
-        />
-        <FilterSelect
-          value={isPublic}
-          onChange={(value) => {
-            setIsPublic(value);
-            setOffset(0);
-          }}
-          options={[
-            { value: 'true', label: 'Public' },
-            { value: 'false', label: 'Private' },
-          ]}
-          placeholder="All Visibility"
-        />
+      {/* Action Bar */}
+      <div className="flex justify-between items-center">
+        <button
+          onClick={handleToggleOffensiveScan}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+            showOffensiveOnly
+              ? 'bg-red-600 text-white hover:bg-red-700'
+              : 'bg-light-bg-secondary dark:bg-dark-bg-secondary text-light-text dark:text-dark-text hover:bg-light-bg-tertiary dark:hover:bg-dark-bg-tertiary'
+          }`}
+        >
+          <AlertTriangle className="w-4 h-4" />
+          {showOffensiveOnly ? 'Show All Snippets' : 'Identify Offensive Snippets'}
+        </button>
+        {showOffensiveOnly && total > 0 && (
+          <span className="text-red-600 dark:text-red-400 font-medium">
+            Found {total} snippet{total !== 1 ? 's' : ''} with offensive content
+          </span>
+        )}
       </div>
 
-      <ResultsCount offset={offset} limit={limit} total={total} entityName="snippets" />
+      {/* Filters */}
+      {!showOffensiveOnly && (
+        <div className="flex flex-col sm:flex-row gap-4">
+          <FilterInput
+            value={search}
+            onChange={(value) => {
+              setSearch(value);
+              setOffset(0);
+            }}
+            placeholder="Search snippets..."
+            className="flex-1"
+            showSearchIcon
+          />
+          <FilterInput
+            value={userId}
+            onChange={(value) => {
+              setUserId(value);
+              setOffset(0);
+            }}
+            placeholder="User ID"
+            className="w-32"
+          />
+          <FilterSelect
+            value={isPublic}
+            onChange={(value) => {
+              setIsPublic(value);
+              setOffset(0);
+            }}
+            options={[
+              { value: 'true', label: 'Public' },
+              { value: 'false', label: 'Private' },
+            ]}
+            placeholder="All Visibility"
+          />
+        </div>
+      )}
+
+      {!showOffensiveOnly && (
+        <ResultsCount offset={offset} limit={limit} total={total} entityName="snippets" />
+      )}
 
       <AdminTable
         columns={columns}
@@ -209,13 +253,15 @@ export const SnippetsTab: React.FC = () => {
         getRowKey={(snippet) => snippet.id}
       />
 
-      <Pagination
-        offset={offset}
-        limit={limit}
-        total={total}
-        onPrevious={() => setOffset(Math.max(0, offset - limit))}
-        onNext={() => setOffset(offset + limit)}
-      />
+      {!showOffensiveOnly && (
+        <Pagination
+          offset={offset}
+          limit={limit}
+          total={total}
+          onPrevious={() => setOffset(Math.max(0, offset - limit))}
+          onNext={() => setOffset(offset + limit)}
+        />
+      )}
 
       {/* Delete Confirmation Modal */}
       <ConfirmationModal

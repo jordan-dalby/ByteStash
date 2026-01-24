@@ -1,5 +1,6 @@
 import express from 'express';
 import adminRepository from '../repositories/adminRepository.js';
+import badWordsChecker from '../utils/badWords.js';
 import Logger from '../logger.js';
 
 const router = express.Router();
@@ -146,6 +147,16 @@ router.patch('/snippets/:id/toggle-public', async (req, res) => {
   } catch (error) {
     Logger.error('Error toggling snippet public status:', error);
     res.status(500).json({ message: 'Failed to toggle snippet visibility' });
+  }
+});
+
+router.get('/snippets/scan/offensive', async (req, res) => {
+  try {
+    const result = await adminRepository.scanSnippetsForOffensiveContent(badWordsChecker);
+    res.json(result);
+  } catch (error) {
+    Logger.error('Error scanning snippets for offensive content:', error);
+    res.status(500).json({ message: 'Failed to scan snippets for offensive content' });
   }
 });
 

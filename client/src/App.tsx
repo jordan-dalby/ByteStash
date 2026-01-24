@@ -90,7 +90,7 @@ const App: React.FC = () => {
                   <Route path={ROUTES.RECYCLE} element={<RecycleSnippetStorage />} />
                   <Route path={ROUTES.EMBED} element={<EmbedViewWrapper />} />
                   <Route path={ROUTES.SNIPPET} element={<SnippetPage />} />
-                  <Route path={ROUTES.ADMIN} element={<AdminPage />} />
+                  <Route path="/admin/*" element={<AdminPage />} />
                   <Route path={ROUTES.HOME} element={<AuthenticatedApp />} />
                 </Routes>
               </AuthProvider>

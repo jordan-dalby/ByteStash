@@ -506,6 +506,67 @@ class AdminRepository {
       throw error;
     }
   }
+
+  async scanSnippetsForOffensiveContent(badWordsChecker) {
+    this.#initializeStatements();
+
+    try {
+      const db = getDb();
+
+      // Get all snippets with their fragments
+      const query = `
+        SELECT
+          s.id, s.title, s.description, s.updated_at, s.is_public,
+          s.user_id, u.username,
+          GROUP_CONCAT(f.code || ' ' || f.file_name, '|||') as fragments_content
+        FROM snippets s
+        LEFT JOIN users u ON s.user_id = u.id
+        LEFT JOIN fragments f ON s.id = f.snippet_id
+        GROUP BY s.id
+        ORDER BY s.updated_at DESC
+      `;
+
+      const snippets = db.prepare(query).all();
+      const flaggedSnippets = [];
+
+      for (const snippet of snippets) {
+        const textToCheck = [
+          snippet.title || '',
+          snippet.description || '',
+          snippet.fragments_content || ''
+        ].join(' ');
+
+        const foundWords = badWordsChecker.findBadWords(textToCheck);
+
+        if (foundWords.length > 0) {
+          // Get fragment count for display
+          const fragmentCount = db.prepare(
+            'SELECT COUNT(*) as count FROM fragments WHERE snippet_id = ?'
+          ).get(snippet.id).count;
+
+          flaggedSnippets.push({
+            id: snippet.id,
+            title: snippet.title,
+            description: snippet.description,
+            updated_at: snippet.updated_at,
+            is_public: snippet.is_public,
+            user_id: snippet.user_id,
+            username: snippet.username,
+            fragment_count: fragmentCount,
+            flagged_words: foundWords
+          });
+        }
+      }
+
+      return {
+        snippets: flaggedSnippets,
+        total: flaggedSnippets.length
+      };
+    } catch (error) {
+      Logger.error('Error scanning snippets for offensive content:', error);
+      throw error;
+    }
+  }
 }
 
 export default new AdminRepository();
