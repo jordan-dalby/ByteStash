@@ -561,8 +561,8 @@ class SnippetRepository {
         params.push(...filters.categories, filters.categories.length);
       }
 
-      // Apply sorting
-      sql += ` ORDER BY `;
+      // Apply sorting - pinned snippets always come first
+      sql += ` ORDER BY s.is_pinned DESC, `;
       switch (sort) {
         case 'oldest':
           sql += `s.updated_at ASC`;
