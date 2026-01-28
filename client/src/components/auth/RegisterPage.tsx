@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { register } from '../../utils/api/auth';
 import { PageContainer } from '../common/layout/PageContainer';
 import { useToast } from '../../hooks/useToast';
+import { useOidcErrorHandler } from '../../hooks/useOidcErrorHandler';
 import { AlertCircle } from 'lucide-react';
 import { ROUTES } from '../../constants/routes';
 import { OIDCConfig } from '../../types/auth';
 import { apiClient } from '../../utils/api/apiClient';
-import { handleOIDCError } from '../../utils/oidcErrorHandler';
+import { capitalizeFirstLetter } from '../../utils/helpers/changeCaseUtils';
 
 export const RegisterPage: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -18,6 +20,9 @@ export const RegisterPage: React.FC = () => {
   const [oidcConfig, setOIDCConfig] = useState<OIDCConfig | null>(null);
   const { login, authConfig, isAuthenticated, refreshAuthConfig } = useAuth();
   const { addToast } = useToast();
+  const handleOIDCError = useOidcErrorHandler();
+  const { t } = useTranslation();
+  const { t: translate } = useTranslation('components/auth');
 
   useEffect(() => {
     const fetchOIDCConfig = async () => {
@@ -38,9 +43,9 @@ export const RegisterPage: React.FC = () => {
     const message = params.get('message');
     
     if (error) {
-      handleOIDCError(error, addToast, oidcConfig?.displayName, message || undefined);
+      handleOIDCError(error, oidcConfig?.displayName, message || undefined);
     }
-  }, [addToast, oidcConfig]);
+  }, [oidcConfig]);
 
   if (isAuthenticated) {
     return <Navigate to="/" replace />;
@@ -50,13 +55,13 @@ export const RegisterPage: React.FC = () => {
     return (
       <PageContainer className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4 text-light-text dark:text-dark-text">Registration Disabled</h2>
-          <p className="text-light-text-secondary dark:text-dark-text-secondary mb-4">New account registration is currently disabled.</p>
-          <Link 
+          <h2 className="text-2xl font-bold mb-4 text-light-text dark:text-dark-text">{translate('register.disabled.title')}</h2>
+          <p className="text-light-text-secondary dark:text-dark-text-secondary mb-4">{translate('register.disabled.description')}</p>
+          <Link
             to="/login" 
             className="text-light-primary dark:text-dark-primary hover:opacity-80"
           >
-            Return to Login
+            {translate('register.disabled.link.text')}
           </Link>
         </div>
       </PageContainer>
@@ -68,7 +73,7 @@ export const RegisterPage: React.FC = () => {
     setIsLoading(true);
 
     if (password !== confirmPassword) {
-      addToast('Passwords do not match', 'error');
+      addToast(translate('register.error.passwordsDoNotMatch'), 'error');
       setIsLoading(false);
       return;
     }
@@ -80,7 +85,7 @@ export const RegisterPage: React.FC = () => {
         login(response.token, response.user);
       }
     } catch (err: any) {
-      const errorMessage = err.error || 'Failed to register';
+      const errorMessage = err.error || translate('register.error.default');
       addToast(errorMessage, 'error');
     } finally {
       setIsLoading(false);
@@ -98,18 +103,17 @@ export const RegisterPage: React.FC = () => {
       <div className="max-w-md w-full space-y-6">
         <div>
           <h2 className="mt-6 text-center text-3xl font-bold text-light-text dark:text-dark-text">
-            Create Account
+            {translate('register.title')}
           </h2>
           <p className="mt-2 text-center text-sm text-light-text-secondary dark:text-dark-text-secondary">
             {authConfig?.hasUsers ? (
               <>
-                Or{' '}
                 <Link to="/login" className="text-light-primary dark:text-dark-primary hover:opacity-80">
-                  sign in to your account
+                  {capitalizeFirstLetter(translate('register.signInToYourAccount'))}
                 </Link>
-                {' '}or{' '}
+                {' '}{t('or')}{' '}
                 <Link to={ROUTES.PUBLIC_SNIPPETS} className="text-light-primary dark:text-dark-primary hover:opacity-80">
-                  browse public snippets
+                  {translate('register.browsePublicSnippets')}
                 </Link>
               </>
             ) : (
@@ -120,8 +124,7 @@ export const RegisterPage: React.FC = () => {
                       <AlertCircle size={14} className="text-light-primary dark:text-dark-primary" />
                     </div>
                     <p className="text-sm text-light-text dark:text-dark-text text-left">
-                      This is the first account to be created. All existing snippets will be
-                      automatically migrated to this account.
+                      {translate('register.firstAccountDescription')}
                     </p>
                   </div>
                 </div>
@@ -137,7 +140,7 @@ export const RegisterPage: React.FC = () => {
               className="w-full flex items-center justify-center gap-2 px-4 py-2 
                 bg-light-primary dark:bg-dark-primary text-white rounded-md hover:opacity-90 transition-colors"
             >
-              Sign in with {oidcConfig.displayName}
+              {translate('signIn.with', { displayName: oidcConfig.displayName })}
             </button>
             {showInternalRegistration && (
               <div className="relative my-6">
@@ -146,7 +149,7 @@ export const RegisterPage: React.FC = () => {
                 </div>
                 <div className="relative flex justify-center">
                   <span className="px-2 bg-light-bg dark:bg-dark-bg text-light-text-secondary dark:text-dark-text-secondary text-sm">
-                    Or continue with password
+                    {translate('login.orContinueWithPassword')}
                   </span>
                 </div>
               </div>
@@ -158,7 +161,7 @@ export const RegisterPage: React.FC = () => {
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="rounded-md shadow-sm -space-y-px">
               <div>
-                <label htmlFor="username" className="sr-only">Username</label>
+                <label htmlFor="username" className="sr-only">{t('username')}</label>
                 <input
                   id="username"
                   type="text"
@@ -167,14 +170,14 @@ export const RegisterPage: React.FC = () => {
                     border-light-border dark:border-dark-border placeholder-light-text-secondary dark:placeholder-dark-text-secondary 
                     text-light-text dark:text-dark-text bg-light-surface dark:bg-dark-surface rounded-t-md 
                     focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary focus:border-light-primary dark:focus:border-dark-primary focus:z-10 sm:text-sm"
-                  placeholder="Username"
+                  placeholder={t('username')}
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   disabled={isLoading}
                 />
               </div>
               <div>
-                <label htmlFor="password" className="sr-only">Password</label>
+                <label htmlFor="password" className="sr-only">{t('password')}</label>
                 <input
                   id="password"
                   type="password"
@@ -183,14 +186,14 @@ export const RegisterPage: React.FC = () => {
                     border-light-border dark:border-dark-border placeholder-light-text-secondary dark:placeholder-dark-text-secondary 
                     text-light-text dark:text-dark-text bg-light-surface dark:bg-dark-surface
                     focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary focus:border-light-primary dark:focus:border-dark-primary focus:z-10 sm:text-sm"
-                  placeholder="Password"
+                  placeholder={t('password')}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
                 />
               </div>
               <div>
-                <label htmlFor="confirm-password" className="sr-only">Confirm Password</label>
+                <label htmlFor="confirm-password" className="sr-only">{t('confirmPassword')}</label>
                 <input
                   id="confirm-password"
                   type="password"
@@ -199,7 +202,7 @@ export const RegisterPage: React.FC = () => {
                     border-light-border dark:border-dark-border placeholder-light-text-secondary dark:placeholder-dark-text-secondary 
                     text-light-text dark:text-dark-text bg-light-surface dark:bg-dark-surface rounded-b-md
                     focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary focus:border-light-primary dark:focus:border-dark-primary focus:z-10 sm:text-sm"
-                  placeholder="Confirm Password"
+                  placeholder={t('confirmPassword')}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   disabled={isLoading}
@@ -222,10 +225,10 @@ export const RegisterPage: React.FC = () => {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Creating Account...
+                    {translate('register.creatingAccount')}
                   </span>
                 ) : (
-                  'Create Account'
+                  t('action.createAccount')
                 )}
               </button>
             </div>
@@ -234,16 +237,15 @@ export const RegisterPage: React.FC = () => {
 
         {!showInternalRegistration && !oidcConfig?.enabled && (
           <div className="text-center">
-            <h2 className="text-xl font-bold text-red-400 mb-4">Registration Not Available</h2>
+            <h2 className="text-xl font-bold text-red-400 mb-4">{translate('register.notAvailable.title')}</h2>
             <p className="text-light-text-secondary dark:text-dark-text-secondary mb-4">
-              Internal account registration is disabled and no SSO providers are configured.
-              Please contact your administrator.
+              {translate('register.notAvailable.description')}
             </p>
             <Link 
               to={ROUTES.PUBLIC_SNIPPETS}
               className="text-light-primary dark:text-dark-primary hover:opacity-80"
             >
-              Browse public snippets
+              {capitalizeFirstLetter(translate('register.browsePublicSnippets'))}
             </Link>
           </div>
         )}

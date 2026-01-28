@@ -1,0 +1,59 @@
+{
+  "action": {
+    "delete": "Удалить снипет",
+    "makePrivate": "Сделать приватным",
+    "makePublic": "Сделать публичным",
+    "scanForOffensiveContent": "С неприемлемым содержимым",
+    "showAllSnippets": "Показать все снипеты",
+    "viewSnippet": "Просмотр снипета"
+  },
+  "columns": {
+    "labels": {
+      "actions": "Действия",
+      "fragments": "Фрагменты",
+      "owner": "Владелец",
+      "title": "Заголовок",
+      "updated": "Обновлён",
+      "visibility": "Видимость"
+    }
+  },
+  "confirmationModal": {
+    "message": "Вы уверены, что хотите навсегда удалить этот снипет? Это действие невозможно отменить.",
+    "title": "Удалить снипет"
+  },
+  "containsOffensiveWords": "Содержит неприемлемые слова: {{words}}",
+  "entityName_one": "снипет",
+  "entityName_few": "снипета",
+  "entityName_many": "снипетов",
+  "entityName_other": "снипетов",
+  "error": {
+    "delete": {
+      "default": "Не удалось удалить снипет"
+    },
+    "update": {
+      "default": "Не удалось обновить видимость снипета"
+    }
+  },
+  "filters": {
+    "search": "Поиск снипетов...",
+    "userId": "ID пользователя",
+    "visibility": {
+      "all": "Все типы",
+      "private": "Приватный",
+      "public": "Публичный"
+    }
+  },
+  "offensiveContentMessage": "Обнаружено {{total}} {{entityName}} с неприемлемым содержимым",
+  "success": {
+    "delete": {
+      "default": "Снипет успешно удалён"
+    },
+    "update": {
+      "default": "Видимость снипета обновлена"
+    }
+  },
+  "table": {
+    "emptyMessage": "Снипеты не найдены",
+    "loadingMessage": "Загрузка снипетов..."
+  }
+}

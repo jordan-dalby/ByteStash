@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { LogOut, User, Key, Lock, Shield } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { useOutsideClick } from '../../hooks/useOutsideClick';
 import { Link, useNavigate } from 'react-router-dom';
@@ -10,6 +11,7 @@ import { OIDCConfig } from '../../types/auth';
 import { ROUTES } from '../../constants/routes';
 
 export const UserDropdown: React.FC = () => {
+  const { t: translate } = useTranslation('components/auth');
   const [isOpen, setIsOpen] = useState(false);
   const [isApiKeysModalOpen, setIsApiKeysModalOpen] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
@@ -74,7 +76,7 @@ export const UserDropdown: React.FC = () => {
                   dark:hover:bg-dark-hover flex items-center gap-2"
               >
                 <Shield size={16} />
-                <span>Admin Panel</span>
+                <span>{translate('userDropdown.adminPanel')}</span>
               </button>
             )}
             <button
@@ -86,7 +88,7 @@ export const UserDropdown: React.FC = () => {
                 dark:hover:bg-dark-hover flex items-center gap-2"
             >
               <Key size={16} />
-              <span>API Keys</span>
+              <span>{translate('userDropdown.apiKeys')}</span>
             </button>
             {!user.oidc_id && authConfig?.allowPasswordChanges && (
               <button
@@ -98,7 +100,7 @@ export const UserDropdown: React.FC = () => {
                   dark:hover:bg-dark-hover flex items-center gap-2"
               >
                 <Lock size={16} />
-                <span>Change Password</span>
+                <span>{translate('userDropdown.changePassword')}</span>
               </button>
             )}
             <button
@@ -110,7 +112,7 @@ export const UserDropdown: React.FC = () => {
                 dark:hover:bg-dark-hover flex items-center gap-2"
             >
               <LogOut size={16} />
-              <span>Sign out</span>
+              <span>{translate('userDropdown.signOut')}</span>
             </button>
           </div>
         )}
@@ -137,7 +139,7 @@ export const UserDropdown: React.FC = () => {
           dark:hover:bg-dark-hover rounded-md transition-colors text-sm text-light-text dark:text-dark-text"
       >
         <User size={16} />
-        <span>Sign in</span>
+        <span>{translate('userDropdown.signIn')}</span>
       </Link>
     </div>
   );

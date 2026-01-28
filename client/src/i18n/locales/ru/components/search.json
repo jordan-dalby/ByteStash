@@ -1,0 +1,30 @@
+{
+  "action": {
+    "clear": "Очистить поиск",
+    "newSnippet": "Создать",
+    "openSettings": "Настройки",
+    "recycleBin": "Корзина",
+    "showAll": "Показать все",
+    "showFavorites": "Избранное"
+  },
+  "categories": {
+    "addNew": "Создать категорию",
+    "title": "Категории"
+  },
+  "defaultPlaceholder": "Поиск снипетов... (Наберите # чтобы просмотреть все доступные категории)",
+  "filter": {
+    "language": {
+      "all": "Все языки"
+    }
+  },
+  "sort": {
+    "alphaAsc": "А-Я",
+    "alphaDesc": "Я-А",
+    "newestFirst": "Сначала новые",
+    "oldestFirst": "Сначала старые"
+  },
+  "view": {
+    "grid": "Карточки",
+    "list": "Список"
+  }
+}

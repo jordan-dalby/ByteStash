@@ -1,0 +1,57 @@
+{
+  "editSnippetModal": {
+    "addSnippet": "Add new snippet",
+    "editSnippet": "Edit snippet",
+    "error": {
+      "savingFailed": "An error occurred while saving the snippet. Please try again."
+    },
+    "form": {
+      "categories": {
+        "counter": "{{categories}}/{{max}} categories",
+        "label": "Categories (max {{max}})",
+        "placeholder": "Type a category and press Enter or comma"
+      },
+      "codeFragments": {
+        "add": "Add new fragment",
+        "label": "Code Fragments ({{fragments}})"
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Write a short description of the snippet"
+      },
+      "isPublic": {
+        "description": "Public snippets can be viewed by anyone without authentication",
+        "label": "Make snippet public"
+      },
+      "title": {
+        "counter": "{{characters}}/{{max}} characters",
+        "label": "Title",
+        "placeholder": "Enter the title of the snippet (max {{max}} characters)"
+      }
+    },
+    "fragmentRequired": "At least one code fragment is required",
+    "mustHaveFileNames": "All fragments must have file names",
+    "unsavedChanges": "You have unsaved changes. Are you sure you want to close?"
+  },
+  "fragmentEditor": {
+    "action": {
+      "collapse": "Collapse",
+      "delete": "Delete",
+      "expand": "Expand"
+    },
+    "form": {
+      "fileName": {
+        "placeholder": "File name"
+      },
+      "language": {
+        "placeholder": "Select language",
+        "sections": {
+          "other": "Other",
+          "used": "Used"
+        }
+      }
+    },
+    "moveDown": "Move down",
+    "moveUp": "Move up"
+  }
+}

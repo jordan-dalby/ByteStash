@@ -47,48 +47,17 @@ const CategoryTag: React.FC<CategoryTagProps> = ({
 };
 
 const getCategoryColor = (name: string) => {
-  const colorSchemes = [
-    {
-      bg: 'bg-blue-500/20 dark:bg-blue-500/30',
-      text: 'text-blue-700 dark:text-blue-200',
-      hover: 'hover:bg-blue-500/30 dark:hover:bg-blue-500/40'
-    },
-    {
-      bg: 'bg-emerald-500/20 dark:bg-emerald-500/30',
-      text: 'text-emerald-700 dark:text-emerald-200',
-      hover: 'hover:bg-emerald-500/30 dark:hover:bg-emerald-500/40'
-    },
-    {
-      bg: 'bg-purple-500/20 dark:bg-purple-500/30',
-      text: 'text-purple-700 dark:text-purple-200',
-      hover: 'hover:bg-purple-500/30 dark:hover:bg-purple-500/40'
-    },
-    {
-      bg: 'bg-amber-500/20 dark:bg-amber-500/30',
-      text: 'text-amber-700 dark:text-amber-200',
-      hover: 'hover:bg-amber-500/30 dark:hover:bg-amber-500/40'
-    },
-    {
-      bg: 'bg-rose-500/20 dark:bg-rose-500/30',
-      text: 'text-rose-700 dark:text-rose-200',
-      hover: 'hover:bg-rose-500/30 dark:hover:bg-rose-500/40'
-    },
-    {
-      bg: 'bg-cyan-500/20 dark:bg-cyan-500/30',
-      text: 'text-cyan-700 dark:text-cyan-200',
-      hover: 'hover:bg-cyan-500/30 dark:hover:bg-cyan-500/40'
-    },
-    {
-      bg: 'bg-indigo-500/20 dark:bg-indigo-500/30',
-      text: 'text-indigo-700 dark:text-indigo-200',
-      hover: 'hover:bg-indigo-500/30 dark:hover:bg-indigo-500/40'
-    },
-    {
-      bg: 'bg-teal-500/20 dark:bg-teal-500/30',
-      text: 'text-teal-700 dark:text-teal-200',
-      hover: 'hover:bg-teal-500/30 dark:hover:bg-teal-500/40'
-    }
+  const colors = [
+    'blue', 'emerald',
+    'purple', 'amber',
+    'rose', 'cyan',
+    'indigo', 'teal',
   ];
+  const colorSchemes = colors.map((color) => ({
+    bg: `bg-${color}-500/20 dark:bg-${color}-500/30`,
+    text: `text-${color}-700 dark:text-${color}-200`,
+    hover: `hover:bg-${color}-500/30 dark:hover:bg-${color}-500/40`
+  }));
   
   const hash = name.split('').reduce((acc, char, i) => {
     return char.charCodeAt(0) + ((acc << 5) - acc) + i;

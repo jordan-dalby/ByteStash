@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Trash2, ToggleLeft, ToggleRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { adminApi } from '../../../utils/api/admin';
 import { useToast } from '../../../hooks/useToast';
 import { ConfirmationModal } from '../../common/modals/ConfirmationModal';
-import { Trash2, ToggleLeft, ToggleRight } from 'lucide-react';
 import { useDebounce } from '../../../hooks/useDebounce';
 import {
   FilterInput,
@@ -17,6 +18,8 @@ import {
 } from '../common';
 
 export const UsersTab: React.FC = () => {
+  const { t } = useTranslation();
+  const { t: translate } = useTranslation('components/admin/tabs/users');
   const [search, setSearch] = useState('');
   const [authType, setAuthType] = useState('');
   const [isActive, setIsActive] = useState('');
@@ -43,24 +46,24 @@ export const UsersTab: React.FC = () => {
   const deleteMutation = useMutation({
     mutationFn: (id: number) => adminApi.deleteUser(id),
     onSuccess: () => {
-      addToast('User deleted successfully', 'success');
+      addToast(translate('success.delete.default'), 'success');
       queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] });
       setDeleteUserId(null);
     },
     onError: (error: any) => {
-      addToast(error.message || 'Failed to delete user', 'error');
+      addToast(error.message || translate('error.delete.default'), 'error');
     },
   });
 
   const toggleActiveMutation = useMutation({
     mutationFn: (id: number) => adminApi.toggleUserActive(id),
     onSuccess: () => {
-      addToast('User status updated', 'success');
+      addToast(translate('success.update.default'), 'success');
       queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
     },
     onError: (error: any) => {
-      addToast(error.message || 'Failed to update user status', 'error');
+      addToast(error.message || translate('error.update.default'), 'error');
     },
   });
 
@@ -79,21 +82,25 @@ export const UsersTab: React.FC = () => {
     },
     {
       key: 'username',
-      label: 'Username',
+      label: translate('columns.labels.username'),
       render: (user) => (
         <span className="whitespace-nowrap text-light-text dark:text-dark-text">
           {user.username}
-          {user.is_admin && (
-            <span className="ml-2 px-2 py-0.5 text-xs bg-light-primary dark:bg-dark-primary text-white rounded">
-              Admin
-            </span>
-          )}
+          {
+            user.is_admin
+              ? (
+                  <span className="ml-2 px-2 py-0.5 text-xs bg-light-primary dark:bg-dark-primary text-white rounded">
+                    Admin
+                  </span>
+                )
+              : null
+          }
         </span>
       ),
     },
     {
       key: 'email',
-      label: 'Email',
+      label: translate('columns.labels.email'),
       render: (user) => (
         <span className="whitespace-nowrap text-light-text-secondary dark:text-dark-text-secondary">
           {user.email || '-'}
@@ -102,16 +109,16 @@ export const UsersTab: React.FC = () => {
     },
     {
       key: 'auth_type',
-      label: 'Auth Type',
+      label: translate('columns.labels.authType'),
       render: (user) => (
         <span className="whitespace-nowrap text-light-text-secondary dark:text-dark-text-secondary">
-          {user.oidc_id ? 'OIDC' : 'Internal'}
+          {user.oidc_id ? translate('filters.authType.oidc') : translate('filters.authType.internal')}
         </span>
       ),
     },
     {
       key: 'created_at',
-      label: 'Created',
+      label: translate('columns.labels.created'),
       render: (user) => (
         <span className="whitespace-nowrap text-light-text-secondary dark:text-dark-text-secondary">
           {formatDate(user.created_at)}
@@ -120,7 +127,7 @@ export const UsersTab: React.FC = () => {
     },
     {
       key: 'last_login_at',
-      label: 'Last Login',
+      label: translate('columns.labels.lastLogin'),
       render: (user) => (
         <span className="whitespace-nowrap text-light-text-secondary dark:text-dark-text-secondary">
           {formatDate(user.last_login_at)}
@@ -129,7 +136,7 @@ export const UsersTab: React.FC = () => {
     },
     {
       key: 'snippet_count',
-      label: 'Snippets',
+      label: translate('columns.labels.snippetsCount'),
       render: (user) => (
         <span className="whitespace-nowrap text-light-text-secondary dark:text-dark-text-secondary">
           {user.snippet_count}
@@ -138,7 +145,7 @@ export const UsersTab: React.FC = () => {
     },
     {
       key: 'api_key_count',
-      label: 'API Keys',
+      label: translate('columns.labels.apiKeysCount'),
       render: (user) => (
         <span className="whitespace-nowrap text-light-text-secondary dark:text-dark-text-secondary">
           {user.api_key_count}
@@ -147,11 +154,11 @@ export const UsersTab: React.FC = () => {
     },
     {
       key: 'status',
-      label: 'Status',
+      label: translate('columns.labels.status'),
       render: (user) => (
         <span className="whitespace-nowrap">
           <StatusBadge
-            label={user.is_active ? 'Active' : 'Inactive'}
+            label={user.is_active ? translate('status.active') : translate('status.inactive')}
             variant={user.is_active ? 'success' : 'danger'}
           />
         </span>
@@ -159,13 +166,13 @@ export const UsersTab: React.FC = () => {
     },
     {
       key: 'actions',
-      label: 'Actions',
+      label: translate('columns.labels.actions'),
       render: (user) => (
         <div className="flex items-center gap-2 whitespace-nowrap">
           <button
             onClick={() => toggleActiveMutation.mutate(user.id)}
             className="p-1 hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary rounded"
-            title={user.is_active ? 'Deactivate user' : 'Activate user'}
+            title={user.is_active ? translate('action.deactivate') : translate('action.activate')}
           >
             {user.is_active ? (
               <ToggleRight className="w-4 h-4 text-green-600" />
@@ -176,7 +183,7 @@ export const UsersTab: React.FC = () => {
           <button
             onClick={() => setDeleteUserId(user.id)}
             className="p-1 hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary rounded text-red-600 dark:text-red-400"
-            title="Delete user"
+            title={translate('action.delete')}
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -195,7 +202,7 @@ export const UsersTab: React.FC = () => {
             setSearch(value);
             setOffset(0);
           }}
-          placeholder="Search users..."
+          placeholder={translate('filters.search')}
           className="flex-1"
           showSearchIcon
         />
@@ -206,10 +213,10 @@ export const UsersTab: React.FC = () => {
             setOffset(0);
           }}
           options={[
-            { value: 'internal', label: 'Internal' },
-            { value: 'oidc', label: 'OIDC' },
+            { value: 'internal', label: translate('filters.authType.internal') },
+            { value: 'oidc', label: translate('filters.authType.oidc') },
           ]}
-          placeholder="All Auth Types"
+          placeholder={translate('filters.authType.all')}
         />
         <FilterSelect
           value={isActive}
@@ -218,21 +225,21 @@ export const UsersTab: React.FC = () => {
             setOffset(0);
           }}
           options={[
-            { value: 'true', label: 'Active' },
-            { value: 'false', label: 'Inactive' },
+            { value: 'true', label: translate('filters.status.active') },
+            { value: 'false', label: translate('filters.status.inactive') },
           ]}
-          placeholder="All Status"
+          placeholder={translate('filters.status.all')}
         />
       </div>
 
-      <ResultsCount offset={offset} limit={limit} total={total} entityName="users" />
+      <ResultsCount offset={offset} limit={limit} total={total} entityName={translate('entityName', { count: total })} />
 
       <AdminTable
         columns={columns}
         data={users}
         isLoading={isLoading}
-        emptyMessage="No users found"
-        loadingMessage="Loading users..."
+        emptyMessage={translate('table.emptyMessage')}
+        loadingMessage={translate('table.loadingMessage')}
         getRowKey={(user) => user.id}
       />
 
@@ -249,10 +256,10 @@ export const UsersTab: React.FC = () => {
         isOpen={deleteUserId !== null}
         onClose={() => setDeleteUserId(null)}
         onConfirm={() => deleteUserId && deleteMutation.mutate(deleteUserId)}
-        title="Delete User"
-        message="Are you sure you want to delete this user? This will permanently delete all their snippets, API keys, and shares. This action cannot be undone."
-        confirmLabel="Delete"
-        cancelLabel="Cancel"
+        title={translate('confirmationModal.title')}
+        message={translate('confirmationModal.message')}
+        confirmLabel={t('action.delete')}
+        cancelLabel={t('action.cancel')}
         variant="danger"
       />
     </div>

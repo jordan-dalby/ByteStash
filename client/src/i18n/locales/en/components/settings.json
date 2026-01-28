@@ -1,0 +1,93 @@
+{
+  "settingsModal": {
+    "block": {
+      "category": {
+        "expandCategories": {
+          "description": "Automatically expand category groups",
+          "label": "Expand Categories"
+        },
+        "showCategories": {
+          "description": "Display category labels for snippets",
+          "label": "Show Categories"
+        },
+        "title": "Category"
+      },
+      "dataManagement": {
+        "export": {
+          "label": "Export Snippets"
+        },
+        "import": {
+          "errors": {
+            "failed": "Failed to import \"{{title}}\": {{error}}",
+            "occurred_one": "{{count, number}} error occurred",
+            "occurred_other": "{{count, number}} errors occurred"
+          },
+          "label": "Import Snippets",
+          "progress": "Importing snippets..."
+        },
+        "title": "Data management"
+      },
+      "locale": {
+        "title": "Locale"
+      },
+      "search": {
+        "includeCodeInSearch": {
+          "description": "Search within code content, not just titles",
+          "label": "Include Code in Search"
+        },
+        "title": "Search"
+      },
+      "theme": {
+        "title": "Theme"
+      },
+      "view": {
+        "compactView": {
+          "description": "Display snippets in a more condensed format",
+          "label": "Compact View"
+        },
+        "previewLines": {
+          "description": "Display a preview of the code in the snippet list",
+          "label": "Show Code Preview"
+        },
+        "showCodePreview": {
+          "description": "Maximum number of lines to show in preview (1-20)",
+          "label": "Number of Preview Lines"
+        },
+        "showLineNumbers": {
+          "description": "Display line numbers in code blocks",
+          "label": "Show Line Numbers"
+        },
+        "title": "View"
+      }
+    },
+    "export": {
+      "error": {
+        "default": "Failed to export snippets",
+        "noSnippets": "No snippets available for export"
+      },
+      "markdown": {
+        "error": {
+          "default": "Failed to export Markdown"
+        },
+        "success": {
+          "default": "Markdown export successful"
+        },
+        "warning": {
+          "default": "No snippets available for export"
+        }
+      },
+      "success": {
+        "default": "{{total}} snippets exported successfully"
+      }
+    },
+    "import": {
+      "error": {
+        "default": "Failed to import snippets"
+      },
+      "hasFailed": "Imported {{succeeded}} snippets, {{failed}} failed. Check console for details.",
+      "successOnly_one": "Successfully imported {{succeeded}} snippets. Close settings to see them.",
+      "successOnly_other": "Successfully imported {{succeeded}} snippets. Close settings to see them."
+    },
+    "title": "Settings"
+  }
+}

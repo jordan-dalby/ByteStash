@@ -1,7 +1,9 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, type HTMLAttributes } from "react";
+import { useTranslation } from "react-i18next";
 import {
   AlertCircle,
   BookOpen,
+  ChevronDown,
   Clock,
   Download,
   Upload,
@@ -9,14 +11,15 @@ import {
   Moon,
   Monitor,
 } from "lucide-react";
-import Modal from "../common/modals/Modal";
-import ChangelogModal from "../common/modals/ChangelogModal";
+import JSZip from "jszip";
 import { useToast } from "../../hooks/useToast";
+import { Locale } from "../../i18n/types";
 import { Snippet } from "../../types/snippets";
+import ChangelogModal from "../common/modals/ChangelogModal";
+import Modal from "../common/modals/Modal";
 import { Switch } from "../common/switch/Switch";
 import { getAssetPath } from "../../utils/paths";
 import { snippetService } from "../../service/snippetService";
-import JSZip from "jszip";
 
 const GITHUB_URL = "https://github.com/jordan-dalby/ByteStash";
 const DOCKER_URL =
@@ -51,10 +54,53 @@ export interface SettingsModalProps {
     expandCategories: boolean;
     showLineNumbers: boolean;
     theme: "light" | "dark" | "system";
+    locale: Locale;
   };
   onSettingsChange: (newSettings: SettingsModalProps["settings"]) => void;
   isPublicView: boolean;
 }
+
+type LocaleSelectProps = {
+  value: Locale;
+  onChange: (value: Locale) => void;
+  theme: string;
+} & Omit<HTMLAttributes<HTMLSelectElement>, 'onChange'>
+
+const LocaleSelect = ({
+  value,
+  onChange,
+  theme,
+  ...attrs
+}: LocaleSelectProps) => {
+  const { t } = useTranslation();
+
+  const localeNames = Object.keys(Locale);
+  const localesOptions = localeNames.map((locale) => ({
+    value: locale as Locale,
+    label: t(`locale.${locale}`),
+  }));
+
+  return (
+    <div className="relative">
+      <select
+        className="px-4 py-2 pr-10 rounded-lg appearance-none focus:outline-none bg-light-hover dark:bg-dark-hover text-light-text dark:text-dark-text"
+        value={value}
+        onChange={(e) => onChange(e.target.value as Locale)}
+        {...attrs}
+      >
+        {localesOptions.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      <ChevronDown
+        className="absolute -translate-y-1/2 pointer-events-none right-2 top-1/2 text-light-text-secondary dark:text-dark-text-secondary"
+        size={20}
+      />
+    </div>
+  );
+};
 
 const SettingsModal: React.FC<SettingsModalProps> = ({
   isOpen,
@@ -63,6 +109,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   onSettingsChange,
   isPublicView,
 }) => {
+  const { t } = useTranslation();
+  const { t: translate } = useTranslation('components/settings');
+
   const [compactView, setCompactView] = useState(settings.compactView);
   const [showCodePreview, setShowCodePreview] = useState(
     settings.showCodePreview
@@ -79,6 +128,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     settings.showLineNumbers
   );
   const [themePreference, setThemePreference] = useState(settings.theme);
+  const [localePreference, setLocalePreference] = useState(settings.locale);
   const [showChangelog, setShowChangelog] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importProgress, setImportProgress] = useState<ImportProgress | null>(
@@ -119,6 +169,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
       expandCategories,
       showLineNumbers,
       theme: themePreference,
+      locale: localePreference,
     });
     onClose();
   };
@@ -199,19 +250,19 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
       if (progress.failed === 0) {
         addToast(
-          `Successfully imported ${progress.succeeded} snippets. Close settings to see them.`,
+          translate('settingsModal.import.successOnly', { count: progress.succeeded, succeeded: progress.succeeded }),
           "success"
         );
       } else {
         addToast(
-          `Imported ${progress.succeeded} snippets, ${progress.failed} failed. Check console for details.`,
+          translate('settingsModal.import.hasFailed', { succeeded: progress.succeeded, failed: progress.failed }),
           "warning"
         );
       }
     } catch (error) {
       console.error("Import error:", error);
       addToast(
-        error instanceof Error ? error.message : "Failed to import snippets",
+        error instanceof Error ? error.message : translate('settingsModal.import.error.default'),
         "error"
       );
     } finally {
@@ -225,7 +276,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
       const allSnippets = await fetchAllSnippets();
 
       if (allSnippets.length === 0) {
-        addToast("No snippets available for export", "warning");
+        addToast(translate('settingsModal.export.error.noSnippets'), "warning");
         return;
       }
 
@@ -249,12 +300,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      addToast(`Exported ${allSnippets.length} snippets successfully`, "success");
+      addToast(translate('settingsModal.export.success.default', { total: allSnippets.length }), "success");
     } catch (error) {
       console.error("Export error:", error);
-      addToast("Failed to export snippets", "error");
-    } finally {
-      setIsExporting(false);
+      addToast(translate('settingsModal.export.error.default'), "error");
     }
   };
 
@@ -294,11 +343,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
   const handleMarkdownExport = async () => {
     try {
-      setIsExporting(true);
-      const allSnippets = await fetchAllSnippets();
-
-      if (allSnippets.length === 0) {
-        addToast("No snippets available for export", "warning");
+      if (!snippets || snippets.length === 0) {
+        addToast(translate('settingsModal.export.markdown.warning.default'), "warning");
         return;
       }
 
@@ -325,12 +371,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      addToast(`Exported ${allSnippets.length} snippets as Markdown successfully`, "success");
+      addToast(translate('settingsModal.export.markdown.success.default'), "success");
     } catch (error) {
       console.error("Markdown export error:", error);
-      addToast("Failed to export Markdown", "error");
-    } finally {
-      setIsExporting(false);
+      addToast(translate('settingsModal.export.markdown.error.default'), "error");
     }
   };
 
@@ -379,14 +423,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
       onClose={onClose}
       title={
         <h2 className="text-xl font-bold text-light-text dark:text-dark-text">
-          Settings
+          {translate('settingsModal.title')}
         </h2>
       }
       contentRef={modalContentRef}
     >
       <div className="pb-4">
         <div className="space-y-4">
-          <SettingsGroup title="Theme Settings">
+          <SettingsGroup title={translate('settingsModal.block.theme.title')}>
             <div className="flex justify-start gap-2">
               <button
                 onClick={() => setThemePreference("light")}
@@ -398,7 +442,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                   }`}
               >
                 <Sun size={16} />
-                Light
+                {t('theme.light')}
               </button>
               <button
                 onClick={() => setThemePreference("dark")}
@@ -410,7 +454,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                   }`}
               >
                 <Moon size={16} />
-                Dark
+                {t('theme.dark')}
               </button>
               <button
                 onClick={() => setThemePreference("system")}
@@ -422,16 +466,27 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                   }`}
               >
                 <Monitor size={16} />
-                System
+                {t('theme.system')}
               </button>
             </div>
           </SettingsGroup>
 
-          <SettingsGroup title="View Settings">
+          <SettingsGroup title={translate('settingsModal.block.locale.title')}>
+            <div className="flex justify-start gap-2">
+              <LocaleSelect
+                id="locale"
+                value={localePreference}
+                onChange={setLocalePreference}
+                theme={themePreference}
+              />
+            </div>
+          </SettingsGroup>
+
+          <SettingsGroup title={translate('settingsModal.block.view.title')}>
             <SettingRow
-              label="Compact View"
+              label={translate('settingsModal.block.view.compactView.label')}
               htmlFor="compactView"
-              description="Display snippets in a more condensed format"
+              description={translate('settingsModal.block.view.compactView.description')}
             >
               <Switch
                 id="compactView"
@@ -442,9 +497,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
             <div className="space-y-3">
               <SettingRow
-                label="Show Code Preview"
+                label={translate('settingsModal.block.view.showCodePreview.label')}
                 htmlFor="showCodePreview"
-                description="Display a preview of the code in the snippet list"
+                description={translate('settingsModal.block.view.showCodePreview.description')}
               >
                 <Switch
                   id="showCodePreview"
@@ -455,10 +510,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
               {showCodePreview && (
                 <SettingRow
-                  label="Number of Preview Lines"
+                  label={translate('settingsModal.block.view.previewLines.label')}
                   htmlFor="previewLines"
                   indent
-                  description="Maximum number of lines to show in preview (1-20)"
+                  description={translate('settingsModal.block.view.previewLines.description')}
                 >
                   <input
                     type="number"
@@ -478,9 +533,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
 
             <SettingRow
-              label="Show Line Numbers"
+              label={translate('settingsModal.block.view.showLineNumbers.label')}
               htmlFor="showLineNumbers"
-              description="Display line numbers in code blocks"
+              description={translate('settingsModal.block.view.showLineNumbers.description')}
             >
               <Switch
                 id="showLineNumbers"
@@ -490,11 +545,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             </SettingRow>
           </SettingsGroup>
 
-          <SettingsGroup title="Category Settings">
+          <SettingsGroup title={translate('settingsModal.block.category.title')}>
             <SettingRow
-              label="Show Categories"
+              label={translate('settingsModal.block.category.showCategories.label')}
               htmlFor="showCategories"
-              description="Display category labels for snippets"
+              description={translate('settingsModal.block.category.showCategories.description')}
             >
               <Switch
                 id="showCategories"
@@ -505,10 +560,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
             {showCategories && (
               <SettingRow
-                label="Expand Categories"
+                label={translate('settingsModal.block.category.expandCategories.label')}
                 htmlFor="expandCategories"
                 indent
-                description="Automatically expand category groups"
+                description={translate('settingsModal.block.category.expandCategories.description')}
               >
                 <Switch
                   id="expandCategories"
@@ -519,11 +574,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             )}
           </SettingsGroup>
 
-          <SettingsGroup title="Search Settings">
+          <SettingsGroup title={translate('settingsModal.block.search.title')}>
             <SettingRow
-              label="Include Code in Search"
+              label={translate('settingsModal.block.search.includeCodeInSearch.label')}
               htmlFor="includeCodeInSearch"
-              description="Search within code content, not just titles"
+              description={translate('settingsModal.block.search.includeCodeInSearch.description')}
             >
               <Switch
                 id="includeCodeInSearch"
@@ -534,7 +589,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
           </SettingsGroup>
 
           {!isPublicView && (
-            <SettingsGroup title="Data Management">
+            <SettingsGroup title={translate('settingsModal.block.dataManagement.title')}>
               <div className="flex gap-2">
                 <button
                   onClick={handleExport}
@@ -544,7 +599,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                   }`}
                 >
                   <Download size={16} />
-                  {isExporting ? "Exporting..." : "Export Snippets (JSON)"}
+                  {translate('settingsModal.block.dataManagement.export.label')} (JSON)
                 </button>
                 <button
                   onClick={handleMarkdownExport}
@@ -554,7 +609,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                   }`}
                 >
                   <Download size={16} />
-                  {isExporting ? "Exporting..." : "Export Snippets (Markdown)"}
+                  {translate('settingsModal.block.dataManagement.export.label')} (Markdown)
                 </button>
                 <label
                   className={`flex items-center gap-2 px-4 py-2 bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more rounded-md transition-colors text-sm cursor-pointer text-light-text dark:text-dark-text ${
@@ -570,14 +625,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                     className="hidden"
                   />
                   <Upload size={16} />
-                  Import Snippets
+                  {translate('settingsModal.block.dataManagement.import.label')}
                 </label>
               </div>
 
               {importProgress && (
                 <div className="mt-4 space-y-2">
                   <div className="flex justify-between text-sm text-light-text dark:text-dark-text">
-                    <span>Importing snippets...</span>
+                    <span>{translate('settingsModal.block.dataManagement.import.progress')}</span>
                     <span>
                       {importProgress.current} / {importProgress.total}
                     </span>
@@ -599,13 +654,28 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                       <div className="flex items-center gap-1 text-red-400">
                         <AlertCircle size={14} />
                         <span>
-                          {importProgress.errors.length} errors occurred
+                          {
+                            translate(
+                              'settingsModal.block.dataManagement.import.errors.occurred',
+                              {
+                                count: importProgress.errors.length,
+                              }
+                            )
+                          }
                         </span>
                       </div>
                       <div className="mt-1 overflow-y-auto max-h-24">
                         {importProgress.errors.map((error, index) => (
                           <div key={index} className="text-xs text-red-400">
-                            Failed to import "{error.title}": {error.error}
+                            {
+                              translate(
+                                'settingsModal.block.dataManagement.import.errors.failed',
+                                {
+                                  title: error.title,
+                                  error: error.error,
+                                }
+                              )
+                            }
                           </div>
                         ))}
                       </div>
@@ -682,13 +752,13 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 mr-2 text-sm rounded-md bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover"
           >
-            Cancel
+            {t('action.cancel')}
           </button>
           <button
             onClick={handleSave}
             className="px-4 py-2 text-sm text-white rounded-md bg-light-primary dark:bg-dark-primary hover:opacity-90"
           >
-            Save
+            {t('action.save')}
           </button>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import BaseDropdown from '../common/dropdowns/BaseDropdown';
 
 export interface CategorySuggestionsProps {
@@ -21,13 +22,17 @@ const CategorySuggestions: React.FC<CategorySuggestionsProps> = ({
   onCategorySelect,
   existingCategories,
   selectedCategories,
-  placeholder = "Type to search categories...",
   disabled = false,
   className = "",
   maxCategories,
-  handleHashtag = false
+  handleHashtag = false,
+  ...props
 }) => {
+  const { t: translate } = useTranslation('components/categories');
   const [internalValue, setInternalValue] = useState(inputValue);
+
+  const placeholder = props.placeholder || translate('categorySuggestions.placeholder');
+  const addNewLabel = translate('categorySuggestions.addNewLabel');
 
   useEffect(() => {
     setInternalValue(inputValue);
@@ -56,7 +61,7 @@ const CategorySuggestions: React.FC<CategorySuggestionsProps> = ({
 
     if (filtered.length > 0) {
       sections.push({
-        title: 'Categories',
+        title: translate('categorySuggestions.title'),
         items: filtered
       });
     }
@@ -64,8 +69,8 @@ const CategorySuggestions: React.FC<CategorySuggestionsProps> = ({
     if (term && term.length > 0 && 
         !existingCategories.some(cat => cat.toLowerCase() === term)) {
       sections.push({
-        title: 'Add New',
-        items: [`Add new: ${term}`]
+        title: addNewLabel,
+        items: [`${addNewLabel}: ${term}`]
       });
     }
 
@@ -80,7 +85,7 @@ const CategorySuggestions: React.FC<CategorySuggestionsProps> = ({
         : internalValue.trim();
       
       if (term) {
-        handleSelect(`Add new: ${term}`);
+        handleSelect(`${addNewLabel}: ${term}`);
       }
     }
   };
@@ -92,7 +97,7 @@ const CategorySuggestions: React.FC<CategorySuggestionsProps> = ({
 
   const handleSelect = (option: string) => {
     let newCategory;
-    if (option.startsWith('Add new:')) {
+    if (option.startsWith(`${addNewLabel}:`)) {
       newCategory = option.slice(9).trim();
     } else {
       newCategory = option;

@@ -1,0 +1,35 @@
+{
+  "apiKeyDeletedSuccessfully": "Ключ API успешно удалён",
+  "columns": {
+    "labels": {
+      "actions": "Действия",
+      "created": "Дата создания",
+      "lastUsed": "Последнее использование",
+      "name": "Имя",
+      "owner": "Владелец",
+      "status": "Статус"
+    }
+  },
+  "confirmationModal": {
+    "message": "Вы уверены, что хотите удалить этот ключ API? Владелец ключа больше не сможет использовать его для доступа к API. Это действие невозможно отменить.",
+    "title": "Удалить ключ API"
+  },
+  "entityName_one": "API ключ",
+  "entityName_few": "API ключа",
+  "entityName_many": "API ключей",
+  "entityName_other": "API ключей",
+  "error": {
+    "default": "Ошибка удаления ключа API"
+  },
+  "filters": {
+    "userId": "Отфильтровать по ID пользователя"
+  },
+  "status": {
+    "active": "Активный",
+    "inactive": "Неактивный"
+  },
+  "table": {
+    "emptyMessage": "Ключи API не найдены",
+    "loadingMessage": "Загрузка ключей API..."
+  }
+}

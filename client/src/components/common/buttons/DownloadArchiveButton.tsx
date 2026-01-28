@@ -1,7 +1,8 @@
 import React from "react";
 import { ArrowDownToLine } from "lucide-react";
-import { downloadSnippetArchive } from "../../../utils/downloadUtils";
+import { useTranslation } from "react-i18next";
 import { useToast } from "../../../hooks/useToast";
+import { downloadSnippetArchive } from "../../../utils/downloadUtils";
 
 interface DownloadArchiveButtonProps {
   snippetTitle: string;
@@ -22,6 +23,7 @@ export const DownloadArchiveButton: React.FC<DownloadArchiveButtonProps> = ({
   size = "md",
   variant = "primary",
 }) => {
+  const { t: translate } = useTranslation('components/common/buttons');
   const { addToast } = useToast();
 
   const handleDownload = async () => {
@@ -32,10 +34,10 @@ export const DownloadArchiveButton: React.FC<DownloadArchiveButtonProps> = ({
 
     try {
       await downloadSnippetArchive(snippetTitle, fragments);
-      addToast("Downloaded all code fragments", "success");
+      addToast(translate('downloadArchiveButton.success.downloadedAll'), "success");
     } catch (error) {
       console.error("Failed to download archive:", error);
-      addToast("Failed to download archive", "error");
+      addToast(translate('downloadArchiveButton.error.failedDownload'), "error");
     }
   };
 
@@ -68,12 +70,12 @@ export const DownloadArchiveButton: React.FC<DownloadArchiveButtonProps> = ({
         ${variantClasses[variant]}
         ${className}
       `}
-      title={`Download all ${fragments.length} files as ZIP archive`}
+      title={translate('downloadArchiveButton.title')}
     >
       <ArrowDownToLine size={iconSize[size]} />
-      <span>Download all</span>
+      <span>{translate('downloadArchiveButton.label')}</span>
       <span className="opacity-70">
-        ({fragments.length} {fragments.length === 1 ? "file" : "files"})
+        {translate('downloadArchiveButton.fileLabel', { count: fragments.length })}
       </span>
     </button>
   );

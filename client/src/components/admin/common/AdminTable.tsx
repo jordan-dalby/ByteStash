@@ -1,5 +1,6 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export interface TableColumn<T> {
   key: string;
@@ -22,10 +23,14 @@ export function AdminTable<T>({
   columns,
   data,
   isLoading,
-  emptyMessage = 'No data found',
-  loadingMessage = 'Loading...',
   getRowKey,
+  ...props
 }: AdminTableProps<T>) {
+  const { t: translate } = useTranslation('components/admin/common');
+
+  const emptyMessage = props.emptyMessage || translate('adminTable.defaultEmptyMessage');
+  const loadingMessage = props.loadingMessage || translate('adminTable.defaultLoadingMessage');
+
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-16 bg-light-surface dark:bg-dark-surface rounded-lg border border-light-border dark:border-dark-border">

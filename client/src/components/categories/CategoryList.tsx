@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import CategoryTag from "./CategoryTag";
-import type { CategoryTagVariant } from "./CategoryTag";
+import { useTranslation } from "react-i18next";
+import CategoryTag, { type CategoryTagVariant } from "./CategoryTag";
 
 interface CategoryListProps {
   categories: string[];
@@ -18,6 +18,7 @@ const CategoryList: React.FC<CategoryListProps> = ({
   variant,
   showAll = false,
 }) => {
+  const { t: translate } = useTranslation('components/categories');
   const [isExpanded, setIsExpanded] = useState(false);
   const [visibleCount, setVisibleCount] = useState(categories.length);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -66,7 +67,7 @@ const CategoryList: React.FC<CategoryListProps> = ({
       <div className={`relative ${className}`}>
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-light-hover/50 dark:bg-dark-hover/50 text-light-text-secondary dark:text-dark-text-secondary">
-            No categories
+            {translate('categoryList.noData')}
           </span>
         </div>
       </div>
@@ -109,7 +110,7 @@ const CategoryList: React.FC<CategoryListProps> = ({
               hover:bg-light-surface/30 dark:hover:bg-dark-surface/30 
               transition-colors duration-200"
           >
-            <span>{moreCount} more</span>
+            <span>{translate('categoryList.moreCount', { moreCount })}</span>
             <ChevronDown size={12} />
           </button>
         )}
@@ -122,7 +123,7 @@ const CategoryList: React.FC<CategoryListProps> = ({
               hover:bg-light-surface/30 dark:hover:bg-dark-surface/30 
               transition-colors duration-200"
           >
-            <span>Show less</span>
+            <span>{translate('categoryList.showLess')}</span>
             <ChevronUp size={12} />
           </button>
         )}
@@ -152,7 +153,7 @@ const CategoryList: React.FC<CategoryListProps> = ({
             className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs 
               font-medium bg-light-surface/20 dark:bg-dark-surface/20 text-light-text dark:text-dark-text"
           >
-            <span>99 more</span>
+            <span>{translate('categoryList.moreCount', { moreCount: 99 })}</span>
             <ChevronDown size={12} />
           </button>
         </div>

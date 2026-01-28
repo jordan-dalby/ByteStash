@@ -1,0 +1,37 @@
+{
+  "confirmationModalDelete": {
+    "confirmLabel": {
+      "isRecycleView": {
+        "false": "Переместить в корзину",
+        "true": "Удалить навсегда"
+      }
+    },
+    "message": {
+      "isRecycleView": {
+        "false": "Вы уверены, что хотите переместить \"{{title}}\" в корзину?",
+        "true": "Вы уверены, что хотите навсегда удалить \"{{title}}\"? Это действие невозможно отменить."
+      }
+    },
+    "title": {
+      "isRecycleView": {
+        "false": "Переместить в корзину",
+        "true": "Подтвердить удаление"
+      }
+    }
+  },
+  "confirmationModalRestore": {
+    "message": "Вы уверены, что хотите восстановить \"{{title}}\"?",
+    "title": "Подтвердить восстановление"
+  },
+  "date": {
+    "ago": "{{date}} назад",
+    "expiringSoon": "Срок действия скоро истекает",
+    "left": "осталось {{date}}"
+  },
+  "defaultDescription": "Нет описания",
+  "defaultUpdateTime": "Неизвестно",
+  "favorite": "В избранном",
+  "pinned": "Закреплённый",
+  "public": "Публичный",
+  "shared": "Общедоступный"
+}

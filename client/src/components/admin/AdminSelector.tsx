@@ -1,20 +1,23 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, FileCode, Key, Share2 } from 'lucide-react';
+import { Home, Users, FileCode, Key, Share2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { ROUTES } from '../../constants/routes';
 
 interface AdminSelectorProps {
-  selected: 'users' | 'snippets' | 'api-keys' | 'shares';
+  selected: 'dashboard' | 'users' | 'snippets' | 'api-keys' | 'shares';
 }
 
 const AdminSelector: React.FC<AdminSelectorProps> = ({ selected }) => {
   const navigate = useNavigate();
+  const { t: translate } = useTranslation('components/admin/selector');
 
   const options = [
-    { value: 'users' as const, label: 'Users', icon: Users, route: ROUTES.ADMIN_USERS },
-    { value: 'snippets' as const, label: 'Snippets', icon: FileCode, route: ROUTES.ADMIN_SNIPPETS },
-    { value: 'api-keys' as const, label: 'API Keys', icon: Key, route: ROUTES.ADMIN_API_KEYS },
-    { value: 'shares' as const, label: 'Shares', icon: Share2, route: ROUTES.ADMIN_SHARES },
+    { value: 'dashboard' as const, label: translate('dashboard'), icon: Home, route: ROUTES.ADMIN_DASHBOARD },
+    { value: 'users' as const, label: translate('users'), icon: Users, route: ROUTES.ADMIN_USERS },
+    { value: 'snippets' as const, label: translate('snippets'), icon: FileCode, route: ROUTES.ADMIN_SNIPPETS },
+    { value: 'api-keys' as const, label: translate('apiKeys'), icon: Key, route: ROUTES.ADMIN_API_KEYS },
+    { value: 'shares' as const, label: translate('shares'), icon: Share2, route: ROUTES.ADMIN_SHARES },
   ];
 
   return (

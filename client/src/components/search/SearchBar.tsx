@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo, memo, useImperativeHandle, forwardRef } from 'react';
 import { Search, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import BaseDropdown, { BaseDropdownRef } from '../common/dropdowns/BaseDropdown';
 import { IconButton } from '../common/buttons/IconButton';
 import { useKeyboardShortcut } from '../../hooks/useKeyboardShortcut';
@@ -25,10 +26,13 @@ export const SearchBar = memo(forwardRef<SearchBarRef, SearchBarProps>(({
   onCategorySelect,
   existingCategories,
   selectedCategories,
-  placeholder = "Search snippets... (Type # to see all available categories)"
+  ...props
 }, ref) => {
+  const { t: translate } = useTranslation('components/search');
   const [inputValue, setInputValue] = useState(value);
   const inputRef = useRef<BaseDropdownRef>(null);
+
+  const placeholder = props.placeholder || translate('defaultPlaceholder');
 
   useEffect(() => {
     setInputValue(value);
@@ -82,15 +86,15 @@ export const SearchBar = memo(forwardRef<SearchBarRef, SearchBarProps>(({
 
     if (filtered.length > 0) {
       sections.push({
-        title: 'Categories',
+        title: translate('categories.title'),
         items: filtered
       });
     }
 
     if (term && !existingCategories.some(cat => cat.toLowerCase() === term)) {
       sections.push({
-        title: 'Add New',
-        items: [`Add new: ${term}`]
+        title: translate('categories.addNew'),
+        items: [`${translate('categories.addNew')}: ${term}`]
       });
     }
 
@@ -111,7 +115,7 @@ export const SearchBar = memo(forwardRef<SearchBarRef, SearchBarProps>(({
   };
 
   const handleSelect = (option: string) => {
-    const newCategory = option.startsWith('Add new:')
+    const newCategory = option.startsWith(`${translate('categories.addNew')}:`)
       ? option.slice(9).trim()
       : option;
 
@@ -155,7 +159,7 @@ export const SearchBar = memo(forwardRef<SearchBarRef, SearchBarProps>(({
           onClick={handleClear}
           variant="secondary"
           className="absolute right-3 top-1/2 -translate-y-1/2 mr-4 text-light-text-secondary dark:text-dark-text-secondary"
-          label="Clear search"
+          label={translate('action.clear')}
         />
       )}
       <Search

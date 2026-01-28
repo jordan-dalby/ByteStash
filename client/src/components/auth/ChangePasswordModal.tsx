@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Modal from '../common/modals/Modal';
 import { useToast } from '../../hooks/useToast';
 import { changePassword } from '../../utils/api/auth';
@@ -15,6 +16,8 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
   onClose,
   onPasswordChanged,
 }) => {
+  const { t } = useTranslation();
+  const { t: translate } = useTranslation('components/auth');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -28,12 +31,12 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
     e.preventDefault();
     
     if (newPassword !== confirmPassword) {
-      addToast('New passwords do not match', 'error');
+      addToast(translate('changePasswordModal.error.newPasswordsDoNotMatch'), 'error');
       return;
     }
 
     if (newPassword.length < 8) {
-      addToast('New password must be at least 8 characters', 'error');
+      addToast(translate('changePasswordModal.error.newPasswordMustBeAtLeastCharacters', { minLength: 8 }), 'error');
       return;
     }
 
@@ -41,14 +44,22 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
     
     try {
       await changePassword(currentPassword, newPassword);
-      addToast('Password changed successfully', 'success');
+      addToast(translate('changePasswordModal.passwordChangedSuccessfully'), 'success');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
       onClose();
       onPasswordChanged();
     } catch (error: any) {
-      addToast(error.response?.data?.error || 'Failed to change password', 'error');
+      const errorMessage = typeof error === 'string'
+        ? error
+        : (
+          typeof error?.error === 'string'
+            ? error.error
+            : error?.response?.data?.error || translate('changePasswordModal.error.default')
+        );
+
+      addToast(errorMessage, 'error');
     } finally {
       setIsLoading(false);
     }
@@ -62,11 +73,11 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Change Password">
+    <Modal isOpen={isOpen} onClose={handleClose} title={translate('changePasswordModal.title')}>
       <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-light-text dark:text-dark-text mb-1">
-              Current Password
+              {translate('changePasswordModal.currentPassword')}
             </label>
             <div className="relative">
               <input
@@ -92,7 +103,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
 
           <div>
             <label className="block text-sm font-medium text-light-text dark:text-dark-text mb-1">
-              New Password
+              {translate('changePasswordModal.newPassword')}
             </label>
             <div className="relative">
               <input
@@ -119,7 +130,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
 
           <div>
             <label className="block text-sm font-medium text-light-text dark:text-dark-text mb-1">
-              Confirm New Password
+              {translate('changePasswordModal.confirmNewPassword')}
             </label>
             <div className="relative">
               <input
@@ -153,7 +164,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                 rounded-md hover:bg-light-hover dark:hover:bg-dark-hover"
               disabled={isLoading}
             >
-              Cancel
+              {t('action.cancel')}
             </button>
             <button
               type="submit"
@@ -161,7 +172,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                 hover:bg-blue-700 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
             >
-              {isLoading ? 'Changing...' : 'Change Password'}
+              {isLoading ? translate('changePasswordModal.process') : t('action.changePassword')}
             </button>
           </div>
         </form>

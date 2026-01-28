@@ -1,11 +1,12 @@
 import React, { useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { Snippet } from "../../../types/snippets";
+import { ConfirmationModal } from "../../common/modals/ConfirmationModal";
 import Modal from "../../common/modals/Modal";
 import { FullCodeView } from "./FullCodeView";
-import { ConfirmationModal } from "../../common/modals/ConfirmationModal";
 
 export interface SnippetModalProps {
-  snippet: Snippet | null;
+  snippet: Snippet;
   isOpen: boolean;
   onClose: () => void;
   onEdit?: (snippet: Snippet) => void;
@@ -27,7 +28,8 @@ const SnippetModal: React.FC<SnippetModalProps> = ({
   isPublicView,
   isRecycleView
 }) => {
-  if (!snippet) return null;
+  const { t } = useTranslation();
+  const { t: translate } = useTranslation('components/snippets/view/all');
 
   const handleCategoryClick = (e: React.MouseEvent, category: string) => {
     e.preventDefault();
@@ -87,14 +89,22 @@ const SnippetModal: React.FC<SnippetModalProps> = ({
         isOpen={isDeleteModalOpen}
         onClose={cancelDeleteSnippet}
         onConfirm={confirmDeleteSnippet}
-         title={isRecycleView ? "Confirm Deletion" : "Move to Recycle Bin"}
+        title={
+          isRecycleView
+            ? translate('snippetModal.confirmationModal.title.isRecycleView.true')
+            : translate('snippetModal.confirmationModal.title.isRecycleView.false')
+        }
         message={
           isRecycleView
-            ? `Are you sure you want to permanently delete "${snippet.title}"? This action cannot be undone.`
-            : `Are you sure you want to move "${snippet.title}" to the Recycle Bin?`
+            ? translate('snippetModal.confirmationModal.message.isRecycleView.true', { title: snippet.title })
+            : translate('snippetModal.confirmationModal.message.isRecycleView.false', { title: snippet.title })
         }
-        confirmLabel={isRecycleView ? "Delete Permanently" : "Move to Recycle Bin"}
-        cancelLabel="Cancel"
+        confirmLabel={
+          isRecycleView
+            ? translate('snippetModal.confirmationModal.confirmLabel.isRecycleView.true')
+            : translate('snippetModal.confirmationModal.confirmLabel.isRecycleView.false')
+        }
+        cancelLabel={t('action.cancel')}
         variant="danger"
       />
     </>

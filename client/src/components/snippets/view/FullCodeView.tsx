@@ -1,6 +1,8 @@
 import React from "react";
 import { FileCode, Clock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import ReactMarkdown from "react-markdown";
+import { useTranslation } from "react-i18next";
 import { Snippet } from "../../../types/snippets";
 import CategoryList from "../../categories/CategoryList";
 import {
@@ -8,7 +10,6 @@ import {
   getUniqueLanguages,
 } from "../../../utils/language/languageUtils";
 import { FullCodeBlock } from "../../editor/FullCodeBlock";
-import ReactMarkdown from "react-markdown";
 import DownloadButton from "../../common/buttons/DownloadButton";
 import DownloadArchiveButton from "../../common/buttons/DownloadArchiveButton";
 
@@ -31,24 +32,28 @@ export const FullCodeView: React.FC<FullCodeViewProps> = ({
   isModal = false,
   isPublicView = false,
 }) => {
+  const { t: translate } = useTranslation('components/snippets/view/all');
+
   const handleCategoryClick = (e: React.MouseEvent, category: string) => {
     e.preventDefault();
     onCategoryClick?.(category);
   };
 
   const getRelativeUpdateTime = (updatedAt: string): string => {
+    const defaultUpdateTime = translate('defaultUpdateTime');
+
     try {
       if (!updatedAt) {
-        return "Unknown";
+        return defaultUpdateTime;
       }
       const updateDate = new Date(updatedAt);
       if (isNaN(updateDate.getTime())) {
-        return "Unknown";
+        return defaultUpdateTime;
       }
       return formatDistanceToNow(updateDate);
     } catch (error) {
       console.error("Error formatting update date:", error);
-      return "Unknown";
+      return defaultUpdateTime;
     }
   };
 
@@ -63,7 +68,7 @@ export const FullCodeView: React.FC<FullCodeViewProps> = ({
         <div className="bg-light-hover/50 dark:bg-dark-hover/50 px-3 py-1.5 text-xs flex items-center justify-end">
           <div className="flex items-center gap-1 text-light-text-secondary dark:text-dark-text-secondary">
             <Clock size={12} />
-            <span>{getRelativeUpdateTime(snippet.updated_at)} ago</span>
+            <span>{translate('fullCodeView.dateTimeAgo', { dateTime: getRelativeUpdateTime(snippet.updated_at) })}</span>
           </div>
         </div>
       )}
@@ -97,7 +102,7 @@ export const FullCodeView: React.FC<FullCodeViewProps> = ({
           {/* Description */}
           <div className="mt-3 text-sm text-light-text dark:text-dark-text">
             <ReactMarkdown className={`markdown prose max-w-none`}>
-              {snippet.description || "No description available"}
+              {snippet.description || translate('fullCodeView.defaultDescription')}
             </ReactMarkdown>
           </div>
 

@@ -7,7 +7,7 @@
   "scripts": {
     "start": "cd client && npm start",
     "server": "cd server && npm start",
-    "dev": "docker-compose up --build"
+    "dev": "./docker-compose.sh up --build"
   },
   "workspaces": [
     "client",

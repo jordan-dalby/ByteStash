@@ -9,14 +9,15 @@ import {
   Pin,
   Star,
 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import { formatDistanceToNow } from "date-fns";
+import { useTranslation } from "react-i18next";
 import SnippetCardMenu from "./SnippetCardMenu";
 import SnippetRecycleCardMenu from "./SnippetRecycleCardMenu";
 import { ConfirmationModal } from "../../common/modals/ConfirmationModal";
 import { Snippet } from "../../../types/snippets";
 import CategoryList from "../../categories/CategoryList";
 import { PreviewCodeBlock } from "../../editor/PreviewCodeBlock";
-import ReactMarkdown from "react-markdown";
-import { formatDistanceToNow } from "date-fns";
 import { getUniqueLanguages } from "../../../utils/language/languageUtils";
 
 interface SnippetCardProps {
@@ -67,6 +68,8 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
   pinSnippet,
   favoriteSnippet,
 }) => {
+  const { t } = useTranslation();
+  const { t: translate } = useTranslation('components/snippets/list/snippetCard');
   const [currentSnippet, setCurrentSnippet] = useState<Snippet>(snippet);
   const [currentFragmentIndex, setCurrentFragmentIndex] = useState(0);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -75,18 +78,20 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
   const [isFavorite, setIsFavorite] = useState(snippet.is_favorite);
 
   const getRelativeUpdateTime = (updatedAt: string): string => {
+    const defaultUpdateTime = translate('defaultUpdateTime');
+
     try {
       if (!updatedAt) {
-        return "Unknown";
+        return defaultUpdateTime;
       }
       const updateDate = new Date(updatedAt);
       if (isNaN(updateDate.getTime())) {
-        return "Unknown";
+        return defaultUpdateTime;
       }
       return formatDistanceToNow(updateDate);
     } catch (error) {
       console.error("Error formatting update date:", error);
-      return "Unknown";
+      return defaultUpdateTime;
     }
   };
 
@@ -200,38 +205,38 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
               {snippet.is_public === 1 && (
                 <div className="flex items-center gap-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded">
                   <Globe size={12} />
-                  <span>Public</span>
+                  <span>{translate('public')}</span>
                 </div>
               )}
               {isPublicView && (snippet.share_count || 0) > 0 && (
                 <div className="flex items-center gap-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded">
                   <Users size={12} />
-                  <span>Shared</span>
+                  <span>{translate('shared')}</span>
                 </div>
               )}
               {snippet.is_pinned === 1 && (
                 <div className="flex items-center gap-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-1.5 py-0.5 rounded">
                   <Pin size={12} />
-                  <span>Pinned</span>
+                  <span>{translate('pinned')}</span>
                 </div>
               )}
               {snippet.is_favorite === 1 && (
                 <div className="flex items-center gap-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 px-1.5 py-0.5 rounded">
                   <Star size={12} />
-                  <span>Favorite</span>
+                  <span>{translate('favorite')}</span>
                 </div>
               )}
             </div>
             <div className="flex items-center gap-1 ml-auto text-light-text-secondary dark:text-dark-text-secondary">
               <Clock size={12} />
               {!isRecycleView ? (
-                <span>{getRelativeUpdateTime(snippet.updated_at)} ago</span>
+                <span>{translate('date.ago', { date: getRelativeUpdateTime(snippet.updated_at) })}</span>
               ) : snippet.expiry_date ? (
                 <span>
-                  {getRelativeUpdateTime(snippet.expiry_date)} left
+                  {translate('date.left', { date: getRelativeUpdateTime(snippet.expiry_date) })}
                 </span>
               ) : (
-                <span>Expiring soon</span>
+                <span>{translate('date.expiringSoon')}</span>
               )}
             </div>
           </div>
@@ -299,7 +304,7 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
           {!compactView && (
             <p className="mb-3 text-sm text-light-text dark:text-dark-text line-clamp-1">
               <ReactMarkdown className={`markdown prose max-w-none`}>
-                {snippet.description || "No description available"}
+                {snippet.description || translate('defaultDescription')}
               </ReactMarkdown>
             </p>
           )}
@@ -369,16 +374,22 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
         isOpen={isDeleteModalOpen}
         onClose={handleDeleteModalClose}
         onConfirm={handleDeleteConfirm}
-        title={isRecycleView ? "Confirm Deletion" : "Move to Recycle Bin"}
+        title={
+          isRecycleView
+            ? translate('confirmationModalDelete.title.isRecycleView.true')
+            : translate('confirmationModalDelete.title.isRecycleView.false')
+        }
         message={
           isRecycleView
-            ? `Are you sure you want to permanently delete "${snippet.title}"? This action cannot be undone.`
-            : `Are you sure you want to move "${snippet.title}" to the Recycle Bin?`
+            ? translate('confirmationModalDelete.message.isRecycleView.true', { title: snippet.title })
+            : translate('confirmationModalDelete.message.isRecycleView.false', { title: snippet.title })
         }
         confirmLabel={
-          isRecycleView ? "Delete Permanently" : "Move to Recycle Bin"
+          isRecycleView
+            ? translate('confirmationModalDelete.confirmLabel.isRecycleView.true')
+            : translate('confirmationModalDelete.confirmLabel.isRecycleView.false')
         }
-        cancelLabel="Cancel"
+        cancelLabel={t('action.cancel')}
         variant="danger"
       />
 
@@ -386,10 +397,10 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
         isOpen={isRestoreModalOpen}
         onClose={() => setIsRestoreModalOpen(false)}
         onConfirm={handleRestoreConfirm}
-        title="Confirm Restore"
-        message={`Are you sure you want to restore "${snippet.title}"?`}
-        confirmLabel="Restore"
-        cancelLabel="Cancel"
+        title={translate('confirmationModalRestore.title')}
+        message={translate('confirmationModalRestore.message', { title: snippet.title })}
+        confirmLabel={t('action.restore')}
+        cancelLabel={t('action.cancel')}
         variant="info"
       />
     </>

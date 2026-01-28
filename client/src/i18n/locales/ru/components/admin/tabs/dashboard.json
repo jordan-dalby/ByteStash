@@ -1,0 +1,31 @@
+{
+  "card": {
+    "apiKeys": {
+      "title": "Ключи API"
+    },
+    "shares": {
+      "title": "Общие ресурсы"
+    },
+    "snippets": {
+      "apiKeys": {
+        "active": "Активный"
+      },
+      "shares": {
+        "total": "Всего"
+      },
+      "title": "Снипеты",
+      "viewType": {
+        "private": "Приватный",
+        "public": "Публичный"
+      }
+    },
+    "users": {
+      "authType": {
+        "internal": "Логин/пароль",
+        "oidc": "OIDC"
+      },
+      "title": "Пользователи"
+    }
+  },
+  "loadingMessage": "Загрузка статистики..."
+}

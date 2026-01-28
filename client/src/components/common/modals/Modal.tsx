@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { X, Maximize2, Minimize2, Trash2, Pencil } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { IconButton } from "../buttons/IconButton";
 
 export interface ModalProps {
@@ -27,6 +28,8 @@ const Modal: React.FC<ModalProps> = ({
   onDelete,
   contentRef,
 }) => {
+  const { t } = useTranslation();
+
   const [isExpanded, setIsExpanded] = useState(() => {
     if (expandable) {
       const savedState = localStorage.getItem("modalExpandedState");
@@ -101,7 +104,7 @@ const Modal: React.FC<ModalProps> = ({
                 onClick={onEdit}
                 variant="secondary"
                 size="sm"
-                label="Edit"
+                label={t('action.edit')}
               />
             )}
             {onDelete && (
@@ -110,7 +113,7 @@ const Modal: React.FC<ModalProps> = ({
                 onClick={onDelete}
                 variant="secondary"
                 size="sm"
-                label="Delete"
+                label={t('action.delete')}
               />
             )}
             <div className="h-6 w-px bg-light-border dark:bg-dark-border mx-2" />
@@ -122,7 +125,7 @@ const Modal: React.FC<ModalProps> = ({
                 onClick={() => setIsExpanded(!isExpanded)}
                 variant="secondary"
                 size="sm"
-                label={isExpanded ? "Minimize" : "Maximize"}
+                label={isExpanded ? t('action.minimize') : t('action.maximize')}
               />
             )}
             <IconButton
@@ -130,7 +133,7 @@ const Modal: React.FC<ModalProps> = ({
               onClick={onClose}
               variant="secondary"
               size="sm"
-              label="Close"
+              label={t('action.close')}
             />
           </div>
         </div>

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeClosed } from 'lucide-react';
 import { Link, Navigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { PageContainer } from '../common/layout/PageContainer';
 import { login as loginApi } from '../../utils/api/auth';
 import { useToast } from '../../hooks/useToast';
+import { useOidcErrorHandler } from '../../hooks/useOidcErrorHandler';
 import { ROUTES } from '../../constants/routes';
 import { OIDCConfig } from '../../types/auth';
 import { apiClient } from '../../utils/api/apiClient';
-import { handleOIDCError } from '../../utils/oidcErrorHandler';
 
 export const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -18,6 +19,9 @@ export const LoginPage: React.FC = () => {
   const [oidcConfig, setOIDCConfig] = useState<OIDCConfig | null>(null);
   const { login, isAuthenticated, authConfig } = useAuth();
   const { addToast } = useToast();
+  const handleOIDCError = useOidcErrorHandler();
+  const { t } = useTranslation();
+  const { t: translate } = useTranslation('components/auth');
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -25,9 +29,9 @@ export const LoginPage: React.FC = () => {
     const message = params.get('message');
     
     if (error) {
-      handleOIDCError(error, addToast, oidcConfig?.displayName, message || undefined);
+      handleOIDCError(error, oidcConfig?.displayName, message || undefined);
     }
-  }, [addToast, oidcConfig]);
+  }, [oidcConfig]);
 
   useEffect(() => {
     const fetchOIDCConfig = async () => {
@@ -58,7 +62,7 @@ export const LoginPage: React.FC = () => {
       const { token, user } = await loginApi(username, password);
       login(token, user);
     } catch (err: any) {
-      addToast('Invalid username or password', 'error');
+      addToast(translate('login.error.invalidUsernameOrPassword'), 'error');
     } finally {
       setIsLoading(false);
     }
@@ -78,20 +82,20 @@ export const LoginPage: React.FC = () => {
             ByteStash
           </h2>
           <p className="mt-2 text-center text-sm text-light-text-secondary dark:text-dark-text-secondary">
-            Please sign in to continue
+            {translate('login.pleaseSignInToContinue')}
             {authConfig?.allowNewAccounts && showInternalRegistration ? (
               <>
-                , create an{' '}
+                , {translate('login.create')}{' '}
                 <Link to="/register" className="text-light-primary dark:text-dark-primary hover:opacity-80">
-                  account
+                  {translate('login.account')}
                 </Link>
-                {' '}or{' '}
+                {' '}{t('or')}{' '}
               </>
             ) : (
-              ' or '
+              ` ${t('or')} `
             )}
             <Link to={ROUTES.PUBLIC_SNIPPETS} className="text-light-primary dark:text-dark-primary hover:opacity-80">
-              browse public snippets
+              {translate('login.browsePublicSnippets')}
             </Link>
           </p>
         </div>
@@ -103,7 +107,7 @@ export const LoginPage: React.FC = () => {
               className="w-full flex items-center justify-center gap-2 px-4 py-2 
                 bg-light-primary dark:bg-dark-primary text-white rounded-md hover:opacity-90 transition-colors"
             >
-              Sign in with {oidcConfig.displayName}
+              {translate('signIn.with', { displayName: oidcConfig.displayName })}
             </button>
             {showInternalRegistration && (
               <div className="relative my-6">
@@ -112,7 +116,7 @@ export const LoginPage: React.FC = () => {
                 </div>
                 <div className="relative flex justify-center">
                   <span className="px-2 bg-light-bg dark:bg-dark-bg text-light-text-secondary dark:text-dark-text-secondary text-sm">
-                    Or continue with password
+                    {translate('login.orContinueWithPassword')}
                   </span>
                 </div>
               </div>
@@ -131,7 +135,7 @@ export const LoginPage: React.FC = () => {
                     border-light-border dark:border-dark-border placeholder-light-text-secondary dark:placeholder-dark-text-secondary 
                     text-light-text dark:text-dark-text bg-light-surface dark:bg-dark-surface rounded-t-md 
                     focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary focus:border-light-primary dark:focus:border-dark-primary focus:z-10 sm:text-sm"
-                  placeholder="Username"
+                  placeholder={t('username')}
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   disabled={isLoading}
@@ -146,7 +150,7 @@ export const LoginPage: React.FC = () => {
                     text-light-text dark:text-dark-text bg-light-surface dark:bg-dark-surface rounded-b-md 
                     focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary 
                     focus:border-light-primary dark:focus:border-dark-primary sm:text-sm"
-                  placeholder="Password"
+                  placeholder={t('password')}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
@@ -155,7 +159,11 @@ export const LoginPage: React.FC = () => {
                   type="button"
                   onClick={() => setIsPasswordVisible(!isPasswordVisible)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 z-10 text-gray-700 dark:text-gray-500 focus:outline-none"
-                  aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
+                  aria-label={
+                    isPasswordVisible
+                      ? t('action.hidePassword')
+                      : t('action.showPassword')
+                  }
                 >
                   {isPasswordVisible ? <EyeClosed size={18} /> : <Eye size={18} />}
                 </button>
@@ -179,10 +187,10 @@ export const LoginPage: React.FC = () => {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Signing in...
+                    {translate('login.signingIn')}
                   </span>
                 ) : (
-                  'Sign in'
+                  t('action.signIn')
                 )}
               </button>
             </div>

@@ -1,0 +1,56 @@
+{
+  "copyButton": {
+    "title": "Copy to clipboard"
+  },
+  "downloadArchiveButton": {
+    "error": {
+      "failedDownload": "Failed to download archive"
+    },
+    "fileLabel_one": "{{count, number}} file",
+    "fileLabel_other": "{{count, number}} files",
+    "label": "Download all",
+    "success": {
+      "downloadedAll": "Downloaded all code fragments"
+    },
+    "title": "Download all files as ZIP archive"
+  },
+  "downloadButton": {
+    "error": {
+      "failedDownload": "Failed to download file"
+    },
+    "success": {
+      "downloaded": "\"{{fileName}}\" downloaded successfully"
+    },
+    "title": "Download {{fileName}}",
+    "warning": {
+      "nothing": "Nothing to download"
+    }
+  },
+  "fileUploadButton": {
+    "error": {
+      "unknown": "Unknown error"
+    },
+    "info": {
+      "duplicateDetected": "Duplicate file detected",
+      "duplicatesDetected_one": "{{count, number}} duplicate files detected",
+      "duplicatesDetected_other": "{{count, number}} duplicate files detected"
+    },
+    "label": "Upload code file(s)",
+    "loadFromUrl": {
+      "contentMaxSizeError": "Content size must be less than {{max}}",
+      "invalidUrl": "Please enter a valid URL",
+      "label": "Load from URL",
+      "title": "Load code from a URL (e.g., raw GitHub link)"
+    },
+    "success": {
+      "filesUploaded_one": "{{count, number}} files uploaded successfully",
+      "filesUploaded_other": "{{count, number}} files uploaded successfully",
+      "fileUploaded": "\"{{fileName}}\" uploaded successfully",
+      "someFilesUploaded": "{{successCount}} of {{total}} files uploaded successfully"
+    },
+    "title": "Upload code files to auto-create fragments"
+  },
+  "rawButton": {
+    "title": "Open raw"
+  }
+}

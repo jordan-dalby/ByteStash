@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate, Routes, Route, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { ROUTES } from '../../constants/routes';
+import { DashboardTab } from './tabs/DashboardTab';
 import { UsersTab } from './tabs/UsersTab';
 import { SnippetsTab } from './tabs/SnippetsTab';
 import { ApiKeysTab } from './tabs/ApiKeysTab';
@@ -19,11 +20,12 @@ export const AdminPage: React.FC = () => {
   }
 
   // Derive selected tab from URL
-  const getSelectedTab = (): 'users' | 'snippets' | 'api-keys' | 'shares' => {
+  const getSelectedTab = (): 'dashboard' | 'users' | 'snippets' | 'api-keys' | 'shares' => {
+    if (location.pathname.includes('/admin/users')) return 'users';
     if (location.pathname.includes('/admin/snippets')) return 'snippets';
     if (location.pathname.includes('/admin/api-keys')) return 'api-keys';
     if (location.pathname.includes('/admin/shares')) return 'shares';
-    return 'users';
+    return 'dashboard';
   };
 
   return (
@@ -38,11 +40,12 @@ export const AdminPage: React.FC = () => {
       {/* Tab Content */}
       <div>
         <Routes>
+          <Route path="dashboard" element={<DashboardTab />} />
           <Route path="users" element={<UsersTab />} />
           <Route path="snippets" element={<SnippetsTab />} />
           <Route path="api-keys" element={<ApiKeysTab />} />
           <Route path="shares" element={<SharesTab />} />
-          <Route path="/" element={<Navigate to={ROUTES.ADMIN_USERS} replace />} />
+          <Route path="/" element={<Navigate to={ROUTES.ADMIN_DASHBOARD} replace />} />
         </Routes>
       </div>
     </div>

@@ -1,0 +1,29 @@
+{
+  "defaultUpdateTime": "Неизвестно",
+  "fullCodeView": {
+    "dateTimeAgo": "{{dateTime}} назад",
+    "defaultDescription": "Нет описания"
+  },
+  "snippetModal": {
+    "confirmationModal": {
+      "confirmLabel": {
+        "isRecycleView": {
+          "false": "Переместить в корзину",
+          "true": "Удалить навсегда"
+        }
+      },
+      "message": {
+        "isRecycleView": {
+          "false": "Вы уверены, что хотите переместить \"{{title}}\" в корзину?",
+          "true": "Вы уверены, что хотите навсегда удалить \"{{title}}\"? Это действие невозможно отменить."
+        }
+      },
+      "title": {
+        "isRecycleView": {
+          "false": "Переместить в корзину",
+          "true": "Подтвердить удаление"
+        }
+      }
+    }
+  }
+}

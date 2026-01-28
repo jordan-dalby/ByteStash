@@ -1,0 +1,31 @@
+{
+  "card": {
+    "apiKeys": {
+      "title": "API Keys"
+    },
+    "shares": {
+      "title": "Shares"
+    },
+    "snippets": {
+      "apiKeys": {
+        "active": "Active"
+      },
+      "shares": {
+        "total": "Total"
+      },
+      "title": "Snippets",
+      "viewType": {
+        "private": "Private",
+        "public": "Public"
+      }
+    },
+    "users": {
+      "authType": {
+        "internal": "Internal",
+        "oidc": "OIDC"
+      },
+      "title": "Users"
+    }
+  },
+  "loadingMessage": "Loading statistics..."
+}

@@ -1,0 +1,49 @@
+{
+  "action": {
+    "copyShareLink": "Copy share link",
+    "delete": "Delete share",
+    "viewSnippet": "View snippet"
+  },
+  "columns": {
+    "labels": {
+      "actions": "Actions",
+      "auth": "Auth required",
+      "created": "Created",
+      "expires": "Expires",
+      "id": "Share ID",
+      "owner": "Owner",
+      "title": "Title"
+    }
+  },
+  "confirmationModal": {
+    "message": "Are you sure you want to delete this share link? Anyone with the link will no longer be able to access the snippet. This action cannot be undone.",
+    "title": "Delete share"
+  },
+  "entityName_one": "share",
+  "entityName_other": "shares",
+  "error": {
+    "delete": {
+      "default": "Failed to delete share"
+    }
+  },
+  "filters": {
+    "authType": {
+      "all": "All Auth Types",
+      "public": "Public",
+      "requiresAuth": "Requires Auth"
+    },
+    "userId": "Filter by User ID"
+  },
+  "success": {
+    "copied": {
+      "default": "Share link copied to clipboard"
+    },
+    "delete": {
+      "default": "Share deleted successfully"
+    }
+  },
+  "table": {
+    "emptyMessage": "No shares found",
+    "loadingMessage": "Loading shares..."
+  }
+}

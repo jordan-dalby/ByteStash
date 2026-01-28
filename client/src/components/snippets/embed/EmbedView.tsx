@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { FileCode } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Snippet } from '../../../types/snippets';
 import { getLanguageLabel } from '../../../utils/language/languageUtils';
 import { basePath } from '../../../utils/api/basePath';
@@ -25,6 +26,8 @@ export const EmbedView: React.FC<EmbedViewProps> = ({
   theme = 'system',
   fragmentIndex
 }) => {
+  const { t: translateDefault } = useTranslation();
+  const { t: translate } = useTranslation('components/snippets/embed');
   const [snippet, setSnippet] = useState<Snippet | null>(null);
   const [error, setError] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -76,13 +79,13 @@ export const EmbedView: React.FC<EmbedViewProps> = ({
 
         if (!response.ok) {
           const data = await response.json();
-          throw new Error(data.error || 'Failed to load snippet');
+          throw new Error(data.error || translate('embedView.error.default'));
         }
 
         const data = await response.json();
         setSnippet(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load snippet');
+        setError(err instanceof Error ? err.message : translate('embedView.error.default'));
       }
     };
 
@@ -121,7 +124,7 @@ export const EmbedView: React.FC<EmbedViewProps> = ({
     return (
       <div ref={containerRef} className={`theme-${theme} flex items-center justify-center p-4`}>
         <div className="text-center">
-          <p className={effectiveTheme === 'light' ? "text-light-text" : "text-dark-text"}>Loading...</p>
+          <p className={effectiveTheme === 'light' ? "text-light-text" : "text-dark-text"}>{translateDefault('loading')}</p>
         </div>
       </div>
     );

@@ -1,0 +1,12 @@
+{
+  "adminTable": {
+    "defaultEmptyMessage": "Нет данных",
+    "defaultLoadingMessage": "Загрузка..."
+  },
+  "filterInput": {
+    "defaultPlaceholder": "Поиск..."
+  },
+  "filterSelect": {
+    "defaultPlaceholder": "Выбрать..."
+  }
+}

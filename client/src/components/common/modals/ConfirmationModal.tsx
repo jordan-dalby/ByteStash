@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Modal from './Modal';
 
 export interface ConfirmationModalProps {
@@ -18,10 +19,14 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   onConfirm,
   title,
   message,
-  confirmLabel = 'Confirm',
-  cancelLabel = 'Cancel',
-  variant = 'danger'
+  variant = 'danger',
+  ...props
 }) => {
+  const { t } = useTranslation();
+
+  const confirmLabel = props.confirmLabel || t('action.confirm');
+  const cancelLabel = props.cancelLabel || t('action.cancel');
+
   const variantClasses = {
     danger: 'bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800',
     warning: 'bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-700 dark:hover:bg-yellow-800',

@@ -6,10 +6,11 @@ import {
   ChevronRight,
   ChevronDown as CollapseIcon,
 } from "lucide-react";
-import { IconButton } from "../../common/buttons/IconButton";
+import { useTranslation } from "react-i18next";
 import { CodeFragment } from "../../../types/snippets";
-import BaseDropdown from "../../common/dropdowns/BaseDropdown";
 import { getLanguageDropdownSections } from "../../../utils/language/languageUtils";
+import { IconButton } from "../../common/buttons/IconButton";
+import BaseDropdown from "../../common/dropdowns/BaseDropdown";
 import { CodeEditor } from "../../editor/CodeEditor";
 
 interface FragmentEditorProps {
@@ -33,6 +34,7 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
   canMoveUp,
   canMoveDown,
 }) => {
+  const { t: translate } = useTranslation('components/snippets/edit');
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const getMostUsedLanguage = () => {
@@ -96,7 +98,7 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
             variant="custom"
             size="sm"
             className="disabled:opacity-50 w-9 h-9 bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
-            label="Move fragment up"
+            label={translate('fragmentEditor.moveUp')}
           />
           <IconButton
             icon={<ChevronDown size={16} />}
@@ -105,7 +107,7 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
             variant="custom"
             size="sm"
             className="disabled:opacity-50 w-9 h-9 bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
-            label="Move fragment down"
+            label={translate('fragmentEditor.moveDown')}
           />
         </div>
 
@@ -116,7 +118,7 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
               value={fragment.file_name}
               onChange={handleFileNameChange}
               className="w-full px-3 py-2 text-sm transition-colors border rounded bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text border-light-border dark:border-dark-border focus:border-light-primary dark:focus:border-dark-primary focus:ring-1 focus:ring-light-primary dark:focus:ring-dark-primary"
-              placeholder="File name"
+              placeholder={translate('fragmentEditor.form.fileName.placeholder')}
               required
             />
           </div>
@@ -137,17 +139,17 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
 
                 return [
                   {
-                    title: "Used",
+                    title: translate('fragmentEditor.form.language.sections.used'),
                     items: filterBySearch(used),
                   },
                   {
-                    title: "Other",
+                    title: translate('fragmentEditor.form.language.sections.other'),
                     items: filterBySearch(other),
                   },
                 ];
               }}
               maxLength={50}
-              placeholder="Select language"
+              placeholder={translate('fragmentEditor.form.language.placeholder')}
             />
           </div>
         </div>
@@ -165,7 +167,11 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
             variant="custom"
             size="sm"
             className="w-9 h-9 bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
-            label={isCollapsed ? "Expand fragment" : "Collapse fragment"}
+            label={
+              isCollapsed
+                ? translate('fragmentEditor.action.expand')
+                : translate('fragmentEditor.action.collapse')
+              }
           />
           <IconButton
             icon={<Trash2 size={16} className="hover:text-red-500" />}
@@ -173,7 +179,7 @@ export const FragmentEditor: React.FC<FragmentEditorProps> = ({
             variant="custom"
             size="sm"
             className="w-9 h-9 bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
-            label="Delete fragment"
+            label={translate('fragmentEditor.action.delete')}
           />
         </div>
       </div>

@@ -1,0 +1,57 @@
+{
+  "editSnippetModal": {
+    "addSnippet": "Добавить снипет",
+    "editSnippet": "Редактировать снипет",
+    "error": {
+      "savingFailed": "Произошла ошибка при сохранении снипета. Пожалуйста, попробуйте еще раз."
+    },
+    "form": {
+      "categories": {
+        "counter": "{{categories}}/{{max}} категорий",
+        "label": "Категории (максимум {{max}})",
+        "placeholder": "Введите категорию и нажмите Enter или запятую"
+      },
+      "codeFragments": {
+        "add": "Добавить фрагмент кода",
+        "label": "Фрагменты кода ({{fragments}})"
+      },
+      "description": {
+        "label": "Описание",
+        "placeholder": "Напишите краткое описание снипета"
+      },
+      "isPublic": {
+        "description": "Публичные снипеты могут быть просмотрены кем угодно без аутентификации",
+        "label": "Сделать публичным"
+      },
+      "title": {
+        "counter": "{{characters}}/{{max}} символов",
+        "label": "Заголовок",
+        "placeholder": "Введите заголовок снипета (максимум {{max}} символов)"
+      }
+    },
+    "fragmentRequired": "Требуется хотя бы один фрагмент кода",
+    "mustHaveFileNames": "Все фрагменты должны иметь имя файла",
+    "unsavedChanges": "У вас есть несохраненные изменения. Вы уверены, что хотите закрыть?"
+  },
+  "fragmentEditor": {
+    "action": {
+      "collapse": "Свернуть",
+      "delete": "Удалить",
+      "expand": "Развернуть"
+    },
+    "form": {
+      "fileName": {
+        "placeholder": "Имя файла"
+      },
+      "language": {
+        "placeholder": "Выберите язык",
+        "sections": {
+          "other": "Другие",
+          "used": "Использованные"
+        }
+      }
+    },
+    "moveDown": "Переместить вниз",
+    "moveUp": "Переместить вверх"
+  }
+}

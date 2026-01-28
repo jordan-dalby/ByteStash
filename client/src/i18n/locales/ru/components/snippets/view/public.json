@@ -1,0 +1,18 @@
+{
+  "publicSnippetContentArea": {
+    "error": {
+      "addSnippetToCollection": "Не удалось добавить снипет в коллекцию",
+      "failedLoadSnippets": "Не удалось загрузить общедоступные снипеты"
+    },
+    "filter": {
+      "byCategories": "Отфильтровано по категориям"
+    },
+    "info": {
+      "requireAuth": "Пожалуйста, войдите в систему, чтобы добавить этот снипет в свою коллекцию"
+    },
+    "loadingSnippets": "Загрузка снипетов...",
+    "success": {
+      "addSnippetToCollection": "Снипет добавлен в вашу коллекцию"
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Code2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Modal from '../../common/modals/Modal';
 import { Switch } from '../../common/switch/Switch';
 import { basePath } from '../../../utils/api/basePath';
@@ -20,6 +21,8 @@ export const EmbedModal: React.FC<EmbedModalProps> = ({
   shareId,
   snippet
 }) => {
+  const { t: translateDefault } = useTranslation();
+  const { t: translate } = useTranslation('components/snippets/embed');
   const [showTitle, setShowTitle] = useState(true);
   const [showDescription, setShowDescription] = useState(true);
   const [showFileHeaders, setShowFileHeaders] = useState(true);
@@ -68,14 +71,14 @@ export const EmbedModal: React.FC<EmbedModalProps> = ({
       title={
         <div className="flex items-center gap-2 text-light-text dark:text-dark-text">
           <Code2 size={20} />
-          <h2 className="text-xl font-bold">Embed Snippet</h2>
+          <h2 className="text-xl font-bold">{translate('embedModal.title')}</h2>
         </div>
       }
     >
       <div className="space-y-6 text-light-text dark:text-dark-text" onClick={handleModalClick}>
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Customize Embed</h3>
-          
+          <h3 className="text-lg font-medium">{translate('embedModal.subTitle')}</h3>
+
           <div className="space-y-4">
             <label className="flex items-center gap-2">
               <Switch 
@@ -83,7 +86,7 @@ export const EmbedModal: React.FC<EmbedModalProps> = ({
                 checked={showTitle}
                 onChange={setShowTitle}
               />
-              <span>Show title</span>
+              <span>{translate('embedModal.form.showTitle')}</span>
             </label>
 
             <label className="flex items-center gap-2">
@@ -92,7 +95,7 @@ export const EmbedModal: React.FC<EmbedModalProps> = ({
                 checked={showDescription}
                 onChange={setShowDescription}
               />
-              <span>Show description</span>
+              <span>{translate('embedModal.form.showDescription')}</span>
             </label>
 
             <label className="flex items-center gap-2">
@@ -101,7 +104,7 @@ export const EmbedModal: React.FC<EmbedModalProps> = ({
                 checked={showFileHeaders}
                 onChange={setShowFileHeaders}
               />
-              <span>Show file headers</span>
+              <span>{translate('embedModal.form.showFileHeaders')}</span>
             </label>
 
             <label className="flex items-center gap-2">
@@ -110,30 +113,30 @@ export const EmbedModal: React.FC<EmbedModalProps> = ({
                 checked={showPoweredBy}
                 onChange={setShowPoweredBy}
               />
-              <span>Show "Powered by ByteStash"</span>
+              <span>{translate('embedModal.form.showPoweredBy')}</span>
             </label>
 
             <div>
-              <label className="block text-sm mb-2">Theme</label>
+              <label className="block text-sm mb-2">{translate('embedModal.form.theme')}</label>
               <select
                 value={theme}
                 onChange={(e) => setTheme(e.target.value as 'light' | 'dark' | 'system')}
                 className="w-full px-3 py-2 bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text rounded-md border border-light-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary"
               >
-                <option value="system">System (follow user's preference)</option>
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
+                <option value="system">{translateDefault('theme.system')}</option>
+                <option value="light">{translateDefault('theme.light')}</option>
+                <option value="dark">{translateDefault('theme.dark')}</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-sm mb-2">Fragment to show (optional)</label>
+              <label className="block text-sm mb-2">{translate('embedModal.form.fragmentToShow.label')}</label>
               <select
                 value={selectedFragment === undefined ? '' : selectedFragment}
                 onChange={(e) => setSelectedFragment(e.target.value === '' ? undefined : parseInt(e.target.value, 10))}
                 className="w-full px-3 py-2 bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text rounded-md border border-light-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary"
               >
-                <option value="">All fragments</option>
+                <option value="">{translate('embedModal.form.fragmentToShow.all')}</option>
                 {snippet.fragments.map((fragment, index) => (
                   <option key={index} value={index}>
                     {fragment.file_name}
@@ -145,7 +148,7 @@ export const EmbedModal: React.FC<EmbedModalProps> = ({
         </div>
 
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Embed Code</h3>
+          <h3 className="text-lg font-medium">{translate('embedModal.form.embedCode')}</h3>
           <FullCodeBlock
             code={getEmbedCode()}
             language={'html'}

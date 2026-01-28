@@ -1,9 +1,10 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { Loader2, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { adminApi } from '../../../utils/api/admin';
 import Modal from '../../common/modals/Modal';
 import { FullCodeView } from '../../snippets/view/FullCodeView';
-import { Loader2, AlertCircle } from 'lucide-react';
 
 interface SnippetViewModalProps {
   snippetId: number | null;
@@ -14,6 +15,7 @@ export const SnippetViewModal: React.FC<SnippetViewModalProps> = ({
   snippetId,
   onClose,
 }) => {
+  const { t: translate } = useTranslation('components/admin/modals');
   const { data: snippet, isLoading, error } = useQuery({
     queryKey: ['admin', 'snippet', snippetId],
     queryFn: () => adminApi.getSnippetDetails(snippetId!),
@@ -24,7 +26,7 @@ export const SnippetViewModal: React.FC<SnippetViewModalProps> = ({
     <Modal
       isOpen={snippetId !== null}
       onClose={onClose}
-      title={snippet?.title || 'Loading snippet...'}
+      title={snippet?.title || translate('snippetViewModal.title')}
       width="max-w-5xl"
       expandable
     >
@@ -32,7 +34,7 @@ export const SnippetViewModal: React.FC<SnippetViewModalProps> = ({
         <div className="flex items-center justify-center py-12">
           <div className="flex items-center gap-3">
             <Loader2 className="w-6 h-6 text-light-text-secondary dark:text-dark-text-secondary animate-spin" />
-            <span className="text-light-text dark:text-dark-text">Loading snippet...</span>
+            <span className="text-light-text dark:text-dark-text">{translate('snippetViewModal.title')}</span>
           </div>
         </div>
       )}
@@ -41,7 +43,7 @@ export const SnippetViewModal: React.FC<SnippetViewModalProps> = ({
         <div className="flex items-center justify-center py-12">
           <div className="flex items-center gap-3 text-red-600 dark:text-red-400">
             <AlertCircle className="w-6 h-6" />
-            <span>Failed to load snippet</span>
+            <span>{translate('snippetViewModal.error.failedLoad')}</span>
           </div>
         </div>
       )}

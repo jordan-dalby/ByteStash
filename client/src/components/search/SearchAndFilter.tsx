@@ -8,16 +8,10 @@ import {
   Trash,
   Star,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { SearchBar } from "./SearchBar";
 import { IconButton } from "../common/buttons/IconButton";
 import { useNavigate, useSearchParams } from "react-router-dom";
-
-const sortOptions = [
-  { value: "newest" as const, label: "Newest First" },
-  { value: "oldest" as const, label: "Oldest First" },
-  { value: "alpha-asc" as const, label: "Alphabetically A-Z" },
-  { value: "alpha-desc" as const, label: "Alphabetically Z-A" },
-];
 
 export interface SearchAndFilterProps {
   metadata: { categories: string[]; languages: string[] };
@@ -51,6 +45,7 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = memo(({
   showFavorites,
   handleShowFavorites,
 }) => {
+  const { t: translate } = useTranslation('components/search');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -74,6 +69,13 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = memo(({
     [searchParams]
   );
 
+  const sortOptions = [
+    { value: "newest" as const, label: translate('sort.newestFirst') },
+    { value: "oldest" as const, label: translate('sort.oldestFirst') },
+    { value: "alpha-asc" as const, label: translate('sort.alphaAsc') },
+    { value: "alpha-desc" as const, label: translate('sort.alphaDesc') },
+  ];
+
   return (
     <div className="flex flex-wrap items-center gap-2 mb-6">
       <SearchBar
@@ -90,7 +92,7 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = memo(({
           value={currentLanguage}
           onChange={(e) => onLanguageChange(e.target.value)}
         >
-          <option value="">All Languages</option>
+          <option value="">{translate('filter.language.all')}</option>
           {metadata.languages.map((lang) => (
             <option key={lang} value={lang}>
               {lang}
@@ -127,28 +129,28 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = memo(({
           onClick={() => setViewMode("grid")}
           variant={viewMode === "grid" ? "primary" : "secondary"}
           className="h-10 px-4"
-          label="Grid view"
+          label={translate('view.grid')}
         />
         <IconButton
           icon={<List size={20} />}
           onClick={() => setViewMode("list")}
           variant={viewMode === "list" ? "primary" : "secondary"}
           className="h-10 px-4"
-          label="List view"
+          label={translate('view.list')}
         />
         <IconButton
           icon={<Settings size={20} />}
           onClick={openSettingsModal}
           variant="secondary"
           className="h-10 px-4"
-          label="Open settings"
+          label={translate('action.openSettings')}
         />
         {!hideNewSnippet && (
           <div className="flex gap-2">
             {!hideRecycleBin && (
               <IconButton
                 icon={<Plus size={20} />}
-                label="New Snippet"
+                label={translate('action.newSnippet')}
                 onClick={openNewSnippetModal}
                 variant="action"
                 className="h-10 pl-2 pr-4"
@@ -160,7 +162,7 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = memo(({
               onClick={handleShowFavorites || (() => {})}
               variant={showFavorites ? "primary" : "secondary"}
               className="h-10 px-4"
-              label={showFavorites ? "Show all" : "Show Favorites"}
+              label={showFavorites ? translate('action.showAll') : translate('action.showFavorites')}
             />
             <IconButton
               icon={<Trash size={20} />}
@@ -171,7 +173,7 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = memo(({
                   : "secondary"
               }
               className="h-10 px-4"
-              label="Recycle Bin"
+              label={translate('action.recycleBin')}
             />
           </div>
         )}

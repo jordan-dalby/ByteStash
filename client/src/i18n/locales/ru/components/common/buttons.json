@@ -1,0 +1,62 @@
+{
+  "copyButton": {
+    "title": "Скопировать в буфер обмена"
+  },
+  "downloadArchiveButton": {
+    "error": {
+      "failedDownload": "Не удалось скачать архив"
+    },
+    "fileLabel_one": "{{count, number}} файл",
+    "fileLabel_few": "{{count, number}} файла",
+    "fileLabel_many": "{{count, number}} файлов",
+    "fileLabel_other": "{{count, number}} файлов",
+    "label": "Скачать все",
+    "success": {
+      "downloadedAll": "Скачаны все фрагменты кода"
+    },
+    "title": "Скачать все файлы в виде ZIP-архива"
+  },
+  "downloadButton": {
+    "error": {
+      "failedDownload": "Не удалось загрузить файл"
+    },
+    "success": {
+      "downloaded": "\"{{fileName}}\" успешно загружен"
+    },
+    "title": "Загрузить {{fileName}}",
+    "warning": {
+      "nothing": "Нечего скачивать"
+    }
+  },
+  "fileUploadButton": {
+    "error": {
+      "unknown": "Неизвестная ошибка"
+    },
+    "info": {
+      "duplicateDetected": "Обнаружен дубликат файла",
+      "duplicatesDetected_one": "{{count, number}} дубликат обнаружен",
+      "duplicatesDetected_few": "{{count, number}} дубликата обнаружено",
+      "duplicatesDetected_many": "{{count, number}} дубликатов обнаружено",
+      "duplicatesDetected_other": "{{count, number}} дубликатов обнаружено"
+    },
+    "label": "Загрузить файл(ы) с кодом",
+    "loadFromUrl": {
+      "contentMaxSizeError": "Размер контента должен быть меньше {{max}}",
+      "invalidUrl": "Пожалуйста, введите действительный URL-адрес",
+      "label": "Загрузить по ссылке",
+      "title": "Загрузите код с URL-адреса (например, необработанной ссылки GitHub)"
+    },
+    "success": {
+      "filesUploaded_one": "{{count, number}} файл успешно загружен",
+      "filesUploaded_few": "{{count, number}} файла успешно загружено",
+      "filesUploaded_many": "{{count, number}} файлов успешно загружено",
+      "filesUploaded_other": "{{count, number}} файлов успешно загружено",
+      "fileUploaded": "\"{{fileName}}\" успешно загружен",
+      "someFilesUploaded": "{{successCount}} из {{total}} файлов успешно загружено"
+    },
+    "title": "Загрузите файл(ы) с кодом для автоматического создания фрагментов"
+  },
+  "rawButton": {
+    "title": "Открыть исходник"
+  }
+}

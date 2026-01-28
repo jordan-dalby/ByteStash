@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ViewSwitch from './ViewSwitch';
+import { useTranslation } from 'react-i18next';
 import { ROUTES } from '../../../../constants/routes';
 import { AppHeader } from '../../../common/layout/AppHeader';
+import ViewSwitch from './ViewSwitch';
 
 interface StorageHeaderProps {
   isPublicView: boolean;
@@ -11,10 +12,11 @@ interface StorageHeaderProps {
 const StorageHeader: React.FC<StorageHeaderProps> = ({ isPublicView }) => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const navigate = useNavigate();
+  const { t: translate } = useTranslation('components/snippets/view/common');
 
-  const tooltipText = isPublicView 
-    ? "You're viewing publicly shared snippets. These snippets are read-only and visible to everyone."
-    : "You're viewing your private snippets. Only you can see and modify these snippets.";
+  const tooltipText = isPublicView
+    ? translate('storageHeader.public')
+    : translate('storageHeader.private');
 
   const handleViewToggle = (checked: boolean) => {
     navigate(checked ? ROUTES.PUBLIC_SNIPPETS : ROUTES.HOME);

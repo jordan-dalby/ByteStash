@@ -1,0 +1,57 @@
+{
+  "action": {
+    "delete": "Delete snippet",
+    "makePrivate": "Make private",
+    "makePublic": "Make public",
+    "scanForOffensiveContent": "Scan for Offensive Content",
+    "showAllSnippets": "Show All Snippets",
+    "viewSnippet": "View snippet"
+  },
+  "columns": {
+    "labels": {
+      "actions": "Actions",
+      "fragments": "Fragments",
+      "owner": "Owner",
+      "title": "Title",
+      "updated": "Updated",
+      "visibility": "Visibility"
+    }
+  },
+  "confirmationModal": {
+    "message": "Are you sure you want to permanently delete this snippet? This action cannot be undone.",
+    "title": "Delete snippet"
+  },
+  "containsOffensiveWords": "Contains offensive words: {{words}}",
+  "entityName_one": "snippet",
+  "entityName_other": "snippets",
+  "error": {
+    "delete": {
+      "default": "Failed to delete snippet"
+    },
+    "update": {
+      "default": "Failed to update snippet visibility"
+    }
+  },
+  "filters": {
+    "search": "Search snippets...",
+    "userId": "User ID",
+    "visibility": {
+      "all": "All visibility",
+      "private": "Private",
+      "public": "Public"
+    }
+  },
+  "offensiveContentMessage": "Found {{total}} {{entityName}} with offensive content",
+  "success": {
+    "delete": {
+      "default": "Snippet deleted successfully"
+    },
+    "update": {
+      "default": "Snippet visibility updated"
+    }
+  },
+  "table": {
+    "emptyMessage": "No snippets found",
+    "loadingMessage": "Loading snippets..."
+  }
+}

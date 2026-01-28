@@ -41,7 +41,7 @@ services:
       - OIDC_SCOPES=
       # Optional: Comma-separated list of usernames that should have admin privileges
       # e.g. "admin,jordan" - these users will have access to the admin panel
-      - ADMIN_USERNAMES=
+      - ADMIN_USERNAMES=admin
     volumes:
       - ./data:/data/snippets
 # Uncomment to use docker secrets

@@ -1,5 +1,6 @@
 import React from 'react';
-import {Trash2,ArchiveRestore } from 'lucide-react';
+import { Trash2, ArchiveRestore } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { IconButton } from '../../common/buttons/IconButton';
 
 interface SnippetRecycleCardMenuProps {
@@ -11,6 +12,8 @@ const SnippetRecycleCardMenu: React.FC<SnippetRecycleCardMenuProps> = ({
   onDelete,
   onRestore,
 }) => {
+  const { t: translate } = useTranslation('components/snippets/list/snippetRecycleCardMenu');
+
   return (
     <div className="top-4 right-4 flex items-center gap-1">
         <IconButton
@@ -22,7 +25,7 @@ const SnippetRecycleCardMenu: React.FC<SnippetRecycleCardMenuProps> = ({
         variant="custom"
         size="sm"
         className="bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more"
-        label="Restore snippet"
+        label={translate('restoreSnippet')}
       />
       <IconButton
         icon={<Trash2 size={17} className="hover:text-red-500" />}
@@ -33,7 +36,7 @@ const SnippetRecycleCardMenu: React.FC<SnippetRecycleCardMenuProps> = ({
         variant="custom"
         size="sm"
         className="bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more"
-        label="Delete snippet"
+        label={translate('deleteSnippet')}
       />
     </div>
   );

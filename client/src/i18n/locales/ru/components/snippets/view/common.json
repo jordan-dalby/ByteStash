@@ -1,0 +1,56 @@
+{
+  "authAwareSnippetView": {
+    "error": {
+      "snippetLoad": "Не удалось загрузить снипет",
+      "snippetRequireAuth": "Для просмотра этого снипета требуется аутентификация"
+    }
+  },
+  "baseSnippetStorage": {
+    "error": {
+      "sessionExpired": "Сессия истекла. Пожалуйста, войдите снова.",
+      "snippetCreated": "Не удалось создать снипет",
+      "snippetUpdated": "Не удалось обновить снипет"
+    },
+    "success": {
+      "displayAll": "Все снипеты",
+      "displayFavorites": "Избранные снипеты",
+      "snippetCreated": "Снипет успешно создан",
+      "snippetUpdated": "Снипет успешно обновлён"
+    }
+  },
+  "browsePublicSnippets": "Просмотр общедоступных снипетов",
+  "filter": {
+    "filteredByCategories": "Отфильтровано по категориям"
+  },
+  "loadingSnippets": "Загрузка снипетов...",
+  "signIn": "Войти",
+  "sippetNotFound": "Снипет не найден",
+  "snippetContentArea": {
+    "error": {
+      "duplicateSnippet": "Не удалось дублировать снипет",
+      "loadSnippets": "Не удалось загрузить снипеты",
+      "moveSnippetToRecycleBin": "Не удалось переместить снипет в корзину. Пожалуйста, попробуйте еще раз.",
+      "sessionExpired": "Сессия истекла. Пожалуйста, войдите снова.",
+      "updateFavoriteStatusAdded": "Не удалось добавить снипет в избранное. Пожалуйста, попробуйте еще раз.",
+      "updateFavoriteStatusDeleted": "Не удалось удалить снипет из избранного. Пожалуйста, попробуйте еще раз.",
+      "updatePinStatusAdded": "Не удалось закрепить снипет. Пожалуйста, попробуйте еще раз.",
+      "updatePinStatusDeleted": "Не удалось открепить снипет. Пожалуйста, попробуйте еще раз."
+    },
+    "success": {
+      "duplicateSnippet": "Снипет успешно продублирован",
+      "moveSnippetToRecycleBin": "Снипет успешно перемещён в корзину",
+      "updateFavoriteStatusAdded": "Снипет успешно добавлен в избранное",
+      "updateFavoriteStatusDeleted": "Снипет успешно удален из избранного",
+      "updatePinStatusAdded": "Снипет успешно закреплён",
+      "updatePinStatusDeleted": "Снипет успешно откреплён"
+    }
+  },
+  "storageHeader": {
+    "private": "Вы просматриваете свои личные снипеты. Только вы можете просматривать и изменять эти снипеты.",
+    "public": "Вы просматриваете общедоступные снипеты. Эти снипеты доступны только для чтения и видны всем."
+  },
+  "viewSwitch": {
+    "private": "Приватные",
+    "public": "Публичные"
+  }
+}

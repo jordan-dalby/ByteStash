@@ -1,0 +1,63 @@
+{
+  "action": {
+    "activate": "Activate user",
+    "deactivate": "Deactivate user",
+    "delete": "Delete user"
+  },
+  "columns": {
+    "labels": {
+      "actions": "Actions",
+      "apiKeysCount": "API keys",
+      "authType": "AUth type",
+      "created": "Created",
+      "email": "Email",
+      "lastLogin": "Last login",
+      "snippetsCount": "Snippets",
+      "status": "Status",
+      "username": "Username"
+    }
+  },
+  "confirmationModal": {
+    "message": "Are you sure you want to delete this user? This will permanently delete all their snippets, API keys, and shares. This action cannot be undone.",
+    "title": "Delete user"
+  },
+  "entityName_one": "user",
+  "entityName_other": "users",
+  "error": {
+    "delete": {
+      "default": "Failed to delete user"
+    },
+    "update": {
+      "default": "Failed to update user"
+    }
+  },
+  "filters": {
+    "authType": {
+      "all": "All Auth Types",
+      "internal": "Internal",
+      "oidc": "OIDC"
+    },
+    "search": "Search users...",
+    "status": {
+      "active": "Active",
+      "all": "All Status",
+      "inactive": "Inactive"
+    }
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "success": {
+    "delete": {
+      "default": "User deleted successfully"
+    },
+    "update": {
+      "default": "User status updated"
+    }
+  },
+  "table": {
+    "emptyMessage": "No users found",
+    "loadingMessage": "Loading users..."
+  }
+}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Share as ShareIcon, Trash2, Link as LinkIcon, Check, ShieldCheck, ShieldOff, Code2 } from 'lucide-react';
 import parseDuration from 'parse-duration';
 import { formatDistanceToNow } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { Share, ShareSettings, Snippet } from '../../../types/snippets';
 import { useToast } from '../../../hooks/useToast';
 import { createShare, deleteShare, getSharesBySnippetId } from '../../../utils/api/share';
@@ -17,6 +18,7 @@ interface ShareMenuProps {
 }
 
 export const ShareMenu: React.FC<ShareMenuProps> = ({ isOpen, onClose, snippet }) => {
+  const { t: translate } = useTranslation('components/snippets/share');
   const [shares, setShares] = useState<Share[]>([]);
   const [requiresAuth, setRequiresAuth] = useState(false);
   const [expiresIn, setExpiresIn] = useState<string>('');
@@ -38,7 +40,7 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ isOpen, onClose, snippet }
       const loadedShares = await getSharesBySnippetId(snippet.id);
       setShares(loadedShares);
     } catch (error) {
-      addToast('Failed to load shares', 'error');
+      addToast(translate('shareMenu.error.load'), 'error');
     }
   };
 
@@ -46,7 +48,7 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ isOpen, onClose, snippet }
     if (expiresIn) {
       const seconds = parseDuration(expiresIn, 's');
       if (!seconds) {
-        setDurationError('Invalid duration format. Use 1h, 2d, 30m etc.');
+        setDurationError(translate('shareMenu.error.invalidDuration'));
         return;
       }
       setDurationError('');
@@ -60,12 +62,12 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ isOpen, onClose, snippet }
       
       await createShare(snippet.id, settings);
       await loadShares();
-      addToast('Share link created', 'success');
-      
+      addToast(translate('shareMenu.success.created'), 'success');
+
       setRequiresAuth(false);
       setExpiresIn('');
     } catch (error) {
-      addToast('Failed to create share link', 'error');
+      addToast(translate('shareMenu.error.created'), 'error');
     }
   };
 
@@ -73,9 +75,9 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ isOpen, onClose, snippet }
     try {
       await deleteShare(shareId);
       setShares(shares.filter(share => share.id !== shareId));
-      addToast('Share link deleted', 'success');
+      addToast(translate('shareMenu.success.deleted'), 'success');
     } catch (error) {
-      addToast('Failed to delete share link', 'error');
+      addToast(translate('shareMenu.error.deleted'), 'error');
     }
   };
 
@@ -118,10 +120,15 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ isOpen, onClose, snippet }
   const getRelativeExpiryTime = (expiresAt: string): string => {
     try {
       const expiryDate = new Date(expiresAt);
-      return `Expires in ${formatDistanceToNow(expiryDate)}`;
+      return translate(
+        'shareMenu.activeShareLinks.relativeExpiryTime',
+        {
+          date: formatDistanceToNow(expiryDate)
+        }
+      );
     } catch (error) {
       console.error('Error formatting expiry date:', error);
-      return 'Unknown expiry time';
+      return translate('shareMenu.error.unknownExpiryTime');
     }
   };
 
@@ -133,13 +140,13 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ isOpen, onClose, snippet }
         title={
           <div className="flex items-center gap-2 text-light-text dark:text-dark-text">
             <ShareIcon size={20} />
-            <h2 className="text-xl font-bold">Share Snippet</h2>
+            <h2 className="text-xl font-bold">{translate('shareMenu.title')}</h2>
           </div>
         }
       >
         <div className="space-y-6 text-light-text dark:text-dark-text">
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Create New Share Link</h3>
+            <h3 className="text-lg font-medium">{translate('shareMenu.subTitle')}</h3>
             
             <div className="space-y-4">
               <label className="flex items-center gap-2">
@@ -147,11 +154,11 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ isOpen, onClose, snippet }
                   id="useAuth"
                   checked={requiresAuth}
                   onChange={setRequiresAuth}/>
-                <span>Require authentication</span>
+                <span>{translate('shareMenu.requiresAuth')}</span>
               </label>
 
               <div>
-                <label className="block text-sm mb-1">Expires in (e.g. 1h, 2d, 30m)</label>
+                <label className="block text-sm mb-1">{translate('shareMenu.expiresIn')}</label>
                 <input
                   type="text"
                   value={expiresIn}
@@ -159,7 +166,7 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ isOpen, onClose, snippet }
                     setExpiresIn(e.target.value);
                     setDurationError('');
                   }}
-                  placeholder="Never"
+                  placeholder={translate('shareMenu.expiresInPlaceholder')}
                   className="w-full px-3 py-2 bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text rounded-md border border-light-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary"
                 />
                 {durationError && (
@@ -171,16 +178,16 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ isOpen, onClose, snippet }
                 onClick={handleCreateShare}
                 className="w-full py-2 bg-light-primary dark:bg-dark-primary text-white rounded-md hover:opacity-90 transition-colors"
               >
-                Create Share Link
+                {translate('shareMenu.createButtonText')}
               </button>
             </div>
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Active Share Links</h3>
+            <h3 className="text-lg font-medium">{translate('shareMenu.activeShareLinks.title')}</h3>
             
             {shares.length === 0 ? (
-              <p className="text-light-text-secondary dark:text-dark-text-secondary">No active share links</p>
+              <p className="text-light-text-secondary dark:text-dark-text-secondary">{translate('shareMenu.activeShareLinks.noLinks')}</p>
             ) : (
               <div className="space-y-2">
                 {shares.map(share => (
@@ -192,19 +199,19 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ isOpen, onClose, snippet }
                       <div className="flex items-center gap-2">
                         <span className="truncate">{share.id}</span>
                         {share.requires_auth === 1 && (
-                          <span className="text-emerald-500 dark:text-emerald-400" title="Protected - Authentication required">
+                          <span className="text-emerald-500 dark:text-emerald-400" title={translate('shareMenu.activeShareLinks.requiresAuth.true')}>
                             <ShieldCheck size={15} className="stroke-[2.5]" />
                           </span>
                         )}
                         {share.requires_auth === 0 && (
-                          <span className="text-light-text-secondary dark:text-dark-text-secondary" title="Public access">
+                          <span className="text-light-text-secondary dark:text-dark-text-secondary" title={translate('shareMenu.activeShareLinks.requiresAuth.false')}>
                             <ShieldOff size={15} className="stroke-[2.5]" />
                           </span>
                         )}
                         <div className="flex items-center">
                           {share.expired === 1 && (
                             <span className="px-2 py-0.5 bg-red-500/10 dark:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/20 dark:border-red-500/30 rounded text-xs">
-                              Expired
+                              {translate('shareMenu.activeShareLinks.date.expired')}
                             </span>
                           )}
                           {share.expires_at && share.expired === 0 && (
@@ -214,7 +221,7 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ isOpen, onClose, snippet }
                           )}
                           {share.expires_at === null && (
                             <span className="px-2 py-0.5 bg-light-primary/10 dark:bg-dark-primary/20 text-light-primary dark:text-dark-primary border border-light-primary/20 dark:border-dark-primary/30 rounded text-xs">
-                              Never Expires
+                              {translate('shareMenu.activeShareLinks.date.neverExpires')}
                             </span>
                           )}
                         </div>
@@ -224,7 +231,7 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ isOpen, onClose, snippet }
                       <button
                         onClick={() => copyShareLink(share.id)}
                         className="p-2 hover:bg-light-hover dark:hover:bg-dark-hover rounded-md transition-colors"
-                        title="Copy link"
+                        title={translate('shareMenu.activeShareLinks.buttons.copy')}
                       >
                         {copiedStates[share.id] ? (
                           <Check size={16} className="text-light-primary dark:text-dark-primary" />
@@ -239,7 +246,11 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ isOpen, onClose, snippet }
                             ? 'hover:bg-light-hover dark:hover:bg-dark-hover' 
                             : 'cursor-not-allowed'
                         }`}
-                        title={share.requires_auth === 1 ? "Only unauthenticated snippets can be embedded" : "Embed snippet"}
+                        title={
+                          share.requires_auth === 1
+                            ? translate('shareMenu.activeShareLinks.buttons.requiresAuth.true')
+                            : translate('shareMenu.activeShareLinks.buttons.requiresAuth.false')
+                        }
                       >
                         <Code2 
                           size={16} 
@@ -252,7 +263,7 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({ isOpen, onClose, snippet }
                       <button
                         onClick={() => handleDeleteShare(share.id)}
                         className="p-2 hover:bg-light-hover dark:hover:bg-dark-hover rounded-md transition-colors"
-                        title="Delete share link"
+                        title={translate('shareMenu.activeShareLinks.buttons.delete')}
                       >
                         <Trash2 size={16} className="hover:text-red-500" />
                       </button>

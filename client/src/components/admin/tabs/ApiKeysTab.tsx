@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { adminApi } from '../../../utils/api/admin';
 import { useToast } from '../../../hooks/useToast';
 import { ConfirmationModal } from '../../common/modals/ConfirmationModal';
-import { Trash2 } from 'lucide-react';
 import {
   FilterInput,
   AdminTable,
@@ -15,6 +16,8 @@ import {
 } from '../common';
 
 export const ApiKeysTab: React.FC = () => {
+  const { t } = useTranslation();
+  const { t: translate } = useTranslation('components/admin/tabs/apiKeys');
   const [userId, setUserId] = useState('');
   const [offset, setOffset] = useState(0);
   const [deleteKeyId, setDeleteKeyId] = useState<number | null>(null);
@@ -36,13 +39,13 @@ export const ApiKeysTab: React.FC = () => {
   const deleteMutation = useMutation({
     mutationFn: (id: number) => adminApi.deleteApiKey(id),
     onSuccess: () => {
-      addToast('API key deleted successfully', 'success');
+      addToast(translate('apiKeyDeletedSuccessfully'), 'success');
       queryClient.invalidateQueries({ queryKey: ['admin', 'api-keys'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] });
       setDeleteKeyId(null);
     },
     onError: (error: any) => {
-      addToast(error.message || 'Failed to delete API key', 'error');
+      addToast(error.message || translate('error.default'), 'error');
     },
   });
 
@@ -61,14 +64,14 @@ export const ApiKeysTab: React.FC = () => {
     },
     {
       key: 'name',
-      label: 'Name',
+      label: translate('columns.labels.name'),
       render: (key) => (
         <span className="text-light-text dark:text-dark-text">{key.name}</span>
       ),
     },
     {
       key: 'owner',
-      label: 'Owner',
+      label: translate('columns.labels.owner'),
       render: (key) => (
         <span className="whitespace-nowrap text-light-text-secondary dark:text-dark-text-secondary">
           {key.username || `User #${key.user_id}`}
@@ -77,7 +80,7 @@ export const ApiKeysTab: React.FC = () => {
     },
     {
       key: 'created',
-      label: 'Created',
+      label: translate('columns.labels.created'),
       render: (key) => (
         <span className="whitespace-nowrap text-light-text-secondary dark:text-dark-text-secondary">
           {formatDate(key.created_at)}
@@ -86,7 +89,7 @@ export const ApiKeysTab: React.FC = () => {
     },
     {
       key: 'last_used',
-      label: 'Last Used',
+      label: translate('columns.labels.lastUsed'),
       render: (key) => (
         <span className="whitespace-nowrap text-light-text-secondary dark:text-dark-text-secondary">
           {formatDate(key.last_used_at)}
@@ -95,11 +98,11 @@ export const ApiKeysTab: React.FC = () => {
     },
     {
       key: 'status',
-      label: 'Status',
+      label: translate('columns.labels.status'),
       render: (key) => (
         <span className="whitespace-nowrap">
           <StatusBadge
-            label={key.is_active ? 'Active' : 'Inactive'}
+            label={key.is_active ? translate('status.active') : translate('status.inactive')}
             variant={key.is_active ? 'success' : 'neutral'}
           />
         </span>
@@ -107,7 +110,7 @@ export const ApiKeysTab: React.FC = () => {
     },
     {
       key: 'actions',
-      label: 'Actions',
+      label: translate('columns.labels.actions'),
       render: (key) => (
         <div className="whitespace-nowrap">
           <button
@@ -132,19 +135,19 @@ export const ApiKeysTab: React.FC = () => {
             setUserId(value);
             setOffset(0);
           }}
-          placeholder="Filter by User ID"
+          placeholder={translate('filters.userId')}
           className="w-64"
         />
       </div>
 
-      <ResultsCount offset={offset} limit={limit} total={total} entityName="API keys" />
+      <ResultsCount offset={offset} limit={limit} total={total} entityName={translate('entityName', { count: total })} />
 
       <AdminTable
         columns={columns}
         data={apiKeys}
         isLoading={isLoading}
-        emptyMessage="No API keys found"
-        loadingMessage="Loading API keys..."
+        emptyMessage={translate('table.emptyMessage')}
+        loadingMessage={translate('table.loadingMessage')}
         getRowKey={(key) => key.id}
       />
 
@@ -161,10 +164,10 @@ export const ApiKeysTab: React.FC = () => {
         isOpen={deleteKeyId !== null}
         onClose={() => setDeleteKeyId(null)}
         onConfirm={() => deleteKeyId && deleteMutation.mutate(deleteKeyId)}
-        title="Delete API Key"
-        message="Are you sure you want to delete this API key? The key owner will no longer be able to use it to access the API. This action cannot be undone."
-        confirmLabel="Delete"
-        cancelLabel="Cancel"
+        title={translate('confirmationModal.title')}
+        message={translate('confirmationModal.message')}
+        confirmLabel={t('action.delete')}
+        cancelLabel={t('action.cancel')}
         variant="danger"
       />
     </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Snippet } from "../types/snippets";
 import { snippetService } from "../service/snippetService";
 import { useAuth } from "./useAuth";
@@ -45,6 +46,7 @@ export const useSnippetPagination = ({
   viewType,
   forceReload = 0,
 }: UseSnippetPaginationOptions): UseSnippetPaginationReturn => {
+  const { t } = useTranslation();
   const { logout } = useAuth();
   const { addToast } = useToast();
 
@@ -135,9 +137,9 @@ export const useSnippetPagination = ({
         if (mountedRef.current) {
           if (viewType !== "public" && (error.status === 401 || error.status === 403)) {
             logout();
-            addToast("Session expired. Please login again.", "error");
+            addToast(t('pagination.useSnippetPagination.error.sessionExpired'), "error");
           } else {
-            addToast("Failed to load snippets", "error");
+            addToast(t('pagination.useSnippetPagination.error.failedSnippetsLoad'), "error");
           }
         }
       } finally {

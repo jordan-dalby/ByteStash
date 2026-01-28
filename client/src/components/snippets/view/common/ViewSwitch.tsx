@@ -1,5 +1,6 @@
 import React from 'react';
 import { Globe, Lock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface ViewSwitchProps {
   checked: boolean;
@@ -7,6 +8,8 @@ interface ViewSwitchProps {
 }
 
 const ViewSwitch: React.FC<ViewSwitchProps> = ({ checked, onChange }) => {
+  const { t: translate } = useTranslation('components/snippets/view/common');
+
   return (
     <div className="flex items-center gap-3 text-sm text-light-text dark:text-dark-text w-full">
       <div
@@ -31,7 +34,7 @@ const ViewSwitch: React.FC<ViewSwitchProps> = ({ checked, onChange }) => {
             `} 
             size={14} 
           />
-          <span className="text-xs font-medium">Private</span>
+          <span className="text-xs font-medium">{translate('viewSwitch.private')}</span>
         </button>
         <button
           type="button"
@@ -51,7 +54,7 @@ const ViewSwitch: React.FC<ViewSwitchProps> = ({ checked, onChange }) => {
             `} 
             size={14} 
           />
-          <span className="text-xs font-medium">Public</span>
+          <span className="text-xs font-medium">{translate('viewSwitch.public')}</span>
         </button>
       </div>
     </div>

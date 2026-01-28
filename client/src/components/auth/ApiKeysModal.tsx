@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Key, Plus, Trash2, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Modal from '../common/modals/Modal';
 import { ApiKey } from '../../types/apiKey';
 import { getApiKeys, createApiKey, deleteApiKey } from '../../utils/api/apiKeys';
@@ -12,6 +13,7 @@ interface ApiKeysModalProps {
 }
 
 export const ApiKeysModal: React.FC<ApiKeysModalProps> = ({ isOpen, onClose }) => {
+  const { t: translate } = useTranslation('components/auth');
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [newKeyName, setNewKeyName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
@@ -59,7 +61,7 @@ export const ApiKeysModal: React.FC<ApiKeysModalProps> = ({ isOpen, onClose }) =
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="API Keys">
+    <Modal isOpen={isOpen} onClose={onClose} title={translate('apiKeysModal.title')}>
       <div className="space-y-4">
         {/* Create new key section */}
         <div className="space-y-2">
@@ -68,7 +70,7 @@ export const ApiKeysModal: React.FC<ApiKeysModalProps> = ({ isOpen, onClose }) =
               type="text"
               value={newKeyName}
               onChange={(e) => setNewKeyName(e.target.value)}
-              placeholder="Enter key name"
+              placeholder={translate('apiKeysModal.enterKeyName')}
               className="flex-1 px-3 py-2 bg-light-hover dark:bg-dark-hover border border-light-border
                 dark:border-dark-border rounded-md text-sm text-light-text dark:text-dark-text
                 focus:border-light-primary dark:focus:border-dark-primary outline-none
@@ -76,7 +78,7 @@ export const ApiKeysModal: React.FC<ApiKeysModalProps> = ({ isOpen, onClose }) =
             />
             <IconButton
               icon={<Plus size={20} />}
-              label="Create Key"
+              label={translate('apiKeysModal.createKey')}
               onClick={handleCreateKey}
               variant="action"
               className="h-10 pl-2 pr-4"
@@ -90,7 +92,7 @@ export const ApiKeysModal: React.FC<ApiKeysModalProps> = ({ isOpen, onClose }) =
             <div className="p-3 bg-light-hover dark:bg-dark-hover rounded-md space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-light-text dark:text-dark-text">
-                  New API Key (copy it now, it won't be shown again)
+                  {translate('apiKeysModal.newApiKey')}
                 </span>
                 <button
                   onClick={() => setNewKey(null)}
@@ -112,7 +114,7 @@ export const ApiKeysModal: React.FC<ApiKeysModalProps> = ({ isOpen, onClose }) =
 
         {/* List of existing keys */}
         <div className="space-y-2">
-          <h3 className="text-sm font-medium text-light-text dark:text-dark-text">Your API Keys</h3>
+          <h3 className="text-sm font-medium text-light-text dark:text-dark-text">{translate('apiKeysModal.yourApiKeys')}</h3>
           <div className="space-y-2">
             {apiKeys.map((key) => (
               <div
@@ -129,15 +131,15 @@ export const ApiKeysModal: React.FC<ApiKeysModalProps> = ({ isOpen, onClose }) =
                     </span>
                   </div>
                   <div className="text-xs text-light-text-secondary dark:text-dark-text-secondary">
-                    Created: {new Date(key.created_at).toLocaleDateString()}
-                    {key.last_used && ` • Last used: ${new Date(key.last_used).toLocaleDateString()}`}
+                    {translate('apiKeysModal.created')}: {new Date(key.created_at).toLocaleDateString()}
+                    {key.last_used && ` • ${translate('apiKeysModal.lastUsed')}: ${new Date(key.last_used).toLocaleDateString()}`}
                   </div>
                 </div>
                 <button
                   onClick={() => handleDeleteKey(key.id)}
                   className="p-1 text-light-text-secondary dark:text-dark-text-secondary
                     hover:text-red-500 transition-colors"
-                  aria-label="Delete API key"
+                  aria-label={translate('apiKeysModal.deleteApiKey')}
                 >
                   <Trash2 size={16} />
                 </button>
@@ -145,7 +147,7 @@ export const ApiKeysModal: React.FC<ApiKeysModalProps> = ({ isOpen, onClose }) =
             ))}
             {apiKeys.length === 0 && (
               <div className="text-sm text-light-text-secondary dark:text-dark-text-secondary text-center py-4">
-                No API keys found
+                {translate('apiKeysModal.notApiKeys')}
               </div>
             )}
           </div>

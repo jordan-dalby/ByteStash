@@ -1,0 +1,18 @@
+{
+  "publicSnippetContentArea": {
+    "error": {
+      "addSnippetToCollection": "Failed to add snippet to your collection",
+      "failedLoadSnippets": "Failed to load public snippets"
+    },
+    "filter": {
+      "byCategories": "Filtered by categories"
+    },
+    "info": {
+      "requireAuth": "Please sign in to add this snippet to your collection"
+    },
+    "loadingSnippets": "Loading snippets...",
+    "success": {
+      "addSnippetToCollection": "Snippet added to your collection"
+    }
+  }
+}

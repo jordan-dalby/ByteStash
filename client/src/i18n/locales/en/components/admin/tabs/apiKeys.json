@@ -1,0 +1,33 @@
+{
+  "apiKeyDeletedSuccessfully": "API key deleted successfully",
+  "columns": {
+    "labels": {
+      "actions": "Actions",
+      "created": "Created",
+      "lastUsed": "Last used",
+      "name": "Name",
+      "owner": "Owner",
+      "status": "Status"
+    }
+  },
+  "confirmationModal": {
+    "message": "Are you sure you want to delete this API key? The key owner will no longer be able to use it to access the API. This action cannot be undone.",
+    "title": "Delete API Key"
+  },
+  "entityName_one": "API key",
+  "entityName_other": "API keys",
+  "error": {
+    "default": "Failed to delete API key"
+  },
+  "filters": {
+    "userId": "Filter by User ID"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "table": {
+    "emptyMessage": "No API keys found",
+    "loadingMessage": "Loading API keys..."
+  }
+}

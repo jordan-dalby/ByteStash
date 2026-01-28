@@ -1,0 +1,26 @@
+{
+  "embedCopyButton": {
+    "title": "Copy to clipboard"
+  },
+  "embedModal": {
+    "form": {
+      "embedCode": "Embed Code",
+      "fragmentToShow": {
+        "all": "All fragments",
+        "label": "Fragment to show (optional)"
+      },
+      "showDescription": "Show description",
+      "showFileHeaders": "Show file headers",
+      "showPoweredBy": "Show \"Powered by ByteStash\"",
+      "showTitle": "Show title",
+      "theme": "Theme"
+    },
+    "subTitle": "Customize Embed",
+    "title": "Embed Snippet"
+  },
+  "embedView": {
+    "error": {
+      "default": "Failed to load snippet"
+    }
+  }
+}

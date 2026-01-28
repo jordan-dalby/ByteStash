@@ -1,7 +1,8 @@
 import React from "react";
 import { Download } from "lucide-react";
-import { downloadFragment } from "../../../utils/downloadUtils";
+import { useTranslation } from "react-i18next";
 import { useToast } from "../../../hooks/useToast";
+import { downloadFragment } from "../../../utils/downloadUtils";
 
 interface DownloadButtonProps {
   code: string;
@@ -16,6 +17,7 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({
   language,
   className = "",
 }) => {
+  const { t: translate } = useTranslation('components/common/buttons');
   const { addToast } = useToast();
 
   const handleDownload = (e: React.MouseEvent) => {
@@ -24,15 +26,15 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({
       e.preventDefault();
 
       if (!code || !fileName) {
-        addToast("Nothing to download", "warning");
+        addToast(translate('downloadButton.warning.nothing'), "warning");
         return;
       }
 
       downloadFragment(code, fileName, language);
-      addToast(`"${fileName}" downloaded successfully`, "success");
+      addToast(translate('downloadButton.success.downloaded', { fileName }), "success");
     } catch (error) {
       console.error("Download failed:", error);
-      addToast("Failed to download file", "error");
+      addToast(translate('downloadButton.error.failedDownload'), "error");
     }
   };
 
@@ -40,8 +42,8 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({
     <button
       onClick={handleDownload}
       className={`inline-flex items-center justify-center w-8 h-8 text-light-text-secondary dark:text-dark-text-secondary bg-light-surface dark:bg-dark-surface hover:bg-light-hover dark:hover:bg-dark-hover rounded border border-light-border dark:border-dark-border transition-colors ${className}`}
-      title={`Download ${fileName}`}
-      aria-label={`Download ${fileName}`}
+      title={translate('downloadButton.title', { fileName })}
+      aria-label={translate('downloadButton.title', { fileName })}
     >
       <Download size={20} />
     </button>

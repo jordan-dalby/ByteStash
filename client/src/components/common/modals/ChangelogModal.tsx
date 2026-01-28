@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import Modal from './Modal';
 import { Loader2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../../contexts/ThemeContext';
+import { getCurrentLocale } from '../../../utils/getCurrentLocale';
+import Modal from './Modal';
 
 interface GitHubRelease {
   tag_name: string;
@@ -17,6 +19,7 @@ interface ChangelogModalProps {
 }
 
 const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose }) => {
+  const { t: translate } = useTranslation('components/common/modals');
   const [releases, setReleases] = useState<GitHubRelease[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,7 +60,7 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose }) => {
         const data = await response.json();
         setReleases(data);
       } catch (err) {
-        setError('Failed to load changelog. Please try again later.');
+        setError(translate('changelogModal.error.default'));
         console.error('Error fetching releases:', err);
       } finally {
         setIsLoading(false);
@@ -68,7 +71,9 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose }) => {
   }, [isOpen]);
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    const { isoCode } = getCurrentLocale();
+
+    return new Date(dateString).toLocaleDateString(isoCode, {
       year: 'numeric',
       month: 'long',
       day: 'numeric'

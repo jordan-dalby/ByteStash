@@ -1,0 +1,48 @@
+{
+  "sharedSnippetView": {
+    "browsePublicSnippets": "Browse public snippets",
+    "loadingSnippet": "Loading snippet...",
+    "snippetExpired": "This shared snippet has expired",
+    "snippetNotFound": "Snippet not found"
+  },
+  "shareMenu": {
+    "activeShareLinks": {
+      "buttons": {
+        "copy": "Copy link",
+        "delete": "Delete share link",
+        "requiresAuth": {
+          "false": "Embed snippet",
+          "true": "Only unauthenticated snippets can be embedded"
+        }
+      },
+      "date": {
+        "expired": "Expired",
+        "neverExpires": "Never Expires"
+      },
+      "noLinks": "No active share links",
+      "relativeExpiryTime": "Expires in {{date}}",
+      "requiresAuth": {
+        "false": "Public access",
+        "true": "Protected - Authentication required"
+      },
+      "title": "Active Share Links"
+    },
+    "createButtonText": "Create Share Link",
+    "error": {
+      "created": "Failed to create share link",
+      "deleted": "Failed to delete share link",
+      "invalidDuration": "Invalid duration format. Use 1h, 2d, 30m etc.",
+      "load": "Failed to load shares",
+      "unknownExpiryTime": "Unknown expiry time"
+    },
+    "expiresIn": "Expires in (e.g. 1h, 2d, 30m)",
+    "expiresInPlaceholder": "Never",
+    "requiresAuth": "Require authentication",
+    "subTitle": "Create New Share Link",
+    "success": {
+      "created": "Share link created",
+      "deleted": "Share link deleted"
+    },
+    "title": "Share Snippet"
+  }
+}

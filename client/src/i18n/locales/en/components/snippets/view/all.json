@@ -1,0 +1,29 @@
+{
+  "defaultUpdateTime": "Unknown",
+  "fullCodeView": {
+    "dateTimeAgo": "{{dateTime}} ago",
+    "defaultDescription": "No description available"
+  },
+  "snippetModal": {
+    "confirmationModal": {
+      "confirmLabel": {
+        "isRecycleView": {
+          "false": "Move to Recycle Bin",
+          "true": "Delete Permanently"
+        }
+      },
+      "message": {
+        "isRecycleView": {
+          "false": "Are you sure you want to move \"{{title}}\" to the Recycle Bin?",
+          "true": "Are you sure you want to permanently delete \"{{title}}\"? This action cannot be undone."
+        }
+      },
+      "title": {
+        "isRecycleView": {
+          "false": "Move to Recycle Bin",
+          "true": "Confirm Deletion"
+        }
+      }
+    }
+  }
+}

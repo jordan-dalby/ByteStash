@@ -1,21 +1,23 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { initializeMonaco } from "../../../../utils/language/languageUtils";
+import { useAuth } from "../../../../hooks/useAuth";
+import { useSettings } from "../../../../hooks/useSettings";
+import { useCreateSnippet, useEditSnippet } from "../../../../hooks/useSnippetsQuery";
+import { useToast } from "../../../../hooks/useToast";
+import { SearchAndFilter } from "../../../search/SearchAndFilter";
 import { snippetService } from "../../../../service/snippetService";
 import { Snippet } from "../../../../types/snippets";
-import { SearchAndFilter } from "../../../search/SearchAndFilter";
-import { UserDropdown } from "../../../auth/UserDropdown";
-import StorageHeader from "./StorageHeader";
-import SnippetContentArea from "./SnippetContentArea";
-import EditSnippetModal from "../../edit/EditSnippetModal";
 import SettingsModal from "../../../settings/SettingsModal";
+import { UserDropdown } from "../../../auth/UserDropdown";
+import EditSnippetModal from "../../edit/EditSnippetModal";
 import { ShareMenu } from "../../share/ShareMenu";
-import { useSettings } from "../../../../hooks/useSettings";
-import { useAuth } from "../../../../hooks/useAuth";
-import { useToast } from "../../../../hooks/useToast";
-import { useCreateSnippet, useEditSnippet } from "../../../../hooks/useSnippetsQuery";
+import SnippetContentArea from "./SnippetContentArea";
+import StorageHeader from "./StorageHeader";
 
 const BaseSnippetStorage: React.FC = () => {
+  const { t: translate } = useTranslation('components/snippets/view/common');
   const [, setSearchParams] = useSearchParams();
   const { addToast } = useToast();
   const { isAuthenticated, logout } = useAuth();
@@ -31,6 +33,7 @@ const BaseSnippetStorage: React.FC = () => {
     expandCategories,
     showLineNumbers,
     theme,
+    locale,
     showFavorites,
     setShowFavorites,
   } = useSettings();
@@ -130,9 +133,9 @@ const BaseSnippetStorage: React.FC = () => {
     setShowFavorites((prev) => {
       const newValue = !prev;
       if (newValue) {
-        addToast("Displaying favorite snippets", "success");
+        addToast(translate('baseSnippetStorage.success.displayFavorites'), "success");
       } else {
-        addToast("Displaying all snippets", "info");
+        addToast(translate('baseSnippetStorage.success.displayAll'), "info");
       }
       return newValue;
     });
@@ -148,24 +151,33 @@ const BaseSnippetStorage: React.FC = () => {
     setSnippetToEdit(null);
     setIsEditSnippetModalOpen(false);
   }, []);
+  
+  const sessionExpiredHandler = useCallback(() => {
+    logout();
+    addToast(translate('baseSnippetStorage.error.sessionExpired'), "error");
+  }, []);
 
   const handleSnippetSubmit = useCallback(async (snippetData: Omit<Snippet, "id" | "updated_at">) => {
     try {
       if (snippetToEdit) {
         await editSnippetMutation.mutateAsync({ id: snippetToEdit.id, snippet: snippetData });
-        addToast("Snippet updated successfully", "success");
+        addToast(translate('baseSnippetStorage.success.snippetUpdated'), "success");
       } else {
         await createSnippetMutation.mutateAsync(snippetData);
-        addToast("New snippet created successfully", "success");
+        addToast(translate('baseSnippetStorage.success.snippetCreated'), "success");
       }
       closeEditSnippetModal();
     } catch (error: any) {
       console.error("Error saving snippet:", error);
       if (error.status === 401 || error.status === 403) {
-        logout();
-        addToast("Session expired. Please login again.", "error");
+        sessionExpiredHandler();
       } else {
-        addToast(snippetToEdit ? "Failed to update snippet" : "Failed to create snippet", "error");
+        addToast(
+          snippetToEdit
+            ? translate('baseSnippetStorage.error.snippetUpdated')
+            : translate('baseSnippetStorage.error.snippetCreated'),
+          "error"
+        );
       }
       throw error;
     }
@@ -248,6 +260,7 @@ const BaseSnippetStorage: React.FC = () => {
           expandCategories,
           showLineNumbers,
           theme,
+          locale,
         }}
         onSettingsChange={updateSettings}
         isPublicView={false}

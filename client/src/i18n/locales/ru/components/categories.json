@@ -1,0 +1,12 @@
+{
+  "categoryList": {
+    "moreCount": "более {{moreCount}}",
+    "noData": "Нет категорий",
+    "showLess": "Показать меньше"
+  },
+  "categorySuggestions": {
+    "addNewLabel": "Добавить",
+    "placeholder": "Начните ввод для поиска категорий...",
+    "title": "Категории"
+  }
+}

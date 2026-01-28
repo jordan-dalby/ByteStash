@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export interface EmbedCopyButtonProps {
   text: string;
@@ -7,6 +8,7 @@ export interface EmbedCopyButtonProps {
 }
 
 const EmbedCopyButton: React.FC<EmbedCopyButtonProps> = ({ text, theme }) => {
+  const { t: translate } = useTranslation('components/snippets/embed');
   const [isCopied, setIsCopied] = useState(false);
   
   const isDark = theme === 'dark' || theme === 'blue' || 
@@ -77,7 +79,7 @@ const EmbedCopyButton: React.FC<EmbedCopyButtonProps> = ({ text, theme }) => {
     <button
       onClick={handleCopy}
       className={`absolute top-2 right-2 p-1 rounded-md transition-colors ${getBackgroundColor()} ${getTextColor()}`}
-      title="Copy to clipboard"
+      title={translate('embedCopyButton.title')}
     >
       {isCopied ? (
         <Check size={16} className={getIconColor()} />

@@ -1,6 +1,7 @@
 import React from "react";
-import { SnippetCard } from "./SnippetCard";
+import { useTranslation } from "react-i18next";
 import { Snippet } from "../../../types/snippets";
+import { SnippetCard } from "./SnippetCard";
 
 export interface SnippetListProps {
   snippets: Snippet[];
@@ -50,11 +51,13 @@ const SnippetList: React.FC<SnippetListProps> = ({
   pinSnippet,
   favoriteSnippet,
 }) => {
+  const { t: translate } = useTranslation('components/snippets/list/snippetList');
+
   if (snippets.length === 0) {
     return (
       <div className="py-12 text-center">
         <p className="mb-4 text-xl text-light-text-secondary dark:text-dark-text-secondary">
-          No snippets match your search criteria.
+          {translate('noSnippetsMatch')}
         </p>
       </div>
     );

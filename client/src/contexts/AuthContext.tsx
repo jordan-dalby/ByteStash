@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useToast } from '../hooks/useToast';
 import { EVENTS } from '../constants/events';
 import { anonymous, getAuthConfig, verifyToken } from '../utils/api/auth';
@@ -21,16 +22,20 @@ export interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const { t: translate } = useTranslation('components/auth');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [authConfig, setAuthConfig] = useState<AuthConfig | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { addToast } = useToast();
 
+  const defaultCookie = 'bytestash_token=; path=/; max-age=0';
+  const defaultCookieTime = 86400;
+
   useEffect(() => {
     const handleAuthError = () => {
       localStorage.removeItem('token');
-      document.cookie = 'bytestash_token=; path=/; max-age=0';
+      document.cookie = defaultCookie;
       setIsAuthenticated(false);
       setUser(null);
     };
@@ -53,7 +58,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             }
           } catch (error) {
             console.error('Failed to create anonymous session:', error);
-            addToast('Failed to initialize anonymous session', 'error');
+            addToast(translate('authProvider.error.failedCreateAnonymousSession'), 'error');
           }
         } else {
           const token = localStorage.getItem('token');
@@ -64,14 +69,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               setUser(response.user);
             } else {
               localStorage.removeItem('token');
-              document.cookie = 'bytestash_token=; path=/; max-age=0';
+              document.cookie = defaultCookie;
             }
           }
         }
       } catch (error) {
         console.error('Auth initialization error:', error);
         localStorage.removeItem('token');
-        document.cookie = 'bytestash_token=; path=/; max-age=0';
+        document.cookie = defaultCookie;
       } finally {
         setIsLoading(false);
       }
@@ -83,7 +88,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = (token: string, userData: User | null) => {
     localStorage.setItem('token', token);
     // Also set as httpOnly cookie for direct browser API access
-    document.cookie = `bytestash_token=${token}; path=/; max-age=86400; SameSite=Lax`;
+    document.cookie = `bytestash_token=${token}; path=/; max-age=${defaultCookieTime}; SameSite=Lax`;
     setIsAuthenticated(true);
     setUser(userData);
   };
@@ -91,10 +96,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     // Clear the cookie as well
-    document.cookie = 'bytestash_token=; path=/; max-age=0';
+    document.cookie = defaultCookie;
     setIsAuthenticated(false);
     setUser(null);
-    addToast('Successfully logged out.', 'info');
+    addToast(translate('authProvider.info.logoutSuccess'), 'info');
   };
 
   const refreshAuthConfig = async () => {

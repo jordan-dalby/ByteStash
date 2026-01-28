@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeftToLine, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useSettings } from "../../../../hooks/useSettings";
 import { useToast } from "../../../../hooks/useToast";
 import { useAuth } from "../../../../hooks/useAuth";
@@ -17,6 +18,8 @@ import { ConfirmationModal } from "../../../common/modals/ConfirmationModal";
 import RecycleSnippetContentArea from "./RecycleSnippetContentArea";
 
 const RecycleSnippetStorage: React.FC = () => {
+  const { t } = useTranslation();
+  const { t: translate } = useTranslation('components/snippets/view/recycle');
   // URL-based filter state
   const [, setSearchParams] = useSearchParams();
 
@@ -33,6 +36,7 @@ const RecycleSnippetStorage: React.FC = () => {
     expandCategories,
     showLineNumbers,
     theme,
+    locale,
   } = useSettings();
 
   const { isAuthenticated, logout } = useAuth();
@@ -71,20 +75,23 @@ const RecycleSnippetStorage: React.FC = () => {
     };
     fetchMetadata();
   }, []);
-
+  
+  const sessionExpiredHandler = useCallback(() => {
+    logout();
+    addToast(translate('recycleSnippetStorage.error.sessionExpired'), "error");
+  }, []);
 
   // Snippet operations
   const permanentDeleteAllSnippets = useCallback(async () => {
     try {
       await Promise.all(snippetsRef.current.map((s) => deleteSnippetMutation.mutateAsync(s.id)));
-      addToast("All snippets in the recycle bin are cleared.", "success");
+      addToast(translate('recycleSnippetStorage.success.clear'), "success");
     } catch (error: any) {
       console.error("Failed to clear all recycle bin snippets:", error);
       if (error.status === 401 || error.status === 403) {
-        logout();
-        addToast("Session expired. Please login again.", "error");
+        sessionExpiredHandler();
       } else {
-        addToast("Failed to clear recycle bin. Please try again.", "error");
+        addToast(translate('recycleSnippetStorage.error.clear'), "error");
       }
     }
   }, [deleteSnippetMutation, addToast, logout]);
@@ -147,7 +154,7 @@ const RecycleSnippetStorage: React.FC = () => {
 
   const openPermanentDeleteAllModal = useCallback(() => {
     if (snippetsRef.current.length === 0) {
-      addToast("No snippets in the recycle bin to clear.", "info");
+      addToast(translate('recycleSnippetStorage.info.noSnippets'), "info");
       return;
     }
     setIsPermanentDeleteAllModalOpen(true);
@@ -186,22 +193,22 @@ const RecycleSnippetStorage: React.FC = () => {
         <div className="mb-6 space-y-3">
           <button
             onClick={() => navigate("/")}
-            className="flex items-center gap-2 text-sm font-medium text-white hover:underline"
+            className="flex items-center gap-2 text-sm font-medium text-light-text-primary dark:text-dark-text-secondary hover:underline"
           >
-            <ArrowLeftToLine size={18} /> Back to Snippets
+            <ArrowLeftToLine size={18} /> {translate('recycleSnippetStorage.backToSnippets')}
           </button>
 
           <div className="flex items-center justify-between text-sm text-light-text-primary dark:text-dark-text-secondary">
             <div>
-              <h1 className="text-2xl font-semibold text-white">Recycle Bin</h1>
+              <h1 className="text-2xl font-semibold text-light-text-primary dark:text-dark-text-secondary">{translate('recycleSnippetStorage.recycleBin')}</h1>
               <p className="text-sm">
-                Snippets in the recycle bin will be permanently deleted after 30 days.
+                {translate('recycleSnippetStorage.description')}
               </p>
             </div>
 
             <IconButton
               icon={<Trash2 size={18} />}
-              label="Clear all"
+              label={t('action.clearAll')}
               showLabel={true}
               variant="danger"
               size="sm"
@@ -237,6 +244,7 @@ const RecycleSnippetStorage: React.FC = () => {
           expandCategories,
           showLineNumbers,
           theme,
+          locale,
         }}
         onSettingsChange={updateSettings}
         isPublicView={true}
@@ -246,10 +254,10 @@ const RecycleSnippetStorage: React.FC = () => {
         isOpen={isPermanentDeleteAllModalOpen}
         onClose={() => setIsPermanentDeleteAllModalOpen(false)}
         onConfirm={handlePermanentDeleteAllConfirm}
-        title="Confirm Deletion"
-        message={`Are you sure you want to permanently clear all snippets in the recycle bin? This action cannot be undone.`}
-        confirmLabel="Delete Permanently"
-        cancelLabel="Cancel"
+        title={translate('recycleSnippetStorage.confirmationModal.title')}
+        message={translate('recycleSnippetStorage.confirmationModal.message')}
+        confirmLabel={t('action.delete')}
+        cancelLabel={t('action.cancel')}
         variant="danger"
       />
     </>

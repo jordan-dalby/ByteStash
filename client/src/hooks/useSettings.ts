@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "../contexts/ThemeContext";
+import { Locale } from "../i18n/types";
 
 type Theme = "light" | "dark" | "system";
 
@@ -12,10 +14,17 @@ interface Settings {
   expandCategories: boolean;
   showLineNumbers: boolean;
   theme: Theme;
+  locale: Locale;
   showFavorites?: boolean;
 }
 
 export const useSettings = () => {
+  const { i18n } = useTranslation();
+
+  const changeLocale = (locale: Locale) => {
+    i18n.changeLanguage(locale);
+  };
+
   const { setTheme: setThemeContext } = useTheme();
   const [viewMode, setViewMode] = useState<"grid" | "list">(
     () => (localStorage.getItem("viewMode") as "grid" | "list") || "grid"
@@ -52,6 +61,9 @@ export const useSettings = () => {
       ? savedTheme
       : "system";
   });
+  const [locale, setLocale] = useState<Locale>(
+    () => i18n.language as Locale
+  );
 
   useEffect(() => {
     localStorage.setItem("viewMode", viewMode);
@@ -94,6 +106,10 @@ export const useSettings = () => {
     setThemeContext(theme);
   }, [theme, setThemeContext]);
 
+  useEffect(() => {
+    changeLocale(locale);
+  }, [locale, setLocale]);
+
   const updateSettings = (newSettings: Settings) => {
     setCompactView(newSettings.compactView);
     setShowCodePreview(newSettings.showCodePreview);
@@ -106,6 +122,7 @@ export const useSettings = () => {
       setShowFavorites(newSettings.showFavorites);
     }
     setThemeState(newSettings.theme);
+    setLocale(newSettings.locale)
   };
 
   return {
@@ -122,5 +139,6 @@ export const useSettings = () => {
     showFavorites,
     setShowFavorites,
     theme,
+    locale,
   };
 };

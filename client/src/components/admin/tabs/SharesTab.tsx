@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Trash2, Copy, ExternalLink, Lock, Unlock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { adminApi } from '../../../utils/api/admin';
 import { useToast } from '../../../hooks/useToast';
 import { ConfirmationModal } from '../../common/modals/ConfirmationModal';
-import { Trash2, Copy, ExternalLink, Lock, Unlock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../constants/routes';
 import {
@@ -19,6 +20,8 @@ import {
 } from '../common';
 
 export const SharesTab: React.FC = () => {
+  const { t } = useTranslation();
+  const { t: translate } = useTranslation('components/admin/tabs/shares');
   const [userId, setUserId] = useState('');
   const [requiresAuth, setRequiresAuth] = useState('');
   const [offset, setOffset] = useState(0);
@@ -43,13 +46,13 @@ export const SharesTab: React.FC = () => {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => adminApi.deleteShare(id),
     onSuccess: () => {
-      addToast('Share deleted successfully', 'success');
+      addToast(translate('success.delete.default'), 'success');
       queryClient.invalidateQueries({ queryKey: ['admin', 'shares'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] });
       setDeleteShareId(null);
     },
     onError: (error: any) => {
-      addToast(error.message || 'Failed to delete share', 'error');
+      addToast(error.message || translate('error.delete.default'), 'error');
     },
   });
 
@@ -59,13 +62,13 @@ export const SharesTab: React.FC = () => {
   const copyShareLink = (shareId: string) => {
     const shareUrl = `${window.location.origin}${window.__BASE_PATH__ || ''}/share/${shareId}`;
     navigator.clipboard.writeText(shareUrl);
-    addToast('Share link copied to clipboard', 'success');
+    addToast(translate('success.copied.default'), 'success');
   };
 
   const columns: TableColumn<any>[] = [
     {
       key: 'id',
-      label: 'Share ID',
+      label: translate('columns.labels.id'),
       render: (share) => (
         <span className="whitespace-nowrap font-mono text-light-text dark:text-dark-text">
           {share.id.substring(0, 8)}...
@@ -74,7 +77,7 @@ export const SharesTab: React.FC = () => {
     },
     {
       key: 'title',
-      label: 'Snippet Title',
+      label: translate('columns.labels.title'),
       render: (share) => (
         <span className="text-light-text dark:text-dark-text max-w-xs truncate">
           {share.snippet_title || 'Untitled'}
@@ -83,7 +86,7 @@ export const SharesTab: React.FC = () => {
     },
     {
       key: 'owner',
-      label: 'Owner',
+      label: translate('columns.labels.owner'),
       render: (share) => (
         <span className="whitespace-nowrap text-light-text-secondary dark:text-dark-text-secondary">
           {share.username || `User #${share.user_id}`}
@@ -92,7 +95,7 @@ export const SharesTab: React.FC = () => {
     },
     {
       key: 'auth',
-      label: 'Auth Required',
+      label: translate('columns.labels.auth'),
       render: (share) => (
         <span className="whitespace-nowrap">
           <StatusBadge
@@ -105,7 +108,7 @@ export const SharesTab: React.FC = () => {
     },
     {
       key: 'expires',
-      label: 'Expires At',
+      label: translate('columns.labels.expires'),
       render: (share) => (
         <span className="whitespace-nowrap text-light-text-secondary dark:text-dark-text-secondary">
           {share.expires_at ? (
@@ -121,7 +124,7 @@ export const SharesTab: React.FC = () => {
     },
     {
       key: 'created',
-      label: 'Created',
+      label: translate('columns.labels.created'),
       render: (share) => (
         <span className="whitespace-nowrap text-light-text-secondary dark:text-dark-text-secondary">
           {formatDate(share.created_at)}
@@ -130,27 +133,27 @@ export const SharesTab: React.FC = () => {
     },
     {
       key: 'actions',
-      label: 'Actions',
+      label: translate('columns.labels.actions'),
       render: (share) => (
         <div className="flex items-center gap-2 whitespace-nowrap">
           <button
             onClick={() => copyShareLink(share.id)}
             className="p-1 hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary rounded text-light-text-secondary dark:text-dark-text-secondary"
-            title="Copy share link"
+            title={translate('action.copyShareLink')}
           >
             <Copy className="w-4 h-4" />
           </button>
           <button
             onClick={() => navigate(`${ROUTES.SNIPPETS}/${share.snippet_id}`)}
             className="p-1 hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary rounded text-light-text-secondary dark:text-dark-text-secondary"
-            title="View snippet"
+            title={translate('action.viewSnippet')}
           >
             <ExternalLink className="w-4 h-4" />
           </button>
           <button
             onClick={() => setDeleteShareId(share.id)}
             className="p-1 hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary rounded text-red-600 dark:text-red-400"
-            title="Delete share"
+            title={translate('action.delete')}
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -169,7 +172,7 @@ export const SharesTab: React.FC = () => {
             setUserId(value);
             setOffset(0);
           }}
-          placeholder="Filter by User ID"
+          placeholder={translate('filters.userId')}
           className="w-64"
         />
         <FilterSelect
@@ -179,21 +182,21 @@ export const SharesTab: React.FC = () => {
             setOffset(0);
           }}
           options={[
-            { value: 'true', label: 'Requires Auth' },
-            { value: 'false', label: 'Public' },
+            { value: 'true', label: translate('filters.authType.requiresAuth') },
+            { value: 'false', label: translate('filters.authType.public') },
           ]}
-          placeholder="All Auth Types"
+          placeholder={translate('filters.authType.all')}
         />
       </div>
 
-      <ResultsCount offset={offset} limit={limit} total={total} entityName="shares" />
+      <ResultsCount offset={offset} limit={limit} total={total} entityName={translate('entityName', { count: total })} />
 
       <AdminTable
         columns={columns}
         data={shares}
         isLoading={isLoading}
-        emptyMessage="No shares found"
-        loadingMessage="Loading shares..."
+        emptyMessage={translate('table.emptyMessage')}
+        loadingMessage={translate('table.loadingMessage')}
         getRowKey={(share) => share.id}
       />
 
@@ -210,10 +213,10 @@ export const SharesTab: React.FC = () => {
         isOpen={deleteShareId !== null}
         onClose={() => setDeleteShareId(null)}
         onConfirm={() => deleteShareId && deleteMutation.mutate(deleteShareId)}
-        title="Delete Share"
-        message="Are you sure you want to delete this share link? Anyone with the link will no longer be able to access the snippet. This action cannot be undone."
-        confirmLabel="Delete"
-        cancelLabel="Cancel"
+        title={translate('confirmationModal.title')}
+        message={translate('confirmationModal.message')}
+        confirmLabel={t('action.delete')}
+        cancelLabel={t('action.cancel')}
         variant="danger"
       />
     </div>

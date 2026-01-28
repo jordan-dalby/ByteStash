@@ -1,0 +1,50 @@
+{
+  "action": {
+    "addSnippet": "Добавить снипет",
+    "cancel": "Отменить",
+    "changePassword": "Изменить пароль",
+    "clear": "Очистить",
+    "clearAll": "Очистить всё",
+    "close": "Закрыть",
+    "confirm": "Подтвердить",
+    "createAccount": "Создать аккаунт",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "hidePassword": "Скрыть пароль",
+    "load": "Загрузить",
+    "maximize": "Развернуть",
+    "minimize": "Свернуть",
+    "restore": "Восстановить",
+    "save": "Сохранить",
+    "showPassword": "Показать пароль",
+    "signIn": "Войти"
+  },
+  "confirmPassword": "Подтверждение пароля",
+  "loading": "Загрузка...",
+  "locale": {
+    "en": "Английский",
+    "ru": "Русский"
+  },
+  "no": "нет",
+  "or": "или",
+  "pagination": {
+    "next": "Следующая",
+    "pageOf": "Страница {{currentPage}} из {{totalPages}}",
+    "previous": "Предыдущая",
+    "total": "{{total}} всего",
+    "useSnippetPagination": {
+      "error": {
+        "failedSnippetsLoad": "Не удалось загрузить снипеты",
+        "sessionExpired": "Сессия истекла. Пожалуйста, войдите снова."
+      }
+    }
+  },
+  "password": "Пароль",
+  "showing": "Показано",
+  "theme": {
+    "dark": "Тёмная",
+    "light": "Светлая",
+    "system": "Системная"
+  },
+  "username": "Имя пользователя"
+}

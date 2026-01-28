@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Trash2, Globe, Lock, AlertTriangle, Eye } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { adminApi } from '../../../utils/api/admin';
 import { useToast } from '../../../hooks/useToast';
 import { ConfirmationModal } from '../../common/modals/ConfirmationModal';
-import { Trash2, Globe, Lock, AlertTriangle, Eye } from 'lucide-react';
 import { useDebounce } from '../../../hooks/useDebounce';
 import { IconButton } from '../../common/buttons/IconButton';
 import { SnippetViewModal } from '../modals/SnippetViewModal';
@@ -19,6 +20,8 @@ import {
 } from '../common';
 
 export const SnippetsTab: React.FC = () => {
+  const { t } = useTranslation();
+  const { t: translate } = useTranslation('components/admin/tabs/snippets');
   const [search, setSearch] = useState('');
   const [userId, setUserId] = useState('');
   const [isPublic, setIsPublic] = useState('');
@@ -38,6 +41,7 @@ export const SnippetsTab: React.FC = () => {
       if (showOffensiveOnly) {
         return adminApi.scanSnippetsForOffensive();
       }
+
       return adminApi.getSnippets({
         offset,
         limit,
@@ -51,25 +55,25 @@ export const SnippetsTab: React.FC = () => {
   const deleteMutation = useMutation({
     mutationFn: (id: number) => adminApi.deleteSnippet(id),
     onSuccess: () => {
-      addToast('Snippet deleted successfully', 'success');
+      addToast(translate('success.delete.default'), 'success');
       queryClient.invalidateQueries({ queryKey: ['admin', 'snippets'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] });
       setDeleteSnippetId(null);
     },
     onError: (error: any) => {
-      addToast(error.message || 'Failed to delete snippet', 'error');
+      addToast(error.message || translate('error.delete.default'), 'error');
     },
   });
 
   const togglePublicMutation = useMutation({
     mutationFn: (id: number) => adminApi.toggleSnippetPublic(id),
     onSuccess: () => {
-      addToast('Snippet visibility updated', 'success');
+      addToast(translate('success.update.default'), 'success');
       queryClient.invalidateQueries({ queryKey: ['admin', 'snippets'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] });
     },
     onError: (error: any) => {
-      addToast(error.message || 'Failed to update snippet visibility', 'error');
+      addToast(error.message || translate('error.update.default'), 'error');
     },
   });
 
@@ -93,13 +97,13 @@ export const SnippetsTab: React.FC = () => {
     },
     {
       key: 'title',
-      label: 'Title',
+      label: translate('columns.labels.title'),
       render: (snippet) => (
         <div className="flex items-center gap-2">
           {snippet.flagged_words && snippet.flagged_words.length > 0 && (
             <span
               className="text-red-600 dark:text-red-400"
-              title={`Contains offensive words: ${snippet.flagged_words.join(', ')}`}
+              title={translate('containsOffensiveWords', { words: snippet.flagged_words.join(', ') })}
             >
               <AlertTriangle className="w-4 h-4" />
             </span>
@@ -115,7 +119,7 @@ export const SnippetsTab: React.FC = () => {
     },
     {
       key: 'owner',
-      label: 'Owner',
+      label: translate('columns.labels.owner'),
       render: (snippet) => (
         <span className="whitespace-nowrap text-light-text-secondary dark:text-dark-text-secondary">
           {snippet.username || `User #${snippet.user_id}`}
@@ -124,11 +128,11 @@ export const SnippetsTab: React.FC = () => {
     },
     {
       key: 'visibility',
-      label: 'Visibility',
+      label: translate('columns.labels.visibility'),
       render: (snippet) => (
         <span className="whitespace-nowrap">
           <StatusBadge
-            label={snippet.is_public ? 'Public' : 'Private'}
+            label={snippet.is_public ? translate('filters.visibility.public') : translate('filters.visibility.private')}
             variant={snippet.is_public ? 'success' : 'neutral'}
             icon={snippet.is_public ? <Globe className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
           />
@@ -137,7 +141,7 @@ export const SnippetsTab: React.FC = () => {
     },
     {
       key: 'fragments',
-      label: 'Fragments',
+      label: translate('columns.labels.fragments'),
       render: (snippet) => (
         <span className="whitespace-nowrap text-light-text-secondary dark:text-dark-text-secondary">
           {snippet.fragment_count}
@@ -146,7 +150,7 @@ export const SnippetsTab: React.FC = () => {
     },
     {
       key: 'updated',
-      label: 'Updated',
+      label: translate('columns.labels.updated'),
       render: (snippet) => (
         <span className="whitespace-nowrap text-light-text-secondary dark:text-dark-text-secondary">
           {formatDateShort(snippet.updated_at)}
@@ -155,20 +159,20 @@ export const SnippetsTab: React.FC = () => {
     },
     {
       key: 'actions',
-      label: 'Actions',
+      label: translate('columns.labels.actions'),
       render: (snippet) => (
         <div className="flex items-center gap-2 whitespace-nowrap">
           <button
             onClick={() => setViewSnippetId(snippet.id)}
             className="p-1 hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary rounded"
-            title="View snippet"
+            title={translate('action.viewSnippet')}
           >
             <Eye className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           </button>
           <button
             onClick={() => togglePublicMutation.mutate(snippet.id)}
             className="p-1 hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary rounded"
-            title={snippet.is_public ? 'Make private' : 'Make public'}
+            title={snippet.is_public ? translate('action.makePrivate') : translate('action.makePublic')}
           >
             {snippet.is_public ? (
               <Lock className="w-4 h-4 text-gray-600" />
@@ -179,7 +183,7 @@ export const SnippetsTab: React.FC = () => {
           <button
             onClick={() => setDeleteSnippetId(snippet.id)}
             className="p-1 hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary rounded text-red-600 dark:text-red-400"
-            title="Delete snippet"
+            title={translate('action.delete')}
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -194,7 +198,17 @@ export const SnippetsTab: React.FC = () => {
       {showOffensiveOnly && total > 0 && (
         <div className="flex items-center gap-2 text-red-600 dark:text-red-400 font-medium">
           <AlertTriangle className="w-5 h-5" />
-          <span>Found {total} snippet{total !== 1 ? 's' : ''} with offensive content</span>
+          <span>
+            {
+              translate(
+                'offensiveContentMessage',
+                {
+                  total,
+                  entityName: translate('entityName', { count: total })
+                }
+              )
+            }
+          </span>
         </div>
       )}
 
@@ -208,7 +222,7 @@ export const SnippetsTab: React.FC = () => {
                 setSearch(value);
                 setOffset(0);
               }}
-              placeholder="Search snippets..."
+              placeholder={translate('filters.search')}
               className="flex-1"
               showSearchIcon
             />
@@ -218,7 +232,7 @@ export const SnippetsTab: React.FC = () => {
                 setUserId(value);
                 setOffset(0);
               }}
-              placeholder="User ID"
+              placeholder={translate('filters.userId')}
               className="w-32"
             />
             <FilterSelect
@@ -228,17 +242,17 @@ export const SnippetsTab: React.FC = () => {
                 setOffset(0);
               }}
               options={[
-                { value: 'true', label: 'Public' },
-                { value: 'false', label: 'Private' },
+                { value: 'true', label: translate('filters.visibility.public') },
+                { value: 'false', label: translate('filters.visibility.private') },
               ]}
-              placeholder="All Visibility"
+              placeholder={translate('filters.visibility.all')}
             />
           </>
         )}
         <IconButton
           icon={<AlertTriangle className="w-4 h-4" />}
           onClick={handleToggleOffensiveScan}
-          label={showOffensiveOnly ? 'Show All Snippets' : 'Scan for Offensive Content'}
+          label={showOffensiveOnly ? translate('action.showAllSnippets') : translate('action.scanForOffensiveContent')}
           variant={showOffensiveOnly ? 'danger' : 'secondary'}
           showLabel
           size="md"
@@ -247,15 +261,15 @@ export const SnippetsTab: React.FC = () => {
       </div>
 
       {!showOffensiveOnly && (
-        <ResultsCount offset={offset} limit={limit} total={total} entityName="snippets" />
+        <ResultsCount offset={offset} limit={limit} total={total} entityName={translate('entityName', { count: total })} />
       )}
 
       <AdminTable
         columns={columns}
         data={snippets}
         isLoading={isLoading}
-        emptyMessage="No snippets found"
-        loadingMessage="Loading snippets..."
+        emptyMessage={translate('table.emptyMessage')}
+        loadingMessage={translate('table.loadingMessage')}
         getRowKey={(snippet) => snippet.id}
       />
 
@@ -274,10 +288,10 @@ export const SnippetsTab: React.FC = () => {
         isOpen={deleteSnippetId !== null}
         onClose={() => setDeleteSnippetId(null)}
         onConfirm={() => deleteSnippetId && deleteMutation.mutate(deleteSnippetId)}
-        title="Delete Snippet"
-        message="Are you sure you want to permanently delete this snippet? This action cannot be undone."
-        confirmLabel="Delete"
-        cancelLabel="Cancel"
+        title={translate('confirmationModal.title')}
+        message={translate('confirmationModal.message')}
+        confirmLabel={t('action.delete')}
+        cancelLabel={t('action.cancel')}
         variant="danger"
       />
 

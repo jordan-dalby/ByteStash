@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback, useMemo, useState, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Snippet } from "../../../../types/snippets";
 import { useToast } from "../../../../hooks/useToast";
 import {
@@ -38,6 +39,7 @@ const PublicSnippetContentArea: React.FC<PublicSnippetContentAreaProps> = ({
   isAuthenticated,
   onCategoryClick,
 }) => {
+  const { t: translate } = useTranslation('components/snippets/view/public');
   const [searchParams] = useSearchParams();
   const { addToast } = useToast();
   const navigate = useNavigate();
@@ -88,13 +90,13 @@ const PublicSnippetContentArea: React.FC<PublicSnippetContentAreaProps> = ({
 
   useEffect(() => {
     if (isError && error) {
-      addToast("Failed to load public snippets", "error");
+      addToast(translate('publicSnippetContentArea.error.failedLoadSnippets'), "error");
     }
   }, [isError, error, addToast]);
 
   const handleDuplicate = useCallback(async (snippet: Snippet) => {
     if (!isAuthenticated) {
-      addToast("Please sign in to add this snippet to your collection", "info");
+      addToast(translate('publicSnippetContentArea.info.requireAuth'), "info");
       navigate(ROUTES.LOGIN);
       return;
     }
@@ -111,10 +113,10 @@ const PublicSnippetContentArea: React.FC<PublicSnippetContentAreaProps> = ({
       };
 
       await createSnippetMutation.mutateAsync(duplicatedSnippet);
-      addToast("Snippet added to your collection", "success");
+      addToast(translate('publicSnippetContentArea.success.addSnippetToCollection'), "success");
     } catch (error) {
       console.error("Failed to duplicate snippet:", error);
-      addToast("Failed to add snippet to your collection", "error");
+      addToast(translate('publicSnippetContentArea.error.addSnippetToCollection'), "error");
     }
   }, [isAuthenticated, createSnippetMutation, addToast, navigate]);
 
@@ -127,7 +129,7 @@ const PublicSnippetContentArea: React.FC<PublicSnippetContentAreaProps> = ({
             <div className="flex items-center justify-center gap-3">
               <Loader2 className="w-5 h-5 text-light-text-secondary dark:text-dark-text-secondary animate-spin" />
               <span className="text-light-text-secondary dark:text-dark-text-secondary">
-                Loading snippets...
+                {translate('publicSnippetContentArea.loadingSnippets')}
               </span>
             </div>
           </div>
@@ -145,7 +147,7 @@ const PublicSnippetContentArea: React.FC<PublicSnippetContentAreaProps> = ({
       {filters.categories.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 mb-4">
           <span className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
-            Filtered by categories:
+            {translate('publicSnippetContentArea.filter.byCategories')}:
           </span>
           {filters.categories.map((category, index) => (
             <button
@@ -189,17 +191,21 @@ const PublicSnippetContentArea: React.FC<PublicSnippetContentAreaProps> = ({
         </div>
       )}
 
-      <SnippetModal
-        snippet={selectedSnippet}
-        isOpen={!!selectedSnippet}
-        onClose={() => setSelectedSnippet(null)}
-        onDelete={() => Promise.resolve()}
-        onEdit={() => {}}
-        onCategoryClick={onCategoryClick}
-        showLineNumbers={showLineNumbers}
-        isPublicView={true}
-        isRecycleView={false}
-      />
+      {
+        selectedSnippet && (
+          <SnippetModal
+            snippet={selectedSnippet}
+            isOpen={!!selectedSnippet}
+            onClose={() => setSelectedSnippet(null)}
+            onDelete={() => Promise.resolve()}
+            onEdit={() => {}}
+            onCategoryClick={onCategoryClick}
+            showLineNumbers={showLineNumbers}
+            isPublicView={true}
+            isRecycleView={false}
+          />
+        )
+      }
     </>
   );
 };

@@ -3,13 +3,14 @@ import "prismjs";
 import "prismjs/components/prism-markup-templating.js";
 import "prismjs/themes/prism.css";
 import { Plus } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Switch } from "../../../components/common/switch/Switch";
 import { CodeFragment, Snippet } from "../../../types/snippets";
-import Modal from "../../common/modals/Modal";
 import CategoryList from "../../categories/CategoryList";
 import CategorySuggestions from "../../categories/CategorySuggestions";
-import { FragmentEditor } from "./FragmentEditor";
-import { Switch } from "../../../components/common/switch/Switch";
 import FileUploadButton from "../../common/buttons/FileUploadButton";
+import Modal from "../../common/modals/Modal";
+import { FragmentEditor } from "./FragmentEditor";
 
 export interface EditSnippetModalProps {
   isOpen: boolean;
@@ -28,6 +29,8 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
   showLineNumbers,
   allCategories,
 }) => {
+  const { t } = useTranslation();
+  const { t: translate } = useTranslation('components/snippets/edit');
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [fragments, setFragments] = useState<CodeFragment[]>([]);
@@ -172,12 +175,12 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
     if (isSubmitting) return;
 
     if (fragments.length === 0) {
-      setError("At least one code fragment is required");
+      setError(translate('editSnippetModal.fragmentRequired'));
       return;
     }
 
     if (fragments.some((f) => !f.file_name.trim())) {
-      setError("All fragments must have file names");
+      setError(translate('editSnippetModal.mustHaveFileNames'));
       return;
     }
 
@@ -197,7 +200,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
       setHasUnsavedChanges(false);
       onClose();
     } catch (error) {
-      setError("An error occurred while saving the snippet. Please try again.");
+      setError(translate('editSnippetModal.error.savingFailed'));
       console.error("Error saving snippet:", error);
     } finally {
       setIsSubmitting(false);
@@ -207,7 +210,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
   const handleModalClose = () => {
     if (hasUnsavedChanges) {
       const confirmClose = window.confirm(
-        "You have unsaved changes. Are you sure you want to close?"
+        translate('editSnippetModal.unsavedChanges')
       );
       if (!confirmClose) return;
     }
@@ -221,7 +224,11 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
       expandable={true}
       title={
         <h2 className="text-xl font-bold text-light-text dark:text-dark-text">
-          {snippetToEdit ? "Edit Snippet" : "Add New Snippet"}
+          {
+            snippetToEdit
+              ? translate('editSnippetModal.editSnippet')
+              : translate('editSnippetModal.addSnippet')
+          }
         </h2>
       }
     >
@@ -281,7 +288,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
                   htmlFor="title"
                   className="block text-sm font-medium text-light-text dark:text-dark-text"
                 >
-                  Title
+                  {translate('editSnippetModal.form.title.label')}
                 </label>
                 <input
                   type="text"
@@ -293,11 +300,11 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
                   }}
                   className="block w-full p-2 mt-1 text-sm border rounded-md bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text border-light-border dark:border-dark-border focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary focus:border-light-primary dark:focus:border-dark-primary"
                   required
-                  placeholder="Enter the title of the snippet (max 100 characters)"
+                  placeholder={translate('editSnippetModal.form.title.placeholder', { max: 100 })}
                   maxLength={100}
                 />
                 <p className="mt-1 text-sm text-light-text-secondary dark:text-dark-text-secondary">
-                  {title.length}/100 characters
+                  {translate('editSnippetModal.form.title.counter', { characters: title.length, max: 100 })}
                 </p>
               </div>
 
@@ -307,7 +314,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
                   htmlFor="description"
                   className="block text-sm font-medium text-light-text dark:text-dark-text"
                 >
-                  Description
+                  {translate('editSnippetModal.form.description.label')}
                 </label>
                 <textarea
                   id="description"
@@ -318,7 +325,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
                   }}
                   className="block w-full p-2 mt-1 text-sm border rounded-md bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text border-light-border dark:border-dark-border focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary focus:border-light-primary dark:focus:border-dark-primary"
                   rows={3}
-                  placeholder="Write a short description of the snippet"
+                  placeholder={translate('editSnippetModal.form.description.placeholder', { max: 20 })}
                 />
               </div>
 
@@ -328,7 +335,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
                   htmlFor="categories"
                   className="block text-sm font-medium text-light-text dark:text-dark-text"
                 >
-                  Categories (max 20)
+                  {translate('editSnippetModal.form.categories.label', { max: 20 })}
                 </label>
                 <CategorySuggestions
                   inputValue={categoryInput}
@@ -336,14 +343,14 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
                   onCategorySelect={handleCategorySelect}
                   existingCategories={allCategories}
                   selectedCategories={categories}
-                  placeholder="Type a category and press Enter or comma"
+                  placeholder={translate('editSnippetModal.form.categories.placeholder')}
                   maxCategories={20}
                   showAddText={true}
                   handleHashtag={false}
                   className="block w-full p-2 mt-1 text-sm border rounded-md bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text border-light-border dark:border-dark-border focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary focus:border-light-primary dark:focus:border-dark-primary"
                 />
                 <p className="mt-1 text-sm text-light-text-secondary dark:text-dark-text-secondary">
-                  {categories.length}/20 categories
+                  {translate('editSnippetModal.form.categories.counter', { categories: categories.length, max: 20 })}
                 </p>
                 <CategoryList
                   categories={categories}
@@ -365,11 +372,11 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
                     }}
                   />
                   <span className="text-sm font-medium text-light-text dark:text-dark-text">
-                    Make snippet public
+                    {translate('editSnippetModal.form.isPublic.label')}
                   </span>
                 </label>
                 <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
-                  Public snippets can be viewed by anyone without authentication
+                  {translate('editSnippetModal.form.isPublic.description')}
                 </p>
               </div>
 
@@ -377,7 +384,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <label className="text-sm font-medium text-light-text dark:text-dark-text">
-                    Code Fragments ({fragments.length})
+                    {translate('editSnippetModal.form.codeFragments.label', { fragments: fragments.length })}
                   </label>
                   <FileUploadButton
                     onFileProcessed={handleFileUpload}
@@ -415,7 +422,7 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
                       className="transition-transform group-hover:scale-110"
                     />
                     <span className="text-sm font-medium">
-                      Add New Fragment
+                      {translate('editSnippetModal.form.codeFragments.add')}
                     </span>
                   </button>
                 </div>
@@ -432,18 +439,20 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
                 onClick={handleModalClose}
                 className="px-4 py-2 text-sm border rounded-md bg-light-surface dark:bg-dark-surface text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover border-light-border dark:border-dark-border"
               >
-                Cancel
+                {t('action.cancel')}
               </button>
               <button
                 type="submit"
                 className="px-4 py-2 text-sm text-white rounded-md bg-light-primary dark:bg-dark-primary hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isSubmitting}
               >
-                {isSubmitting
-                  ? "Saving..."
-                  : snippetToEdit
-                  ? "Save Changes"
-                  : "Add Snippet"}
+                {
+                  isSubmitting
+                    ? "Saving..."
+                    : snippetToEdit
+                      ? t('action.save')
+                      : t('action.addSnippet')
+                }
               </button>
             </div>
           </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChevronDown } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export interface FilterSelectProps {
   value: string;
@@ -15,9 +16,13 @@ export const FilterSelect: React.FC<FilterSelectProps> = ({
   onChange,
   onReset,
   options,
-  placeholder = 'Select...',
   className = '',
-}) => {
+    ...props
+  }) => {
+  const { t: translate } = useTranslation('components/admin/common');
+
+  const placeholder = props.placeholder || translate('filterSelect.defaultPlaceholder');
+
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newValue = e.target.value;
     onChange(newValue);

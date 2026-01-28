@@ -1,0 +1,37 @@
+{
+  "recycleSnippetContentArea": {
+    "error": {
+      "deleteSnippet": "Failed to delete snippet",
+      "loadSnippets": "Failed to load snippets",
+      "restoreSnippet": "Failed to restore snippet",
+      "sessionExpired": "Session expired. Please login again."
+    },
+    "filter": {
+      "byCategories": "Filtered by categories"
+    },
+    "loadingSnippets": "Loading snippets...",
+    "success": {
+      "deleteSnippet": "Snippet deleted successfully",
+      "restoreSnippet": "Snippet restored successfully"
+    }
+  },
+  "recycleSnippetStorage": {
+    "backToSnippets": "Back to Snippets",
+    "confirmationModal": {
+      "message": "Are you sure you want to permanently clear all snippets in the recycle bin? This action cannot be undone.",
+      "title": "Confirm Deletion"
+    },
+    "description": "Snippets in the recycle bin will be permanently deleted after 30 days",
+    "error": {
+      "clear": "Failed to clear recycle bin. Please try again.",
+      "sessionExpired": "Session expired. Please login again."
+    },
+    "info": {
+      "noSnippets": "No snippets in the recycle bin to clear"
+    },
+    "recycleBin": "Recycle Bin",
+    "success": {
+      "clear": "All snippets in the recycle bin are cleared"
+    }
+  }
+}

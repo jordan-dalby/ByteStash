@@ -11,8 +11,9 @@ import {
   PinOff,
   StarOff,
 } from "lucide-react";
-import { IconButton } from "../../common/buttons/IconButton";
+import { useTranslation } from "react-i18next";
 import { useOutsideClick } from "../../../hooks/useOutsideClick";
+import { IconButton } from "../../common/buttons/IconButton";
 
 interface SnippetCardMenuProps {
   onEdit: (e: React.MouseEvent) => void;
@@ -41,6 +42,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
   handlePin,
   handleFavorite,
 }) => {
+  const { t: translate } = useTranslation('components/snippets/list/snippetCardMenu');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -60,7 +62,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
             variant="custom"
             size="sm"
             className="bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
-            label="Duplicate snippet"
+            label={translate('duplicateSnippet')}
           />
         )}
         <IconButton
@@ -72,7 +74,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
           variant="custom"
           size="sm"
           className="bg-light-hover dark:bg-dark-hover hover:bg-light-surface dark:hover:bg-dark-surface"
-          label="Open in new tab"
+          label={translate('openInNewTab')}
         />
       </div>
     );
@@ -89,7 +91,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
         variant="custom"
         size="sm"
         className="bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more"
-        label="Edit snippet"
+        label={translate('editSnippet')}
       />
       <IconButton
         icon={
@@ -106,7 +108,11 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
         variant="custom"
         size="sm"
         className="bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more"
-        label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+        label={
+          isFavorite
+            ? translate('removeFromFavorites')
+            : translate('addToFavorites')
+          }
       />
       <IconButton
         icon={<Trash2 size={16} className="hover:text-red-500" />}
@@ -117,7 +123,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
         variant="custom"
         size="sm"
         className="bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more"
-        label="Delete snippet"
+        label={translate('deleteSnippet')}
       />
       <div className="relative">
         <IconButton
@@ -149,7 +155,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
               className="flex items-center w-full gap-2 px-4 py-2 text-sm text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover"
             >
               <ExternalLink size={16} />
-              Open in new tab
+              {translate('openInNewTab')}
             </button>
             <button
               onClick={(e) => {
@@ -162,12 +168,12 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
               {isPinned ? (
                 <>
                   <PinOff size={16} />
-                  Unpin Snippet
+                  {translate('unpinSnippet')}
                 </>
               ) : (
                 <>
                   <Pin size={16} />
-                  Pin Snippet
+                  {translate('pinSnippet')}
                 </>
               )}
             </button>
@@ -180,7 +186,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
               className="flex items-center w-full gap-2 px-4 py-2 text-sm text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover"
             >
               <Share size={16} />
-              Share snippet
+              {translate('shareSnippet')}
             </button>
             <button
               onClick={(e) => {
@@ -191,7 +197,7 @@ const SnippetCardMenu: React.FC<SnippetCardMenuProps> = ({
               className="flex items-center w-full gap-2 px-4 py-2 text-sm text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover"
             >
               <Copy size={16} />
-              Duplicate snippet
+              {translate('duplicateSnippet')}
             </button>
           </div>
         )}

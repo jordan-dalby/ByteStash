@@ -1,9 +1,11 @@
 import React, { useEffect, useCallback, useMemo, useState, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Snippet } from "../../../../types/snippets";
 import { useAuth } from "../../../../hooks/useAuth";
 import { useToast } from "../../../../hooks/useToast";
+import { saveLanguagesUsage } from "../../../../utils/language/languageUtils";
 import {
   useSnippetsInfiniteQuery,
   useMoveToRecycleBin,
@@ -12,10 +14,9 @@ import {
   useCreateSnippet,
   SnippetsQueryKey,
 } from "../../../../hooks/useSnippetsQuery";
+import { PageContainer } from "../../../common/layout/PageContainer";
 import SnippetList from "../../list/SnippetList";
 import SnippetModal from "../SnippetModal";
-import { PageContainer } from "../../../common/layout/PageContainer";
-import { saveLanguagesUsage } from "../../../../utils/language/languageUtils";
 
 interface SnippetContentAreaProps {
   includeCodeInSearch: boolean;
@@ -50,6 +51,7 @@ const SnippetContentArea: React.FC<SnippetContentAreaProps> = ({
   onEdit,
   onShare,
 }) => {
+  const { t: translate } = useTranslation('components/snippets/view/common');
   const [searchParams] = useSearchParams();
   const { addToast } = useToast();
   const { logout } = useAuth();
@@ -82,6 +84,11 @@ const SnippetContentArea: React.FC<SnippetContentAreaProps> = ({
   const favoriteSnippetMutation = useFavoriteSnippet();
   const createSnippetMutation = useCreateSnippet();
 
+  const sessionExpiredHandler = useCallback(() => {
+    logout();
+    addToast(translate('snippetContentArea.error.sessionExpired'), "error");
+  }, []);
+
   const snippets = useMemo(() => {
     return data?.pages.flatMap(page => page.data) ?? [];
   }, [data]);
@@ -113,10 +120,9 @@ const SnippetContentArea: React.FC<SnippetContentAreaProps> = ({
     if (isError && error) {
       const err = error as any;
       if (err.status === 401 || err.status === 403) {
-        logout();
-        addToast("Session expired. Please login again.", "error");
+        sessionExpiredHandler();
       } else {
-        addToast("Failed to load snippets", "error");
+        addToast(translate('snippetContentArea.error.loadSnippets'), "error");
       }
     }
   }, [isError, error, logout, addToast]);
@@ -124,14 +130,13 @@ const SnippetContentArea: React.FC<SnippetContentAreaProps> = ({
   const removeSnippet = useCallback(async (id: string) => {
     try {
       await moveToRecycleBinMutation.mutateAsync(id);
-      addToast("Snippet moved to recycle bin successfully", "success");
+      addToast(translate('snippetContentArea.success.moveSnippetToRecycleBin'), "success");
     } catch (error: any) {
       console.error("Failed to move snippet to recycle bin:", error);
       if (error.status === 401 || error.status === 403) {
-        logout();
-        addToast("Session expired. Please login again.", "error");
+        sessionExpiredHandler();
       } else {
-        addToast("Failed to move snippet to recycle bin. Please try again.", "error");
+        addToast(translate('snippetContentArea.error.moveSnippetToRecycleBin'), "error");
       }
       throw error;
     }
@@ -140,15 +145,22 @@ const SnippetContentArea: React.FC<SnippetContentAreaProps> = ({
   const pinSnippet = useCallback(async (id: string, isPinned: boolean) => {
     try {
       const updatedSnippet = await pinSnippetMutation.mutateAsync({ id, isPinned });
-      addToast(`Snippet ${!isPinned ? "pinned" : "unpinned"} successfully`, "success");
+      addToast(translate(
+        isPinned
+          ? "snippetContentArea.success.updatePinStatusDeleted"
+          : "snippetContentArea.success.updatePinStatusAdded"
+      ), "success");
       return updatedSnippet;
     } catch (error: any) {
       console.error("Failed to update pin status:", error);
       if (error.status === 401 || error.status === 403) {
-        logout();
-        addToast("Session expired. Please login again.", "error");
+        sessionExpiredHandler();
       } else {
-        addToast("Failed to update pin status. Please try again.", "error");
+        addToast(translate(
+          isPinned
+            ? "snippetContentArea.error.updatePinStatusDeleted"
+            : "snippetContentArea.error.updatePinStatusAdded"
+        ), "error");
       }
     }
   }, [pinSnippetMutation, addToast, logout]);
@@ -156,15 +168,22 @@ const SnippetContentArea: React.FC<SnippetContentAreaProps> = ({
   const favoriteSnippet = useCallback(async (id: string, isFavorite: boolean) => {
     try {
       const updatedSnippet = await favoriteSnippetMutation.mutateAsync({ id, isFavorite });
-      addToast(`Snippet ${!isFavorite ? "added to" : "removed from"} favorites successfully`, "success");
+      addToast(translate(
+        isFavorite
+          ? "snippetContentArea.success.updateFavoriteStatusDeleted"
+          : "snippetContentArea.success.updateFavoriteStatusAdded"
+      ), "success");
       return updatedSnippet;
     } catch (error: any) {
       console.error("Failed to update favorite status:", error);
       if (error.status === 401 || error.status === 403) {
-        logout();
-        addToast("Session expired. Please login again.", "error");
+        sessionExpiredHandler();
       } else {
-        addToast("Failed to update favorite status. Please try again.", "error");
+        addToast(translate(
+          isFavorite
+            ? "snippetContentArea.error.updateFavoriteStatusDeleted"
+            : "snippetContentArea.error.updateFavoriteStatusAdded"
+        ), "error");
       }
     }
   }, [favoriteSnippetMutation, addToast, logout]);
@@ -181,14 +200,13 @@ const SnippetContentArea: React.FC<SnippetContentAreaProps> = ({
         is_favorite: 0,
       };
       await createSnippetMutation.mutateAsync(duplicatedSnippet);
-      addToast("Snippet duplicated successfully", "success");
+      addToast(translate('snippetContentArea.success.duplicateSnippet'), "success");
     } catch (error: any) {
       console.error("Failed to duplicate snippet:", error);
       if (error.status === 401 || error.status === 403) {
-        logout();
-        addToast("Session expired. Please login again.", "error");
+        sessionExpiredHandler();
       } else {
-        addToast("Failed to duplicate snippet", "error");
+        addToast(translate('snippetContentArea.error.duplicateSnippet'), "error");
       }
     }
   }, [createSnippetMutation, addToast, logout]);
@@ -207,7 +225,7 @@ const SnippetContentArea: React.FC<SnippetContentAreaProps> = ({
             <div className="flex items-center justify-center gap-3">
               <Loader2 className="w-5 h-5 text-light-text-secondary dark:text-dark-text-secondary animate-spin" />
               <span className="text-light-text-secondary dark:text-dark-text-secondary">
-                Loading snippets...
+                {translate('loadingSnippets')}
               </span>
             </div>
           </div>
@@ -225,7 +243,7 @@ const SnippetContentArea: React.FC<SnippetContentAreaProps> = ({
       {filters.categories.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 mb-4">
           <span className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
-            Filtered by categories:
+            {translate('filter.filteredByCategories')}:
           </span>
           {filters.categories.map((category, index) => (
             <button
@@ -271,17 +289,21 @@ const SnippetContentArea: React.FC<SnippetContentAreaProps> = ({
         </div>
       )}
 
-      <SnippetModal
-        snippet={selectedSnippet}
-        isOpen={!!selectedSnippet}
-        onClose={() => handleSnippetSelect(null)}
-        onDelete={removeSnippet}
-        onEdit={onEdit}
-        onCategoryClick={onCategoryClick}
-        showLineNumbers={showLineNumbers}
-        isPublicView={false}
-        isRecycleView={false}
-      />
+      {
+        selectedSnippet && (
+          <SnippetModal
+            snippet={selectedSnippet}
+            isOpen={!!selectedSnippet}
+            onClose={() => handleSnippetSelect(null)}
+            onDelete={removeSnippet}
+            onEdit={onEdit}
+            onCategoryClick={onCategoryClick}
+            showLineNumbers={showLineNumbers}
+            isPublicView={false}
+            isRecycleView={false}
+          />
+        )
+      }
     </>
   );
 };

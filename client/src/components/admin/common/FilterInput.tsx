@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { IconButton } from '../../common/buttons/IconButton';
 
 export interface FilterInputProps {
@@ -16,11 +17,15 @@ export const FilterInput: React.FC<FilterInputProps> = ({
   value,
   onChange,
   onReset,
-  placeholder = 'Search...',
   type = 'text',
   className = '',
   showSearchIcon = false,
+  ...props
 }) => {
+  const { t: translate } = useTranslation('components/admin/common');
+
+  const placeholder = props.placeholder || translate('filterInput.defaultPlaceholder');
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     onChange(newValue);

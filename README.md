@@ -66,3 +66,14 @@ Once the server is running you can explore the API via Swagger UI. Open
 
 ## Contributing
 Contributions are welcome! Please submit a pull request or open an issue for any improvements or bug fixes.
+
+### I18n
+To add phrases for a new language, follow these steps. Example for `fr` locale:
+- Add the locale name to the `Locale` enum in the `client/src/i18n/types.ts` file
+- Add the locale name to the `locales` array in the `client/i18next.config.ts` file
+- Run translation synchronization: `cd client && npm run i18n:extract`
+- Replace all `__TRANSLATE_ME__` lines with the desired phrases
+- Create new resources file as `client/src/i18n/resources/fr.ts`
+- Update export resources in file `client/src/i18n/resources/index.ts`
+- Run the server in development mode: `npm run dev`
+- Run the client in development mode: `cd client && npm run start`

@@ -1,11 +1,12 @@
 import React, { useRef, useState } from "react";
 import { Upload, Link } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { useToast } from "../../../hooks/useToast";
 import {
   processUploadedFile,
   ACCEPTED_FILE_EXTENSIONS,
   detectLanguageFromFilename,
 } from "../../../utils/fileUploadUtils";
-import { useToast } from "../../../hooks/useToast";
 
 interface FileUploadButtonProps {
   onFileProcessed: (fileData: {
@@ -30,6 +31,8 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({
   multiple = true,
   existingFragments = [],
 }) => {
+  const { t } = useTranslation();
+  const { t: translate } = useTranslation('components/common/buttons');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { addToast } = useToast();
   const [showUrlModal, setShowUrlModal] = useState(false);
@@ -69,7 +72,7 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({
         successCount++;
       } catch (error) {
         const errorMessage = `${
-          error instanceof Error ? error.message : "Unknown error"
+          error instanceof Error ? error.message : translate('fileUploadButton.error.unknown')
         }`;
         onError(errorMessage);
         addToast(errorMessage, "error");
@@ -79,23 +82,20 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({
     // Show success toast for successfully processed files
     if (successCount > 0) {
       if (successCount === 1 && files.length === 1) {
-        addToast(`"${files[0].name}" uploaded successfully`, "success");
+        addToast(translate('fileUploadButton.success.fileUploaded', { fileName: files[0].name }), "success");
       } else if (successCount === files.length) {
-        addToast(`All ${successCount} files uploaded successfully`, "success");
+        addToast(translate('fileUploadButton.success.filesUploaded', { count: successCount }), "success");
       } else {
-        addToast(
-          `${successCount} of ${files.length} files uploaded successfully`,
-          "success"
-        );
+        addToast(translate('fileUploadButton.success.someFilesUploaded', { successCount, total: files.length }), "success");
       }
     }
 
     // Show summary toast if there were duplicates
     if (duplicateCount > 0) {
       if (duplicateCount === 1) {
-        addToast(`Duplicate file detected`, "info");
+        addToast(translate('fileUploadButton.info.duplicateDetected'), "info");
       } else {
-        addToast(`${duplicateCount} duplicate files detected`, "info");
+        addToast(translate('fileUploadButton.info.duplicatesDetected', { count: duplicateCount }), "info");
       }
     }
 
@@ -107,7 +107,7 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({
 
   const handleUrlLoad = async () => {
     if (!urlInput.trim()) {
-      addToast("Please enter a valid URL", "error");
+      addToast(translate('fileUploadButton.loadFromUrl.invalidUrl'), "error");
       return;
     }
 
@@ -134,7 +134,7 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({
       );
 
       if (isDuplicate) {
-        addToast("Duplicate file detected", "info");
+        addToast(translate('fileUploadButton.info.duplicateDetected'), "info");
         setShowUrlModal(false);
         setUrlInput("");
         setIsLoadingUrl(false);
@@ -143,7 +143,7 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({
 
       // Validate size (max 1MB)
       if (code.length > 1024 * 1024) {
-        throw new Error("Content size must be less than 1MB");
+        throw new Error(translate('fileUploadButton.loadFromUrl.contentMaxSizeError', { max: '1MB' }));
       }
 
       const fileData = {
@@ -154,12 +154,12 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({
       };
 
       onFileProcessed(fileData);
-      addToast(`"${fullFileName}" loaded successfully`, "success");
+      addToast(translate('fileUploadButton.success.fileUploaded', { fileName: fullFileName }), "success");
       setShowUrlModal(false);
       setUrlInput("");
     } catch (error) {
       const errorMessage = `Failed to load from URL: ${
-        error instanceof Error ? error.message : "Unknown error"
+        error instanceof Error ? error.message : translate('fileUploadButton.error.unknown')
       }`;
       onError(errorMessage);
       addToast(errorMessage, "error");
@@ -177,7 +177,7 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({
         multiple={multiple}
         accept={ACCEPTED_FILE_EXTENSIONS}
         className="hidden"
-        aria-label="Upload code files"
+        aria-label={translate('fileUploadButton.label')}
       />
       <div className="inline-flex gap-2">
         <button
@@ -188,10 +188,10 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({
             hover:bg-light-hover/80 dark:hover:bg-dark-hover/80 hover:border-light-border dark:hover:border-dark-border
             focus:outline-none
             ${className}`}
-          title="Upload code files to auto-create fragments."
+          title={translate('fileUploadButton.title')}
         >
           <Upload size={16} />
-          <span>Upload code file(s)</span>
+          <span>{translate('fileUploadButton.label')}</span>
         </button>
         <button
           type="button"
@@ -201,10 +201,10 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({
             hover:bg-light-hover/80 dark:hover:bg-dark-hover/80 hover:border-light-border dark:hover:border-dark-border
             focus:outline-none
             ${className}`}
-          title="Load code from a URL (e.g., raw GitHub link)."
+          title={translate('fileUploadButton.loadFromUrl.title')}
         >
           <Link size={16} />
-          <span>Load from URL</span>
+          <span>{translate('fileUploadButton.loadFromUrl.label')}</span>
         </button>
       </div>
 
@@ -213,7 +213,7 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-light-surface dark:bg-dark-surface p-6 rounded-lg shadow-xl max-w-md w-full mx-4 border border-light-border dark:border-dark-border">
             <h3 className="text-lg font-semibold mb-4 text-light-text dark:text-dark-text">
-              Load Code from URL
+              {translate('fileUploadButton.loadFromUrl.label')}
             </h3>
             <input
               type="url"
@@ -247,7 +247,7 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({
                   hover:bg-light-hover/80 dark:hover:bg-dark-hover/80"
                 disabled={isLoadingUrl}
               >
-                Cancel
+                {t('action.cancel')}
               </button>
               <button
                 type="button"
@@ -257,7 +257,7 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({
                   disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isLoadingUrl}
               >
-                {isLoadingUrl ? "Loading..." : "Load"}
+                {isLoadingUrl ? "Loading..." : t('action.load')}
               </button>
             </div>
           </div>

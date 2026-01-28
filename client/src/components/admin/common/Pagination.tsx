@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export interface PaginationProps {
   offset: number;
@@ -16,6 +17,8 @@ export const Pagination: React.FC<PaginationProps> = ({
   onPrevious,
   onNext,
 }) => {
+  const { t } = useTranslation();
+
   const hasMore = offset + limit < total;
   const hasPrevious = offset > 0;
   const currentPage = Math.floor(offset / limit) + 1;
@@ -33,14 +36,14 @@ export const Pagination: React.FC<PaginationProps> = ({
         className="inline-flex items-center gap-2 px-4 py-2 border border-light-border dark:border-dark-border rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text disabled:opacity-50 disabled:cursor-not-allowed hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary transition-colors font-medium text-sm shadow-sm"
       >
         <ChevronLeft className="w-4 h-4" />
-        Previous
+        {t('pagination.previous')}
       </button>
       <div className="flex items-center gap-2">
         <span className="text-sm font-medium text-light-text dark:text-dark-text">
-          Page {currentPage} of {totalPages}
+          {t('pagination.pageOf', { currentPage, totalPages })}
         </span>
         <span className="text-xs text-light-text-secondary dark:text-dark-text-secondary">
-          ({total} total)
+          ({t('pagination.total', { total })})
         </span>
       </div>
       <button
@@ -48,7 +51,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         disabled={!hasMore}
         className="inline-flex items-center gap-2 px-4 py-2 border border-light-border dark:border-dark-border rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text disabled:opacity-50 disabled:cursor-not-allowed hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary transition-colors font-medium text-sm shadow-sm"
       >
-        Next
+        {t('pagination.next')}
         <ChevronRight className="w-4 h-4" />
       </button>
     </div>

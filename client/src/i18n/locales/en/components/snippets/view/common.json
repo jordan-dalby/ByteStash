@@ -1,0 +1,56 @@
+{
+  "authAwareSnippetView": {
+    "error": {
+      "snippetLoad": "Failed to load snippet",
+      "snippetRequireAuth": "This snippet requires authentication to view"
+    }
+  },
+  "baseSnippetStorage": {
+    "error": {
+      "sessionExpired": "Session expired. Please login again.",
+      "snippetCreated": "Failed to create snippet",
+      "snippetUpdated": "Failed to update snippet"
+    },
+    "success": {
+      "displayAll": "Displaying all snippets",
+      "displayFavorites": "Displaying favorite snippets",
+      "snippetCreated": "New snippet created successfully",
+      "snippetUpdated": "Snippet updated successfully"
+    }
+  },
+  "browsePublicSnippets": "Browse public snippets",
+  "filter": {
+    "filteredByCategories": "Filtered by categories"
+  },
+  "loadingSnippets": "Loading snippets...",
+  "signIn": "Sign in",
+  "sippetNotFound": "Snippet not found",
+  "snippetContentArea": {
+    "error": {
+      "duplicateSnippet": "Failed to duplicate snippet",
+      "loadSnippets": "Failed to load snippets",
+      "moveSnippetToRecycleBin": "Failed to move snippet to recycle bin. Please try again.",
+      "sessionExpired": "Session expired. Please login again.",
+      "updateFavoriteStatusAdded": "Failed to update favorite status. Please try again.",
+      "updateFavoriteStatusDeleted": "Failed to update favorite status. Please try again.",
+      "updatePinStatusAdded": "Failed to update pin status. Please try again.",
+      "updatePinStatusDeleted": "Failed to update pin status. Please try again."
+    },
+    "success": {
+      "duplicateSnippet": "Snippet duplicated successfully",
+      "moveSnippetToRecycleBin": "Snippet moved to recycle bin successfully",
+      "updateFavoriteStatusAdded": "Snippet added to favorites successfully",
+      "updateFavoriteStatusDeleted": "Snippet remove from favorites successfully",
+      "updatePinStatusAdded": "Snippet pinned successfully",
+      "updatePinStatusDeleted": "Snippet unpinned favorites successfully"
+    }
+  },
+  "storageHeader": {
+    "private": "You're viewing your private snippets. Only you can see and modify these snippets.",
+    "public": "You're viewing publicly shared snippets. These snippets are read-only and visible to everyone."
+  },
+  "viewSwitch": {
+    "private": "Private",
+    "public": "Public"
+  }
+}

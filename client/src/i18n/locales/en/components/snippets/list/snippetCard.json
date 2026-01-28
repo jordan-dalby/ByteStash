@@ -1,0 +1,37 @@
+{
+  "confirmationModalDelete": {
+    "confirmLabel": {
+      "isRecycleView": {
+        "false": "Move to Recycle Bin",
+        "true": "Delete Permanently"
+      }
+    },
+    "message": {
+      "isRecycleView": {
+        "false": "Are you sure you want to move \"{{title}}\" to the Recycle Bin?",
+        "true": "Are you sure you want to permanently delete \"{{title}}\"? This action cannot be undone."
+      }
+    },
+    "title": {
+      "isRecycleView": {
+        "false": "Move to Recycle Bin",
+        "true": "Confirm Deletion"
+      }
+    }
+  },
+  "confirmationModalRestore": {
+    "message": "Are you sure you want to restore \"{{title}}\"?",
+    "title": "Confirm Restore"
+  },
+  "date": {
+    "ago": "{{date}} ago",
+    "expiringSoon": "Expiring soon",
+    "left": "{{date}} left"
+  },
+  "defaultDescription": "No description available",
+  "defaultUpdateTime": "Unknown",
+  "favorite": "Favorite",
+  "pinned": "Pinned",
+  "public": "Public",
+  "shared": "Shared"
+}

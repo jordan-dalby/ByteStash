@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react";
 import { ChevronDown } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface Section {
   title: string;
@@ -33,12 +34,13 @@ const BaseDropdown = forwardRef<BaseDropdownRef, BaseDropdownProps>(({
   onSelect,
   onKeyDown,
   getSections,
-  placeholder = "Select or type a value",
   className = "",
   disabled = false,
   maxLength,
   showChevron = true,
+  ...props
 }, ref) => {
+  const { t: translate } = useTranslation('components/common/dropdowns');
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
   const [internalValue, setInternalValue] = useState(value);
@@ -46,6 +48,8 @@ const BaseDropdown = forwardRef<BaseDropdownRef, BaseDropdownProps>(({
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const lastInteractionWasMouse = useRef(false);
+
+  const placeholder = props.placeholder || translate('baseDropdown.defaultPlaceholder');
 
   useImperativeHandle(ref, () => ({
     focus: () => {
@@ -110,8 +114,10 @@ const BaseDropdown = forwardRef<BaseDropdownRef, BaseDropdownProps>(({
     setHighlightedIndex(-1);
   };
 
+  const addNewLabel = translate('baseDropdown.addNewLabel');
+
   const handleOptionClick = (option: string) => {
-    const finalValue = option.startsWith("Add new:")
+    const finalValue = option.startsWith(`${addNewLabel}:`)
       ? option.slice(9).trim()
       : option;
     setInternalValue(finalValue);

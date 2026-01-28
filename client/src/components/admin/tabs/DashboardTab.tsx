@@ -1,9 +1,11 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { adminApi } from '../../../utils/api/admin';
 import { Users, FileText, Key, Share2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { adminApi } from '../../../utils/api/admin';
 
 export const DashboardTab: React.FC = () => {
+  const { t: translate } = useTranslation('components/admin/tabs/dashboard');
   const { data: stats, isLoading } = useQuery({
     queryKey: ['admin', 'stats'],
     queryFn: adminApi.getStats,
@@ -13,7 +15,7 @@ export const DashboardTab: React.FC = () => {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-light-text-secondary dark:text-dark-text-secondary">
-          Loading statistics...
+          {translate('loadingMessage')}
         </div>
       </div>
     );
@@ -21,34 +23,34 @@ export const DashboardTab: React.FC = () => {
 
   const statCards = [
     {
-      title: 'Users',
+      title: translate('card.users.title'),
       icon: Users,
       total: stats?.users.total || 0,
       details: [
-        { label: 'Internal', value: stats?.users.internal || 0 },
-        { label: 'OIDC', value: stats?.users.oidc || 0 },
+        { label: translate('card.users.authType.internal'), value: stats?.users.internal || 0 },
+        { label: translate('card.users.authType.oidc'), value: stats?.users.oidc || 0 },
       ],
     },
     {
-      title: 'Snippets',
+      title: translate('card.snippets.title'),
       icon: FileText,
       total: stats?.snippets.total || 0,
       details: [
-        { label: 'Public', value: stats?.snippets.public || 0 },
-        { label: 'Private', value: stats?.snippets.private || 0 },
+        { label: translate('card.snippets.viewType.public'), value: stats?.snippets.public || 0 },
+        { label: translate('card.snippets.viewType.private'), value: stats?.snippets.private || 0 },
       ],
     },
     {
-      title: 'API Keys',
+      title: translate('card.apiKeys.title'),
       icon: Key,
       total: stats?.apiKeys.active || 0,
-      details: [{ label: 'Active', value: stats?.apiKeys.active || 0 }],
+      details: [{ label: translate('card.snippets.apiKeys.active'), value: stats?.apiKeys.active || 0 }],
     },
     {
-      title: 'Shares',
+      title: translate('card.shares.title'),
       icon: Share2,
       total: stats?.shares.total || 0,
-      details: [{ label: 'Total', value: stats?.shares.total || 0 }],
+      details: [{ label: translate('card.snippets.shares.total'), value: stats?.shares.total || 0 }],
     },
   ];
 

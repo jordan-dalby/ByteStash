@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback, useMemo, useState, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Snippet } from "../../../../types/snippets";
 import { useAuth } from "../../../../hooks/useAuth";
 import { useToast } from "../../../../hooks/useToast";
@@ -41,6 +42,7 @@ const RecycleSnippetContentArea: React.FC<RecycleSnippetContentAreaProps> = ({
   onCategoryClick,
   onSnippetsChange,
 }) => {
+  const { t: translate } = useTranslation('components/snippets/view/recycle');
   const [searchParams] = useSearchParams();
   const { addToast } = useToast();
   const { logout } = useAuth();
@@ -76,6 +78,11 @@ const RecycleSnippetContentArea: React.FC<RecycleSnippetContentAreaProps> = ({
     return data?.pages.flatMap(page => page.data) ?? [];
   }, [data]);
 
+  const sessionExpiredHandler = useCallback(() => {
+    logout();
+    addToast(translate('recycleSnippetContentArea.error.sessionExpired'), "error");
+  }, []);
+
   // Notify parent when snippets change (for bulk delete)
   useEffect(() => {
     if (onSnippetsChange) {
@@ -104,10 +111,9 @@ const RecycleSnippetContentArea: React.FC<RecycleSnippetContentAreaProps> = ({
     if (isError && error) {
       const err = error as any;
       if (err.status === 401 || err.status === 403) {
-        logout();
-        addToast("Session expired. Please login again.", "error");
+        sessionExpiredHandler();
       } else {
-        addToast("Failed to load snippets", "error");
+        addToast(translate('recycleSnippetContentArea.error.loadSnippets'), "error");
       }
     }
   }, [isError, error, logout, addToast]);
@@ -115,14 +121,13 @@ const RecycleSnippetContentArea: React.FC<RecycleSnippetContentAreaProps> = ({
   const permanentDeleteSnippet = useCallback(async (id: string) => {
     try {
       await deleteSnippetMutation.mutateAsync(id);
-      addToast("Snippet deleted successfully", "success");
+      addToast(translate('recycleSnippetContentArea.success.deleteSnippet'), "success");
     } catch (error: any) {
       console.error("Failed to delete snippet:", error);
       if (error.status === 401 || error.status === 403) {
-        logout();
-        addToast("Session expired. Please login again.", "error");
+        sessionExpiredHandler();
       } else {
-        addToast("Failed to delete snippet. Please try again.", "error");
+        addToast(translate('recycleSnippetContentArea.error.deleteSnippet'), "error");
       }
     }
   }, [deleteSnippetMutation, addToast, logout]);
@@ -130,15 +135,14 @@ const RecycleSnippetContentArea: React.FC<RecycleSnippetContentAreaProps> = ({
   const restoreSnippet = useCallback(async (id: string) => {
     try {
       await restoreSnippetMutation.mutateAsync(id);
-      addToast("Snippet restored successfully", "success");
+      addToast(translate('recycleSnippetContentArea.success.restoreSnippet'), "success");
       navigate("/");
     } catch (error: any) {
       console.error("Failed to restore snippet:", error);
       if (error.status === 401 || error.status === 403) {
-        logout();
-        addToast("Session expired. Please login again.", "error");
+        sessionExpiredHandler();
       } else {
-        addToast("Failed to restore snippet. Please try again.", "error");
+        addToast(translate('recycleSnippetContentArea.error.restoreSnippet'), "error");
       }
     }
   }, [restoreSnippetMutation, addToast, logout, navigate]);
@@ -152,7 +156,7 @@ const RecycleSnippetContentArea: React.FC<RecycleSnippetContentAreaProps> = ({
             <div className="flex items-center justify-center gap-3">
               <Loader2 className="w-5 h-5 text-light-text-secondary dark:text-dark-text-secondary animate-spin" />
               <span className="text-light-text-secondary dark:text-dark-text-secondary">
-                Loading snippets...
+                {translate('recycleSnippetContentArea.loadingSnippets')}
               </span>
             </div>
           </div>
@@ -170,7 +174,7 @@ const RecycleSnippetContentArea: React.FC<RecycleSnippetContentAreaProps> = ({
       {filters.categories.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 mb-4">
           <span className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
-            Filtered by categories:
+            {translate('recycleSnippetContentArea.filter.byCategories')}:
           </span>
           {filters.categories.map((category, index) => (
             <button
@@ -214,17 +218,21 @@ const RecycleSnippetContentArea: React.FC<RecycleSnippetContentAreaProps> = ({
         </div>
       )}
 
-      <SnippetModal
-        snippet={selectedSnippet}
-        isOpen={!!selectedSnippet}
-        onClose={() => setSelectedSnippet(null)}
-        onDelete={permanentDeleteSnippet}
-        onEdit={() => {}}
-        onCategoryClick={onCategoryClick}
-        showLineNumbers={showLineNumbers}
-        isPublicView={false}
-        isRecycleView={true}
-      />
+      {
+        selectedSnippet && (
+          <SnippetModal
+            snippet={selectedSnippet}
+            isOpen={!!selectedSnippet}
+            onClose={() => setSelectedSnippet(null)}
+            onDelete={permanentDeleteSnippet}
+            onEdit={() => {}}
+            onCategoryClick={onCategoryClick}
+            showLineNumbers={showLineNumbers}
+            isPublicView={false}
+            isRecycleView={true}
+          />
+        )
+      }
     </>
   );
 };

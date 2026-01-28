@@ -1,0 +1,8 @@
+{
+  "snippetViewModal": {
+    "error": {
+      "failedLoad": "Failed to load snippet"
+    },
+    "title": "Loading snippet..."
+  }
+}

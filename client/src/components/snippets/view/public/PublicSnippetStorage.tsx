@@ -27,6 +27,7 @@ const PublicSnippetStorage: React.FC = () => {
     expandCategories,
     showLineNumbers,
     theme,
+    locale,
   } = useSettings();
 
   const { isAuthenticated } = useAuth();
@@ -161,6 +162,7 @@ const PublicSnippetStorage: React.FC = () => {
           expandCategories,
           showLineNumbers,
           theme,
+          locale,
         }}
         onSettingsChange={updateSettings}
         isPublicView={true}

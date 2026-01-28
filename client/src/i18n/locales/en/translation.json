@@ -1,0 +1,50 @@
+{
+  "action": {
+    "addSnippet": "Add snippet",
+    "cancel": "Cancel",
+    "changePassword": "Change password",
+    "clear": "Clear",
+    "clearAll": "Clear all",
+    "close": "Close",
+    "confirm": "Confirm",
+    "createAccount": "Create account",
+    "delete": "Delete",
+    "edit": "Edit",
+    "hidePassword": "Hide password",
+    "load": "Load",
+    "maximize": "Maximize",
+    "minimize": "Minimize",
+    "restore": "Restore",
+    "save": "Save",
+    "showPassword": "Show password",
+    "signIn": "Sign in"
+  },
+  "confirmPassword": "Confirm Password",
+  "loading": "Loading...",
+  "locale": {
+    "en": "English",
+    "ru": "Russian"
+  },
+  "no": "no",
+  "or": "or",
+  "pagination": {
+    "next": "Next",
+    "pageOf": "Page {{currentPage}} of {{totalPages}}",
+    "previous": "Previous",
+    "total": "{{total}} total",
+    "useSnippetPagination": {
+      "error": {
+        "failedSnippetsLoad": "Failed to load snippets",
+        "sessionExpired": "Session expired. Please login again."
+      }
+    }
+  },
+  "password": "Password",
+  "showing": "Showing",
+  "theme": {
+    "dark": "Dark",
+    "light": "Light",
+    "system": "System"
+  },
+  "username": "Username"
+}

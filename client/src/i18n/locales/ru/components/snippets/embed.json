@@ -1,0 +1,26 @@
+{
+  "embedCopyButton": {
+    "title": "Скопировать в буфер обмена"
+  },
+  "embedModal": {
+    "form": {
+      "embedCode": "Встроить код",
+      "fragmentToShow": {
+        "all": "Все фрагменты",
+        "label": "Фрагмент для отображения (необязательно)"
+      },
+      "showDescription": "Показать описание",
+      "showFileHeaders": "Показать заголовки файлов",
+      "showPoweredBy": "Показать \"Powered by ByteStash\"",
+      "showTitle": "Показать заголовок",
+      "theme": "Тема"
+    },
+    "subTitle": "Настроить вставку",
+    "title": "Вставить фрагмент"
+  },
+  "embedView": {
+    "error": {
+      "default": "Не удалось загрузить фрагмент"
+    }
+  }
+}
