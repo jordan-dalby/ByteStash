@@ -15,6 +15,7 @@ import { useToast } from "../../hooks/useToast";
 import { Snippet } from "../../types/snippets";
 import { Switch } from "../common/switch/Switch";
 import { getAssetPath } from "../../utils/paths";
+import { snippetService } from "../../service/snippetService";
 import JSZip from "jszip";
 
 const GITHUB_URL = "https://github.com/jordan-dalby/ByteStash";
@@ -52,12 +53,6 @@ export interface SettingsModalProps {
     theme: "light" | "dark" | "system";
   };
   onSettingsChange: (newSettings: SettingsModalProps["settings"]) => void;
-  snippets: Snippet[];
-  addSnippet: (
-    snippet: Omit<Snippet, "id" | "updated_at">,
-    toast: boolean
-  ) => Promise<Snippet>;
-  reloadSnippets: () => void;
   isPublicView: boolean;
 }
 
@@ -66,9 +61,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   onClose,
   settings,
   onSettingsChange,
-  snippets,
-  addSnippet,
-  reloadSnippets,
   isPublicView,
 }) => {
   const [compactView, setCompactView] = useState(settings.compactView);
@@ -92,6 +84,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   const [importProgress, setImportProgress] = useState<ImportProgress | null>(
     null
   );
+  const [isExporting, setIsExporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { addToast } = useToast();
 
@@ -152,6 +145,16 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     );
   };
 
+  const fetchAllSnippets = async (): Promise<Snippet[]> => {
+    try {
+      const allSnippets = await snippetService.getAllSnippets();
+      return allSnippets;
+    } catch (error) {
+      console.error("Error fetching all snippets for export:", error);
+      throw error;
+    }
+  };
+
   const handleImportFile = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -179,7 +182,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
       for (const snippet of importData.snippets) {
         try {
-          await addSnippet(snippet, false);
+          await snippetService.createSnippet(snippet);
           progress.succeeded += 1;
         } catch (error) {
           progress.failed += 1;
@@ -196,10 +199,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
       if (progress.failed === 0) {
         addToast(
-          `Successfully imported ${progress.succeeded} snippets`,
+          `Successfully imported ${progress.succeeded} snippets. Close settings to see them.`,
           "success"
         );
-        reloadSnippets();
       } else {
         addToast(
           `Imported ${progress.succeeded} snippets, ${progress.failed} failed. Check console for details.`,
@@ -217,12 +219,20 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     }
   };
 
-  const handleExport = () => {
+  const handleExport = async () => {
     try {
+      setIsExporting(true);
+      const allSnippets = await fetchAllSnippets();
+
+      if (allSnippets.length === 0) {
+        addToast("No snippets available for export", "warning");
+        return;
+      }
+
       const exportData = {
         version: "1.0",
         exported_at: new Date().toISOString(),
-        snippets: snippets,
+        snippets: allSnippets,
       };
 
       const blob = new Blob([JSON.stringify(exportData, null, 2)], {
@@ -239,10 +249,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      addToast("Snippets exported successfully", "success");
+      addToast(`Exported ${allSnippets.length} snippets successfully`, "success");
     } catch (error) {
       console.error("Export error:", error);
       addToast("Failed to export snippets", "error");
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -282,14 +294,17 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
   const handleMarkdownExport = async () => {
     try {
-      if (!snippets || snippets.length === 0) {
+      setIsExporting(true);
+      const allSnippets = await fetchAllSnippets();
+
+      if (allSnippets.length === 0) {
         addToast("No snippets available for export", "warning");
         return;
       }
 
       const zip = new JSZip();
 
-      snippets.forEach((snippet: Snippet) => {
+      allSnippets.forEach((snippet: Snippet) => {
         const mdContent = snippetToMarkdown(snippet);
         const filename = `${(snippet.title || "snippet").replace(
           /[^\w-]/g,
@@ -310,10 +325,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      addToast("Markdown export successful", "success");
+      addToast(`Exported ${allSnippets.length} snippets as Markdown successfully`, "success");
     } catch (error) {
       console.error("Markdown export error:", error);
       addToast("Failed to export Markdown", "error");
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -521,21 +538,27 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
               <div className="flex gap-2">
                 <button
                   onClick={handleExport}
-                  className="flex items-center gap-2 px-4 py-2 text-sm transition-colors rounded-md bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more text-light-text dark:text-dark-text"
+                  disabled={isExporting || importing}
+                  className={`flex items-center gap-2 px-4 py-2 text-sm transition-colors rounded-md bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more text-light-text dark:text-dark-text ${
+                    isExporting || importing ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 >
                   <Download size={16} />
-                  Export Snippets (JSON)
+                  {isExporting ? "Exporting..." : "Export Snippets (JSON)"}
                 </button>
                 <button
                   onClick={handleMarkdownExport}
-                  className="flex items-center gap-2 px-4 py-2 text-sm transition-colors rounded-md bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more text-light-text dark:text-dark-text"
+                  disabled={isExporting || importing}
+                  className={`flex items-center gap-2 px-4 py-2 text-sm transition-colors rounded-md bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more text-light-text dark:text-dark-text ${
+                    isExporting || importing ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 >
                   <Download size={16} />
-                  Export Snippets (Markdown)
+                  {isExporting ? "Exporting..." : "Export Snippets (Markdown)"}
                 </button>
                 <label
                   className={`flex items-center gap-2 px-4 py-2 bg-light-hover dark:bg-dark-hover hover:bg-light-hover-more dark:hover:bg-dark-hover-more rounded-md transition-colors text-sm cursor-pointer text-light-text dark:text-dark-text ${
-                    importing ? "opacity-50 cursor-not-allowed" : ""
+                    importing || isExporting ? "opacity-50 cursor-not-allowed" : ""
                   }`}
                 >
                   <input
@@ -543,7 +566,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                     type="file"
                     accept=".json"
                     onChange={handleImportFile}
-                    disabled={importing}
+                    disabled={importing || isExporting}
                     className="hidden"
                   />
                   <Upload size={16} />

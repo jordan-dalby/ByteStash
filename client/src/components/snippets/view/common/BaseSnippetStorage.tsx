@@ -250,9 +250,6 @@ const BaseSnippetStorage: React.FC = () => {
           theme,
         }}
         onSettingsChange={updateSettings}
-        snippets={[]}
-        addSnippet={() => Promise.resolve({} as Snippet)}
-        reloadSnippets={() => {}}
         isPublicView={false}
       />
 

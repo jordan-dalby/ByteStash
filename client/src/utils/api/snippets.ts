@@ -59,15 +59,6 @@ export const getPublicSnippetById = async (id: string): Promise<Snippet> => {
   }
 };
 
-export const getRecycleSnippets = async (): Promise<Snippet[]> => {
-  try {
-    return await snippetService.getRecycleSnippets();
-  } catch (error) {
-    console.error("Error fetching recycled snippets:", error);
-    throw error;
-  }
-};
-
 export const restoreSnippetById = async (id: string): Promise<void> => {
   try {
     await snippetService.restoreSnippet(id);

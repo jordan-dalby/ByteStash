@@ -4,7 +4,6 @@ import { useSettings } from "../../../../hooks/useSettings";
 import { useAuth } from "../../../../hooks/useAuth";
 import { initializeMonaco } from "../../../../utils/language/languageUtils";
 import { snippetService } from "../../../../service/snippetService";
-import { Snippet } from "../../../../types/snippets";
 import SettingsModal from "../../../settings/SettingsModal";
 import { SearchAndFilter } from "../../../search/SearchAndFilter";
 import { UserDropdown } from "../../../auth/UserDropdown";
@@ -164,9 +163,6 @@ const PublicSnippetStorage: React.FC = () => {
           theme,
         }}
         onSettingsChange={updateSettings}
-        snippets={[]}
-        addSnippet={() => Promise.resolve({} as Snippet)}
-        reloadSnippets={() => {}}
         isPublicView={true}
       />
     </>

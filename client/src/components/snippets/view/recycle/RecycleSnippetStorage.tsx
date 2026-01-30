@@ -239,9 +239,6 @@ const RecycleSnippetStorage: React.FC = () => {
           theme,
         }}
         onSettingsChange={updateSettings}
-        snippets={[]}
-        addSnippet={() => Promise.resolve({} as Snippet)}
-        reloadSnippets={() => {}}
         isPublicView={true}
       />
 

@@ -4,9 +4,20 @@ import { API_ENDPOINTS } from "../constants/api";
 
 export const snippetService = {
   async getAllSnippets(): Promise<Snippet[]> {
-    return apiClient.get<Snippet[]>(API_ENDPOINTS.SNIPPETS, {
-      requiresAuth: true,
-    });
+    // Fetch all snippets using pagination
+    const allSnippets: Snippet[] = [];
+    let offset = 0;
+    const limit = 100;
+    let hasMore = true;
+
+    while (hasMore) {
+      const response = await this.getSnippetsPaginated({ limit, offset });
+      allSnippets.push(...response.data);
+      hasMore = response.pagination.hasMore;
+      offset += limit;
+    }
+
+    return allSnippets;
   },
 
   async getSnippetById(id: string): Promise<Snippet> {
@@ -34,12 +45,6 @@ export const snippetService = {
 
   async deleteSnippet(id: string): Promise<void> {
     return apiClient.delete(`${API_ENDPOINTS.SNIPPETS}/${id}`, {
-      requiresAuth: true,
-    });
-  },
-
-  async getRecycleSnippets(): Promise<Snippet[]> {
-    return apiClient.get(`${API_ENDPOINTS.SNIPPETS}/recycled`, {
       requiresAuth: true,
     });
   },
