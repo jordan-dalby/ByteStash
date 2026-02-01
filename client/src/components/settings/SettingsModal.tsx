@@ -304,6 +304,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     } catch (error) {
       console.error("Export error:", error);
       addToast(translate('settingsModal.export.error.default'), "error");
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -343,7 +345,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
   const handleMarkdownExport = async () => {
     try {
-      if (!snippets || snippets.length === 0) {
+      setIsExporting(true);
+      const allSnippets = await fetchAllSnippets();
+
+      if (allSnippets.length === 0) {
         addToast(translate('settingsModal.export.markdown.warning.default'), "warning");
         return;
       }
@@ -375,6 +380,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     } catch (error) {
       console.error("Markdown export error:", error);
       addToast(translate('settingsModal.export.markdown.error.default'), "error");
+    } finally {
+      setIsExporting(false);
     }
   };
 
