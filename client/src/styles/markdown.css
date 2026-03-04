@@ -56,3 +56,18 @@
 .markdown.prose > :last-child {
   margin-bottom: 0 !important;
 }
+
+.mermaid-container:not(.mermaid-fullscreen) > svg {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: 600px !important;
+  min-height: 200px !important;
+}
+
+.mermaid-container.mermaid-fullscreen > svg {
+  width: auto !important;
+  height: auto !important;
+  max-width: 100vw !important;
+  max-height: calc(100vh - 50px) !important;
+}

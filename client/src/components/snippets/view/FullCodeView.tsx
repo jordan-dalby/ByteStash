@@ -1,7 +1,7 @@
 import React from "react";
 import { FileCode, Clock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import ReactMarkdown from "react-markdown";
+import MarkdownRenderer from "../../common/markdown/MarkdownRenderer";
 import { useTranslation } from "react-i18next";
 import { Snippet } from "../../../types/snippets";
 import CategoryList from "../../categories/CategoryList";
@@ -101,9 +101,9 @@ export const FullCodeView: React.FC<FullCodeViewProps> = ({
 
           {/* Description */}
           <div className="mt-3 text-sm text-light-text dark:text-dark-text">
-            <ReactMarkdown className={`markdown prose max-w-none`}>
+            <MarkdownRenderer className={`markdown prose dark:prose-invert max-w-none`}>
               {snippet.description || translate('fullCodeView.defaultDescription')}
-            </ReactMarkdown>
+            </MarkdownRenderer>
           </div>
 
           {/* Categories */}

@@ -191,7 +191,7 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
       <div
         className={`bg-light-surface dark:bg-dark-surface rounded-lg ${
           viewMode === "grid" ? "h-full" : "mb-4"
-        } 
+        }
           cursor-pointer hover:bg-light-hover dark:hover:bg-dark-hover transition-colors relative group`}
         onClick={() => {
           if (!isRecycleView) onOpen(snippet);
@@ -249,7 +249,7 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
               <h3
                 className={`${
                   compactView ? "text-lg" : "text-xl"
-                } font-bold text-light-text dark:text-dark-text 
+                } font-bold text-light-text dark:text-dark-text
                 truncate leading-normal mb-2`}
               >
                 {snippet.title}
@@ -303,11 +303,11 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
           </div>
 
           {!compactView && (
-            <p className="mb-3 text-sm text-light-text dark:text-dark-text line-clamp-1">
-              <ReactMarkdown className={`markdown prose max-w-none`}>
+            <div className="mb-3 text-sm text-light-text dark:text-dark-text line-clamp-2 overflow-hidden">
+              <ReactMarkdown className={`markdown prose dark:prose-invert max-w-none`}>
                 {snippet.description || translate('defaultDescription')}
               </ReactMarkdown>
-            </p>
+            </div>
           )}
 
           {showCategories && (

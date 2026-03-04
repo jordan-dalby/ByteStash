@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ReactMarkdown from "react-markdown";
+import MarkdownRenderer from "../common/markdown/MarkdownRenderer";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
   vscDarkPlus,
@@ -12,8 +12,6 @@ import {
 import CopyButton from "../common/buttons/CopyButton";
 import { useTheme } from "../../contexts/ThemeContext";
 import RawButton from "../common/buttons/RawButton";
-import Admonition from "../utils/Admonition";
-import { flattenToText } from "../../utils/markdownUtils";
 
 interface PreviewCodeBlockProps {
   code: string;
@@ -131,39 +129,14 @@ export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
             className="overflow-hidden rounded-lg markdown-content markdown-content-preview"
             style={{ backgroundColor }}
           >
-            <ReactMarkdown
+            <MarkdownRenderer
               className={`markdown prose ${
                 isDark ? "prose-invert" : ""
               } max-w-none`}
-              components={{
-                blockquote: ({ children }) => {
-                  const text = flattenToText(children).trim();
-                  const match = text.match(
-                    /^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*([\s\S]*)$/
-                  );
-                  if (match) {
-                    return (
-                      <Admonition type={match[1]}>{match[2].trim()}</Admonition>
-                    );
-                  }
-                  return <blockquote>{children}</blockquote>;
-                },
-                p: ({ children }) => {
-                  const text = flattenToText(children).trim();
-                  const match = text.match(
-                    /^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*([\s\S]*)$/
-                  );
-                  if (match) {
-                    return (
-                      <Admonition type={match[1]}>{match[2].trim()}</Admonition>
-                    );
-                  }
-                  return <p>{children}</p>;
-                },
-              }}
+              disableMermaid
             >
               {truncatedCode}
-            </ReactMarkdown>
+            </MarkdownRenderer>
           </div>
         ) : (
           <div className="preview-wrapper">

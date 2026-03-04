@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import ReactMarkdown from "react-markdown";
+import MarkdownRenderer from "../../common/markdown/MarkdownRenderer";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
   vscDarkPlus,
@@ -10,8 +10,6 @@ import {
   getMonacoLanguage,
 } from "../../../utils/language/languageUtils";
 import EmbedCopyButton from "./EmbedCopyButton";
-import Admonition from "../../utils/Admonition";
-import { flattenToText } from "../../../utils/markdownUtils";
 
 export interface EmbedCodeBlockProps {
   code: string;
@@ -138,39 +136,13 @@ export const EmbedCodeView: React.FC<EmbedCodeBlockProps> = ({
             className="rounded-lg markdown-content markdown-content-full"
             style={{ backgroundColor }}
           >
-            <ReactMarkdown
+            <MarkdownRenderer
               className={`markdown prose ${
                 isDark ? "prose-invert" : ""
               } max-w-none`}
-              components={{
-                blockquote: ({ children }) => {
-                  const text = flattenToText(children).trim();
-                  const match = text.match(
-                    /^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*([\s\S]*)$/
-                  );
-                  if (match) {
-                    return (
-                      <Admonition type={match[1]}>{match[2].trim()}</Admonition>
-                    );
-                  }
-                  return <blockquote>{children}</blockquote>;
-                },
-                p: ({ children }) => {
-                  const text = flattenToText(children).trim();
-                  const match = text.match(
-                    /^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*([\s\S]*)$/
-                  );
-                  if (match) {
-                    return (
-                      <Admonition type={match[1]}>{match[2].trim()}</Admonition>
-                    );
-                  }
-                  return <p>{children}</p>;
-                },
-              }}
             >
               {code}
-            </ReactMarkdown>
+            </MarkdownRenderer>
           </div>
         ) : (
           <div ref={containerRef} style={{ maxHeight: "500px" }}>

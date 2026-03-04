@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
+import MarkdownRenderer from '../markdown/MarkdownRenderer';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { getCurrentLocale } from '../../../utils/getCurrentLocale';
@@ -25,11 +25,11 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose }) => {
   const [error, setError] = useState<string | null>(null);
   const { theme } = useTheme();
   const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark'>(
-    theme === 'system' 
+    theme === 'system'
       ? window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
       : theme
   );
-  
+
   useEffect(() => {
     if (theme === 'system') {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -48,10 +48,10 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose }) => {
   useEffect(() => {
     const fetchReleases = async () => {
       if (!isOpen) return;
-      
+
       setIsLoading(true);
       setError(null);
-      
+
       try {
         const response = await fetch('https://api.github.com/repos/jordan-dalby/ByteStash/releases');
         if (!response.ok) {
@@ -131,9 +131,9 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose }) => {
                   </span>
                 </div>
                 <div className="markdown-content markdown-content-changelog rounded-lg" style={{ backgroundColor }}>
-                  <ReactMarkdown className="markdown prose dark:prose-invert max-w-none">
+                  <MarkdownRenderer className="markdown prose dark:prose-invert max-w-none">
                     {release.body}
-                  </ReactMarkdown>
+                  </MarkdownRenderer>
                 </div>
               </div>
             ))

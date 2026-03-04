@@ -25,6 +25,7 @@ import componentsSnippetsViewAll from '../locales/en/components/snippets/view/al
 import componentsSnippetsViewCommon from '../locales/en/components/snippets/view/common.json'
 import componentsSnippetsViewPublic from '../locales/en/components/snippets/view/public.json'
 import componentsSnippetsViewRecycle from '../locales/en/components/snippets/view/recycle.json'
+import componentsCommonMarkdown from '../locales/en/components/common/markdown.json'
 import componentsUtils from '../locales/en/components/utils.json'
 
 export const resources = {
@@ -41,6 +42,7 @@ export const resources = {
   'components/categories': componentsCategories,
   'components/common/buttons': componentsCommonButtons,
   'components/common/dropdowns': componentsCommonDropdowns,
+  'components/common/markdown': componentsCommonMarkdown,
   'components/common/modals': componentsCommonModals,
   'components/search': componentsSearch,
   'components/settings': componentsSettings,

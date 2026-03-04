@@ -1,0 +1,15 @@
+{
+  "mermaid": {
+    "title": "Mermaid Diagram",
+    "renderError": "Failed to render Mermaid diagram:",
+    "renderErrorFallback": "Error rendering diagram",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "resetView": "Reset view",
+    "copyCode": "Copy Mermaid code",
+    "downloadSVG": "Download as SVG",
+    "downloadPNG": "Download as PNG",
+    "fullscreen": "Fullscreen",
+    "exitFullscreen": "Exit fullscreen"
+  }
+}
