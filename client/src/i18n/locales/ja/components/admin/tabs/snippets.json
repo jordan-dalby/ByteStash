@@ -1,0 +1,57 @@
+{
+  "action": {
+    "delete": "スニペットを削除",
+    "makePrivate": "非公開にする",
+    "makePublic": "公開する",
+    "scanForOffensiveContent": "不適切なコンテンツをスキャン",
+    "showAllSnippets": "すべてのスニペットを表示",
+    "viewSnippet": "スニペットを表示"
+  },
+  "columns": {
+    "labels": {
+      "actions": "アクション",
+      "fragments": "フラグメント",
+      "owner": "所有者",
+      "title": "タイトル",
+      "updated": "更新日時",
+      "visibility": "公開状態"
+    }
+  },
+  "confirmationModal": {
+    "message": "このスニペットを完全に削除してもよろしいですか？この操作は取り消せません。",
+    "title": "スニペットを削除"
+  },
+  "containsOffensiveWords": "不適切な言葉を含んでいます: {{words}}",
+  "entityName_one": "スニペット",
+  "entityName_other": "スニペット",
+  "error": {
+    "delete": {
+      "default": "スニペットの削除に失敗しました"
+    },
+    "update": {
+      "default": "スニペットの公開状態の更新に失敗しました"
+    }
+  },
+  "filters": {
+    "search": "スニペットを検索...",
+    "userId": "ユーザーID",
+    "visibility": {
+      "all": "すべての公開状態",
+      "private": "非公開",
+      "public": "公開"
+    }
+  },
+  "offensiveContentMessage": "不適切なコンテンツを含む{{total}}件の{{entityName}}が見つかりました",
+  "success": {
+    "delete": {
+      "default": "スニペットを削除しました"
+    },
+    "update": {
+      "default": "スニペットの公開状態を更新しました"
+    }
+  },
+  "table": {
+    "emptyMessage": "スニペットが見つかりません",
+    "loadingMessage": "スニペットを読み込み中..."
+  }
+}

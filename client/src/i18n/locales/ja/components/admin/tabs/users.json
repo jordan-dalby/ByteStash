@@ -1,0 +1,63 @@
+{
+  "action": {
+    "activate": "ユーザーを有効化",
+    "deactivate": "ユーザーを無効化",
+    "delete": "ユーザーを削除"
+  },
+  "columns": {
+    "labels": {
+      "actions": "アクション",
+      "apiKeysCount": "APIキー",
+      "authType": "認証タイプ",
+      "created": "作成日時",
+      "email": "メールアドレス",
+      "lastLogin": "最終ログイン",
+      "snippetsCount": "スニペット",
+      "status": "ステータス",
+      "username": "ユーザー名"
+    }
+  },
+  "confirmationModal": {
+    "message": "このユーザーを削除してもよろしいですか？すべてのスニペット、APIキー、共有が完全に削除されます。この操作は取り消せません。",
+    "title": "ユーザーを削除"
+  },
+  "entityName_one": "ユーザー",
+  "entityName_other": "ユーザー",
+  "error": {
+    "delete": {
+      "default": "ユーザーの削除に失敗しました"
+    },
+    "update": {
+      "default": "ユーザーの更新に失敗しました"
+    }
+  },
+  "filters": {
+    "authType": {
+      "all": "すべての認証タイプ",
+      "internal": "内部",
+      "oidc": "OIDC"
+    },
+    "search": "ユーザーを検索...",
+    "status": {
+      "active": "有効",
+      "all": "すべてのステータス",
+      "inactive": "無効"
+    }
+  },
+  "status": {
+    "active": "有効",
+    "inactive": "無効"
+  },
+  "success": {
+    "delete": {
+      "default": "ユーザーを削除しました"
+    },
+    "update": {
+      "default": "ユーザーのステータスを更新しました"
+    }
+  },
+  "table": {
+    "emptyMessage": "ユーザーが見つかりません",
+    "loadingMessage": "ユーザーを読み込み中..."
+  }
+}

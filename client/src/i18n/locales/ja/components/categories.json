@@ -1,0 +1,12 @@
+{
+  "categoryList": {
+    "moreCount": "他{{moreCount}}件",
+    "noData": "カテゴリなし",
+    "showLess": "折りたたむ"
+  },
+  "categorySuggestions": {
+    "addNewLabel": "新規追加",
+    "placeholder": "カテゴリを検索...",
+    "title": "カテゴリ"
+  }
+}

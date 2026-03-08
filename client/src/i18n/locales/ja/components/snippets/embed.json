@@ -1,0 +1,26 @@
+{
+  "embedCopyButton": {
+    "title": "クリップボードにコピー"
+  },
+  "embedModal": {
+    "form": {
+      "embedCode": "埋め込みコード",
+      "fragmentToShow": {
+        "all": "すべてのフラグメント",
+        "label": "表示するフラグメント（オプション）"
+      },
+      "showDescription": "説明を表示",
+      "showFileHeaders": "ファイルヘッダーを表示",
+      "showPoweredBy": "\"Powered by ByteStash\"を表示",
+      "showTitle": "タイトルを表示",
+      "theme": "テーマ"
+    },
+    "subTitle": "埋め込みをカスタマイズ",
+    "title": "スニペットを埋め込む"
+  },
+  "embedView": {
+    "error": {
+      "default": "スニペットの読み込みに失敗しました"
+    }
+  }
+}

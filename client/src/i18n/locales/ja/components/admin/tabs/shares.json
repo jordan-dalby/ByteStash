@@ -1,0 +1,49 @@
+{
+  "action": {
+    "copyShareLink": "共有リンクをコピー",
+    "delete": "共有を削除",
+    "viewSnippet": "スニペットを表示"
+  },
+  "columns": {
+    "labels": {
+      "actions": "アクション",
+      "auth": "認証必須",
+      "created": "作成日時",
+      "expires": "有効期限",
+      "id": "共有ID",
+      "owner": "所有者",
+      "title": "タイトル"
+    }
+  },
+  "confirmationModal": {
+    "message": "この共有リンクを削除してもよろしいですか？リンクを持つ誰もスニペットにアクセスできなくなります。この操作は取り消せません。",
+    "title": "共有を削除"
+  },
+  "entityName_one": "共有",
+  "entityName_other": "共有",
+  "error": {
+    "delete": {
+      "default": "共有の削除に失敗しました"
+    }
+  },
+  "filters": {
+    "authType": {
+      "all": "すべての認証タイプ",
+      "public": "公開",
+      "requiresAuth": "認証必須"
+    },
+    "userId": "ユーザーIDで絞り込み"
+  },
+  "success": {
+    "copied": {
+      "default": "共有リンクをクリップボードにコピーしました"
+    },
+    "delete": {
+      "default": "共有を削除しました"
+    }
+  },
+  "table": {
+    "emptyMessage": "共有が見つかりません",
+    "loadingMessage": "共有を読み込み中..."
+  }
+}

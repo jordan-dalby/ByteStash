@@ -1,0 +1,48 @@
+{
+  "sharedSnippetView": {
+    "browsePublicSnippets": "公開スニペットを閲覧",
+    "loadingSnippet": "スニペットを読み込み中...",
+    "snippetExpired": "この共有スニペットの有効期限が切れています",
+    "snippetNotFound": "スニペットが見つかりません"
+  },
+  "shareMenu": {
+    "activeShareLinks": {
+      "buttons": {
+        "copy": "リンクをコピー",
+        "delete": "共有リンクを削除",
+        "requiresAuth": {
+          "false": "スニペットを埋め込む",
+          "true": "認証不要のスニペットのみ埋め込み可能"
+        }
+      },
+      "date": {
+        "expired": "期限切れ",
+        "neverExpires": "有効期限なし"
+      },
+      "noLinks": "有効な共有リンクなし",
+      "relativeExpiryTime": "{{date}}後に期限切れ",
+      "requiresAuth": {
+        "false": "公開アクセス",
+        "true": "保護済み - 認証が必要"
+      },
+      "title": "有効な共有リンク"
+    },
+    "createButtonText": "共有リンクを作成",
+    "error": {
+      "created": "共有リンクの作成に失敗しました",
+      "deleted": "共有リンクの削除に失敗しました",
+      "invalidDuration": "期間の形式が無効です。1h、2d、30mなどを使用してください。",
+      "load": "共有の読み込みに失敗しました",
+      "unknownExpiryTime": "有効期限が不明です"
+    },
+    "expiresIn": "有効期限（例: 1h、2d、30m）",
+    "expiresInPlaceholder": "無期限",
+    "requiresAuth": "認証を要求",
+    "subTitle": "新しい共有リンクを作成",
+    "success": {
+      "created": "共有リンクを作成しました",
+      "deleted": "共有リンクを削除しました"
+    },
+    "title": "スニペットを共有"
+  }
+}

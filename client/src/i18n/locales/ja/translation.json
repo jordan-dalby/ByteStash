@@ -1,0 +1,52 @@
+{
+  "action": {
+    "addSnippet": "スニペットを追加",
+    "cancel": "キャンセル",
+    "changePassword": "パスワードを変更",
+    "clear": "クリア",
+    "clearAll": "すべてクリア",
+    "close": "閉じる",
+    "confirm": "確認",
+    "createAccount": "アカウントを作成",
+    "delete": "削除",
+    "edit": "編集",
+    "hidePassword": "パスワードを非表示",
+    "load": "読み込み",
+    "maximize": "最大化",
+    "minimize": "最小化",
+    "restore": "復元",
+    "save": "保存",
+    "showPassword": "パスワードを表示",
+    "signIn": "サインイン"
+  },
+  "confirmPassword": "パスワード（確認用）",
+  "loading": "読み込み中...",
+  "locale": {
+    "en": "英語",
+    "es": "スペイン語",
+    "ru": "ロシア語",
+    "ja": "日本語"
+  },
+  "no": "いいえ",
+  "or": "または",
+  "pagination": {
+    "next": "次へ",
+    "pageOf": "{{totalPages}}ページ中{{currentPage}}ページ目",
+    "previous": "前へ",
+    "total": "全{{total}}件",
+    "useSnippetPagination": {
+      "error": {
+        "failedSnippetsLoad": "スニペットの読み込みに失敗しました",
+        "sessionExpired": "セッションの有効期限が切れました。再度サインインしてください。"
+      }
+    }
+  },
+  "password": "パスワード",
+  "showing": "表示中",
+  "theme": {
+    "dark": "ダーク",
+    "light": "ライト",
+    "system": "システム"
+  },
+  "username": "ユーザー名"
+}

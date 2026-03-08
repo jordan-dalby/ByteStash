@@ -1,0 +1,15 @@
+{
+  "mermaid": {
+    "copyCode": "Mermaidコードをコピー",
+    "downloadPNG": "PNGとしてダウンロード",
+    "downloadSVG": "SVGとしてダウンロード",
+    "exitFullscreen": "全画面を終了",
+    "fullscreen": "全画面",
+    "renderError": "Mermaidダイアグラムのレンダリングに失敗しました:",
+    "renderErrorFallback": "ダイアグラムのレンダリングエラー",
+    "resetView": "ビューをリセット",
+    "title": "Mermaidダイアグラム",
+    "zoomIn": "ズームイン",
+    "zoomOut": "ズームアウト"
+  }
+}

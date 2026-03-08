@@ -1,0 +1,57 @@
+{
+  "editSnippetModal": {
+    "addSnippet": "新しいスニペットを追加",
+    "editSnippet": "スニペットを編集",
+    "error": {
+      "savingFailed": "スニペットの保存中にエラーが発生しました。もう一度お試しください。"
+    },
+    "form": {
+      "categories": {
+        "counter": "{{categories}}/{{max}}カテゴリ",
+        "label": "カテゴリ（最大{{max}}）",
+        "placeholder": "カテゴリを入力してEnterまたはカンマを押してください"
+      },
+      "codeFragments": {
+        "add": "新しいフラグメントを追加",
+        "label": "コードフラグメント（{{fragments}}）"
+      },
+      "description": {
+        "label": "説明",
+        "placeholder": "スニペットの簡単な説明を書いてください"
+      },
+      "isPublic": {
+        "description": "公開スニペットは認証なしで誰でも閲覧できます",
+        "label": "スニペットを公開する"
+      },
+      "title": {
+        "counter": "{{characters}}/{{max}}文字",
+        "label": "タイトル",
+        "placeholder": "スニペットのタイトルを入力してください（最大{{max}}文字）"
+      }
+    },
+    "fragmentRequired": "少なくとも1つのコードフラグメントが必要です",
+    "mustHaveFileNames": "すべてのフラグメントにはファイル名が必要です",
+    "unsavedChanges": "保存されていない変更があります。閉じてもよろしいですか？"
+  },
+  "fragmentEditor": {
+    "action": {
+      "collapse": "折りたたむ",
+      "delete": "削除",
+      "expand": "展開"
+    },
+    "form": {
+      "fileName": {
+        "placeholder": "ファイル名"
+      },
+      "language": {
+        "placeholder": "言語を選択",
+        "sections": {
+          "other": "その他",
+          "used": "使用済み"
+        }
+      }
+    },
+    "moveDown": "下に移動",
+    "moveUp": "上に移動"
+  }
+}

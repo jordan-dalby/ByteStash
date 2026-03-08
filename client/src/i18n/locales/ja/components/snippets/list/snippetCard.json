@@ -1,0 +1,37 @@
+{
+  "confirmationModalDelete": {
+    "confirmLabel": {
+      "isRecycleView": {
+        "false": "ゴミ箱に移動",
+        "true": "完全に削除"
+      }
+    },
+    "message": {
+      "isRecycleView": {
+        "false": "\"{{title}}\"をゴミ箱に移動してもよろしいですか？",
+        "true": "\"{{title}}\"を完全に削除してもよろしいですか？この操作は取り消せません。"
+      }
+    },
+    "title": {
+      "isRecycleView": {
+        "false": "ゴミ箱に移動",
+        "true": "削除の確認"
+      }
+    }
+  },
+  "confirmationModalRestore": {
+    "message": "\"{{title}}\"を復元してもよろしいですか？",
+    "title": "復元の確認"
+  },
+  "date": {
+    "ago": "{{date}}前",
+    "expiringSoon": "まもなく期限切れ",
+    "left": "残り{{date}}"
+  },
+  "defaultDescription": "説明なし",
+  "defaultUpdateTime": "不明",
+  "favorite": "お気に入り",
+  "pinned": "固定",
+  "public": "公開",
+  "shared": "共有中"
+}

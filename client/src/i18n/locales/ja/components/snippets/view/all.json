@@ -1,0 +1,29 @@
+{
+  "defaultUpdateTime": "不明",
+  "fullCodeView": {
+    "dateTimeAgo": "{{dateTime}}前",
+    "defaultDescription": "説明なし"
+  },
+  "snippetModal": {
+    "confirmationModal": {
+      "confirmLabel": {
+        "isRecycleView": {
+          "false": "ゴミ箱に移動",
+          "true": "完全に削除"
+        }
+      },
+      "message": {
+        "isRecycleView": {
+          "false": "\"{{title}}\"をゴミ箱に移動してもよろしいですか？",
+          "true": "\"{{title}}\"を完全に削除してもよろしいですか？この操作は取り消せません。"
+        }
+      },
+      "title": {
+        "isRecycleView": {
+          "false": "ゴミ箱に移動",
+          "true": "削除の確認"
+        }
+      }
+    }
+  }
+}

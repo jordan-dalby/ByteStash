@@ -1,0 +1,11 @@
+{
+  "addToFavorites": "お気に入りに追加",
+  "deleteSnippet": "スニペットを削除",
+  "duplicateSnippet": "スニペットを複製",
+  "editSnippet": "スニペットを編集",
+  "openInNewTab": "新しいタブで開く",
+  "pinSnippet": "スニペットを固定",
+  "removeFromFavorites": "お気に入りから削除",
+  "shareSnippet": "スニペットを共有",
+  "unpinSnippet": "固定を解除"
+}

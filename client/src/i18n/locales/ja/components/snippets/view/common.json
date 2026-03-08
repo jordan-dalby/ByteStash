@@ -1,0 +1,56 @@
+{
+  "authAwareSnippetView": {
+    "error": {
+      "snippetLoad": "スニペットの読み込みに失敗しました",
+      "snippetRequireAuth": "このスニペットを表示するには認証が必要です"
+    }
+  },
+  "baseSnippetStorage": {
+    "error": {
+      "sessionExpired": "セッションの有効期限が切れました。再度サインインしてください。",
+      "snippetCreated": "スニペットの作成に失敗しました",
+      "snippetUpdated": "スニペットの更新に失敗しました"
+    },
+    "success": {
+      "displayAll": "すべてのスニペットを表示中",
+      "displayFavorites": "お気に入りのスニペットを表示中",
+      "snippetCreated": "新しいスニペットを作成しました",
+      "snippetUpdated": "スニペットを更新しました"
+    }
+  },
+  "browsePublicSnippets": "公開スニペットを閲覧",
+  "filter": {
+    "filteredByCategories": "カテゴリで絞り込み"
+  },
+  "loadingSnippets": "スニペットを読み込み中...",
+  "signIn": "サインイン",
+  "sippetNotFound": "スニペットが見つかりません",
+  "snippetContentArea": {
+    "error": {
+      "duplicateSnippet": "スニペットの複製に失敗しました",
+      "loadSnippets": "スニペットの読み込みに失敗しました",
+      "moveSnippetToRecycleBin": "スニペットをゴミ箱に移動できませんでした。もう一度お試しください。",
+      "sessionExpired": "セッションの有効期限が切れました。再度サインインしてください。",
+      "updateFavoriteStatusAdded": "お気に入りのステータスを更新できませんでした。もう一度お試しください。",
+      "updateFavoriteStatusDeleted": "お気に入りのステータスを更新できませんでした。もう一度お試しください。",
+      "updatePinStatusAdded": "固定のステータスを更新できませんでした。もう一度お試しください。",
+      "updatePinStatusDeleted": "固定のステータスを更新できませんでした。もう一度お試しください。"
+    },
+    "success": {
+      "duplicateSnippet": "スニペットを複製しました",
+      "moveSnippetToRecycleBin": "スニペットをゴミ箱に移動しました",
+      "updateFavoriteStatusAdded": "スニペットをお気に入りに追加しました",
+      "updateFavoriteStatusDeleted": "スニペットをお気に入りから削除しました",
+      "updatePinStatusAdded": "スニペットを固定しました",
+      "updatePinStatusDeleted": "スニペットの固定を解除しました"
+    }
+  },
+  "storageHeader": {
+    "private": "非公開スニペットを表示しています。あなたのみがこれらのスニペットを表示・変更できます。",
+    "public": "公開スニペットを表示しています。これらのスニペットは読み取り専用で、誰でも閲覧できます。"
+  },
+  "viewSwitch": {
+    "private": "非公開",
+    "public": "公開"
+  }
+}

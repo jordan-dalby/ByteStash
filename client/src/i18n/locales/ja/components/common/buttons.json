@@ -1,0 +1,56 @@
+{
+  "copyButton": {
+    "title": "クリップボードにコピー"
+  },
+  "downloadArchiveButton": {
+    "error": {
+      "failedDownload": "アーカイブのダウンロードに失敗しました"
+    },
+    "fileLabel_one": "{{count, number}}ファイル",
+    "fileLabel_other": "{{count, number}}ファイル",
+    "label": "すべてダウンロード",
+    "success": {
+      "downloadedAll": "すべてのコードフラグメントをダウンロードしました"
+    },
+    "title": "すべてのファイルをZIPアーカイブとしてダウンロード"
+  },
+  "downloadButton": {
+    "error": {
+      "failedDownload": "ファイルのダウンロードに失敗しました"
+    },
+    "success": {
+      "downloaded": "\"{{fileName}}\"をダウンロードしました"
+    },
+    "title": "{{fileName}}をダウンロード",
+    "warning": {
+      "nothing": "ダウンロードするものがありません"
+    }
+  },
+  "fileUploadButton": {
+    "error": {
+      "unknown": "不明なエラー"
+    },
+    "info": {
+      "duplicateDetected": "重複ファイルが検出されました",
+      "duplicatesDetected_one": "{{count, number}}個の重複ファイルが検出されました",
+      "duplicatesDetected_other": "{{count, number}}個の重複ファイルが検出されました"
+    },
+    "label": "コードファイルをアップロード",
+    "loadFromUrl": {
+      "contentMaxSizeError": "コンテンツサイズは{{max}}未満である必要があります",
+      "invalidUrl": "有効なURLを入力してください",
+      "label": "URLから読み込み",
+      "title": "URLからコードを読み込み（例: GitHubの生のリンク）"
+    },
+    "success": {
+      "filesUploaded_one": "{{count, number}}個のファイルをアップロードしました",
+      "filesUploaded_other": "{{count, number}}個のファイルをアップロードしました",
+      "fileUploaded": "\"{{fileName}}\"をアップロードしました",
+      "someFilesUploaded": "{{total}}個のファイルのうち{{successCount}}個をアップロードしました"
+    },
+    "title": "フラグメントを自動作成するためにコードファイルをアップロード"
+  },
+  "rawButton": {
+    "title": "生データを開く"
+  }
+}

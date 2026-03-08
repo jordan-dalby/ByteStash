@@ -1,0 +1,33 @@
+{
+  "apiKeyDeletedSuccessfully": "APIキーを削除しました",
+  "columns": {
+    "labels": {
+      "actions": "アクション",
+      "created": "作成日時",
+      "lastUsed": "最終使用日時",
+      "name": "名前",
+      "owner": "所有者",
+      "status": "ステータス"
+    }
+  },
+  "confirmationModal": {
+    "message": "このAPIキーを削除してもよろしいですか？キーの所有者はAPIにアクセスできなくなります。この操作は取り消せません。",
+    "title": "APIキーを削除"
+  },
+  "entityName_one": "APIキー",
+  "entityName_other": "APIキー",
+  "error": {
+    "default": "APIキーの削除に失敗しました"
+  },
+  "filters": {
+    "userId": "ユーザーIDで絞り込み"
+  },
+  "status": {
+    "active": "有効",
+    "inactive": "無効"
+  },
+  "table": {
+    "emptyMessage": "APIキーが見つかりません",
+    "loadingMessage": "APIキーを読み込み中..."
+  }
+}

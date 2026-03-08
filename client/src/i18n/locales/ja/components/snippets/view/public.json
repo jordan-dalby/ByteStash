@@ -1,0 +1,18 @@
+{
+  "publicSnippetContentArea": {
+    "error": {
+      "addSnippetToCollection": "スニペットをコレクションに追加できませんでした",
+      "failedLoadSnippets": "公開スニペットの読み込みに失敗しました"
+    },
+    "filter": {
+      "byCategories": "カテゴリで絞り込み"
+    },
+    "info": {
+      "requireAuth": "このスニペットをコレクションに追加するにはサインインしてください"
+    },
+    "loadingSnippets": "スニペットを読み込み中...",
+    "success": {
+      "addSnippetToCollection": "スニペットをコレクションに追加しました"
+    }
+  }
+}

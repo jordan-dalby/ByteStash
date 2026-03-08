@@ -1,0 +1,30 @@
+{
+  "action": {
+    "clear": "検索をクリア",
+    "newSnippet": "新しいスニペット",
+    "openSettings": "設定を開く",
+    "recycleBin": "ゴミ箱",
+    "showAll": "すべて表示",
+    "showFavorites": "お気に入りを表示"
+  },
+  "categories": {
+    "addNew": "新規追加",
+    "title": "カテゴリ"
+  },
+  "defaultPlaceholder": "スニペットを検索...（#を入力して利用可能なすべてのカテゴリを表示）",
+  "filter": {
+    "language": {
+      "all": "すべての言語"
+    }
+  },
+  "sort": {
+    "alphaAsc": "アルファベット順 A-Z",
+    "alphaDesc": "アルファベット順 Z-A",
+    "newestFirst": "新しい順",
+    "oldestFirst": "古い順"
+  },
+  "view": {
+    "grid": "グリッド表示",
+    "list": "リスト表示"
+  }
+}

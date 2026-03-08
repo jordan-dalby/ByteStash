@@ -1,0 +1,93 @@
+{
+  "settingsModal": {
+    "block": {
+      "category": {
+        "expandCategories": {
+          "description": "カテゴリグループを自動的に展開",
+          "label": "カテゴリを展開"
+        },
+        "showCategories": {
+          "description": "スニペットのカテゴリラベルを表示",
+          "label": "カテゴリを表示"
+        },
+        "title": "カテゴリ"
+      },
+      "dataManagement": {
+        "export": {
+          "label": "スニペットをエクスポート"
+        },
+        "import": {
+          "errors": {
+            "failed": "\"{{title}}\"のインポートに失敗しました: {{error}}",
+            "occurred_one": "{{count, number}}件のエラーが発生しました",
+            "occurred_other": "{{count, number}}件のエラーが発生しました"
+          },
+          "label": "スニペットをインポート",
+          "progress": "スニペットをインポート中..."
+        },
+        "title": "データ管理"
+      },
+      "locale": {
+        "title": "ロケール"
+      },
+      "search": {
+        "includeCodeInSearch": {
+          "description": "タイトルだけでなくコード内容も検索",
+          "label": "検索にコードを含める"
+        },
+        "title": "検索"
+      },
+      "theme": {
+        "title": "テーマ"
+      },
+      "view": {
+        "compactView": {
+          "description": "スニペットをよりコンパクトな形式で表示",
+          "label": "コンパクト表示"
+        },
+        "previewLines": {
+          "description": "スニペットリストにコードのプレビューを表示",
+          "label": "コードプレビューを表示"
+        },
+        "showCodePreview": {
+          "description": "プレビューに表示する最大行数（1-20）",
+          "label": "プレビュー行数"
+        },
+        "showLineNumbers": {
+          "description": "コードブロックに行番号を表示",
+          "label": "行番号を表示"
+        },
+        "title": "表示"
+      }
+    },
+    "export": {
+      "error": {
+        "default": "スニペットのエクスポートに失敗しました",
+        "noSnippets": "エクスポート可能なスニペットがありません"
+      },
+      "markdown": {
+        "error": {
+          "default": "Markdownのエクスポートに失敗しました"
+        },
+        "success": {
+          "default": "Markdownのエクスポートが成功しました"
+        },
+        "warning": {
+          "default": "エクスポート可能なスニペットがありません"
+        }
+      },
+      "success": {
+        "default": "{{total}}件のスニペットをエクスポートしました"
+      }
+    },
+    "import": {
+      "error": {
+        "default": "スニペットのインポートに失敗しました"
+      },
+      "hasFailed": "{{succeeded}}件のスニペットをインポートしましたが、{{failed}}件失敗しました。詳細はコンソールを確認してください。",
+      "successOnly_one": "{{succeeded}}件のスニペットをインポートしました。設定を閉じて確認してください。",
+      "successOnly_other": "{{succeeded}}件のスニペットをインポートしました。設定を閉じて確認してください。"
+    },
+    "title": "設定"
+  }
+}

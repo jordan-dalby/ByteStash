@@ -1,0 +1,6 @@
+{
+  "baseDropdown": {
+    "addNewLabel": "新規追加",
+    "defaultPlaceholder": "値を選択または入力"
+  }
+}

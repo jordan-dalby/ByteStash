@@ -1,0 +1,31 @@
+{
+  "card": {
+    "apiKeys": {
+      "title": "APIキー"
+    },
+    "shares": {
+      "title": "共有"
+    },
+    "snippets": {
+      "apiKeys": {
+        "active": "有効"
+      },
+      "shares": {
+        "total": "合計"
+      },
+      "title": "スニペット",
+      "viewType": {
+        "private": "非公開",
+        "public": "公開"
+      }
+    },
+    "users": {
+      "authType": {
+        "internal": "内部",
+        "oidc": "OIDC"
+      },
+      "title": "ユーザー"
+    }
+  },
+  "loadingMessage": "統計を読み込み中..."
+}
