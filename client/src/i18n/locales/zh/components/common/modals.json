@@ -1,0 +1,7 @@
+{
+  "changelogModal": {
+    "error": {
+      "default": "加载更新日志失败。请稍后再试。"
+    }
+  }
+}

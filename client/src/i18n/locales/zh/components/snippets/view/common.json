@@ -1,0 +1,56 @@
+{
+  "authAwareSnippetView": {
+    "error": {
+      "snippetLoad": "加载代码片段失败",
+      "snippetRequireAuth": "此代码片段需要认证后才能查看"
+    }
+  },
+  "baseSnippetStorage": {
+    "error": {
+      "sessionExpired": "会话已过期，请重新登录。",
+      "snippetCreated": "创建代码片段失败",
+      "snippetUpdated": "更新代码片段失败"
+    },
+    "success": {
+      "displayAll": "正在显示所有代码片段",
+      "displayFavorites": "正在显示收藏的代码片段",
+      "snippetCreated": "新代码片段创建成功",
+      "snippetUpdated": "代码片段更新成功"
+    }
+  },
+  "browsePublicSnippets": "浏览公开代码片段",
+  "filter": {
+    "filteredByCategories": "已按分类筛选"
+  },
+  "loadingSnippets": "正在加载代码片段...",
+  "signIn": "登录",
+  "sippetNotFound": "未找到代码片段",
+  "snippetContentArea": {
+    "error": {
+      "duplicateSnippet": "复制代码片段失败",
+      "loadSnippets": "加载代码片段失败",
+      "moveSnippetToRecycleBin": "将代码片段移至回收站失败。请重试。",
+      "sessionExpired": "会话已过期，请重新登录。",
+      "updateFavoriteStatusAdded": "更新收藏状态失败。请重试。",
+      "updateFavoriteStatusDeleted": "更新收藏状态失败。请重试。",
+      "updatePinStatusAdded": "更新置顶状态失败。请重试。",
+      "updatePinStatusDeleted": "更新置顶状态失败。请重试。"
+    },
+    "success": {
+      "duplicateSnippet": "代码片段复制成功",
+      "moveSnippetToRecycleBin": "代码片段已成功移至回收站",
+      "updateFavoriteStatusAdded": "代码片段已成功加入收藏",
+      "updateFavoriteStatusDeleted": "代码片段已成功移出收藏",
+      "updatePinStatusAdded": "代码片段已成功置顶",
+      "updatePinStatusDeleted": "代码片段已成功取消置顶"
+    }
+  },
+  "storageHeader": {
+    "private": "你正在查看自己的私有代码片段。只有你可以查看和修改这些代码片段。",
+    "public": "你正在查看公开分享的代码片段。这些代码片段为只读，所有人都可见。"
+  },
+  "viewSwitch": {
+    "private": "私有",
+    "public": "公开"
+  }
+}

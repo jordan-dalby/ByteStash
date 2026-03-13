@@ -1,0 +1,56 @@
+{
+  "copyButton": {
+    "title": "复制到剪贴板"
+  },
+  "downloadArchiveButton": {
+    "error": {
+      "failedDownload": "下载压缩包失败"
+    },
+    "fileLabel_one": "{{count, number}} 个文件",
+    "fileLabel_other": "{{count, number}} 个文件",
+    "label": "全部下载",
+    "success": {
+      "downloadedAll": "已下载全部代码片段"
+    },
+    "title": "将所有文件下载为 ZIP 压缩包"
+  },
+  "downloadButton": {
+    "error": {
+      "failedDownload": "下载文件失败"
+    },
+    "success": {
+      "downloaded": "“{{fileName}}” 下载成功"
+    },
+    "title": "下载 {{fileName}}",
+    "warning": {
+      "nothing": "没有可下载的内容"
+    }
+  },
+  "fileUploadButton": {
+    "error": {
+      "unknown": "未知错误"
+    },
+    "info": {
+      "duplicateDetected": "检测到重复文件",
+      "duplicatesDetected_one": "检测到 {{count, number}} 个重复文件",
+      "duplicatesDetected_other": "检测到 {{count, number}} 个重复文件"
+    },
+    "label": "上传代码文件",
+    "loadFromUrl": {
+      "contentMaxSizeError": "内容大小必须小于 {{max}}",
+      "invalidUrl": "请输入有效的 URL",
+      "label": "从 URL 加载",
+      "title": "从 URL 加载代码（例如 GitHub 原始链接）"
+    },
+    "success": {
+      "filesUploaded_one": "{{count, number}} 个文件上传成功",
+      "filesUploaded_other": "{{count, number}} 个文件上传成功",
+      "fileUploaded": "“{{fileName}}” 上传成功",
+      "someFilesUploaded": "{{total}} 个文件中有 {{successCount}} 个上传成功"
+    },
+    "title": "上传代码文件以自动创建片段"
+  },
+  "rawButton": {
+    "title": "打开原始内容"
+  }
+}

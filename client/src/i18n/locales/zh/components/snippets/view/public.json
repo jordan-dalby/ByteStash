@@ -1,0 +1,18 @@
+{
+  "publicSnippetContentArea": {
+    "error": {
+      "addSnippetToCollection": "将代码片段添加到你的收藏失败",
+      "failedLoadSnippets": "加载公开代码片段失败"
+    },
+    "filter": {
+      "byCategories": "已按分类筛选"
+    },
+    "info": {
+      "requireAuth": "请登录后将此代码片段添加到你的收藏"
+    },
+    "loadingSnippets": "正在加载代码片段...",
+    "success": {
+      "addSnippetToCollection": "代码片段已添加到你的收藏"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "adminTable": {
+    "defaultEmptyMessage": "未找到数据",
+    "defaultLoadingMessage": "加载中..."
+  },
+  "filterInput": {
+    "defaultPlaceholder": "搜索..."
+  },
+  "filterSelect": {
+    "defaultPlaceholder": "请选择..."
+  }
+}

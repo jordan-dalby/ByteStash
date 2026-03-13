@@ -1,0 +1,63 @@
+{
+  "action": {
+    "activate": "启用用户",
+    "deactivate": "停用用户",
+    "delete": "删除用户"
+  },
+  "columns": {
+    "labels": {
+      "actions": "操作",
+      "apiKeysCount": "API 密钥",
+      "authType": "认证类型",
+      "created": "创建时间",
+      "email": "邮箱",
+      "lastLogin": "最后登录",
+      "snippetsCount": "代码片段",
+      "status": "状态",
+      "username": "用户名"
+    }
+  },
+  "confirmationModal": {
+    "message": "确定要删除此用户吗？这将永久删除其所有代码片段、API 密钥和分享。此操作无法撤销。",
+    "title": "删除用户"
+  },
+  "entityName_one": "用户",
+  "entityName_other": "用户",
+  "error": {
+    "delete": {
+      "default": "删除用户失败"
+    },
+    "update": {
+      "default": "更新用户失败"
+    }
+  },
+  "filters": {
+    "authType": {
+      "all": "所有认证类型",
+      "internal": "内部",
+      "oidc": "OIDC"
+    },
+    "search": "搜索用户...",
+    "status": {
+      "active": "启用",
+      "all": "全部状态",
+      "inactive": "停用"
+    }
+  },
+  "status": {
+    "active": "启用",
+    "inactive": "停用"
+  },
+  "success": {
+    "delete": {
+      "default": "用户删除成功"
+    },
+    "update": {
+      "default": "用户状态已更新"
+    }
+  },
+  "table": {
+    "emptyMessage": "未找到用户",
+    "loadingMessage": "正在加载用户..."
+  }
+}

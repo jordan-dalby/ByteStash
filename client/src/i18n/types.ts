@@ -3,4 +3,5 @@ export enum Locale {
   ru = 'ru',
   es = 'es',
   ja = 'ja',
+  zh = 'zh',
 }

@@ -1,0 +1,11 @@
+{
+  "addToFavorites": "加入收藏",
+  "deleteSnippet": "删除代码片段",
+  "duplicateSnippet": "复制代码片段",
+  "editSnippet": "编辑代码片段",
+  "openInNewTab": "在新标签页打开",
+  "pinSnippet": "置顶代码片段",
+  "removeFromFavorites": "移出收藏",
+  "shareSnippet": "分享代码片段",
+  "unpinSnippet": "取消置顶"
+}

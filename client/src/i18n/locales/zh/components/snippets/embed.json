@@ -1,0 +1,26 @@
+{
+  "embedCopyButton": {
+    "title": "复制到剪贴板"
+  },
+  "embedModal": {
+    "form": {
+      "embedCode": "嵌入代码",
+      "fragmentToShow": {
+        "all": "所有片段",
+        "label": "要显示的片段（可选）"
+      },
+      "showDescription": "显示描述",
+      "showFileHeaders": "显示文件头",
+      "showPoweredBy": "显示 “Powered by ByteStash”",
+      "showTitle": "显示标题",
+      "theme": "主题"
+    },
+    "subTitle": "自定义嵌入内容",
+    "title": "嵌入代码片段"
+  },
+  "embedView": {
+    "error": {
+      "default": "加载代码片段失败"
+    }
+  }
+}

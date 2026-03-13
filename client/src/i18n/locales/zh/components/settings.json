@@ -1,0 +1,93 @@
+{
+  "settingsModal": {
+    "block": {
+      "category": {
+        "expandCategories": {
+          "description": "自动展开分类分组",
+          "label": "展开分类"
+        },
+        "showCategories": {
+          "description": "为代码片段显示分类标签",
+          "label": "显示分类"
+        },
+        "title": "分类"
+      },
+      "dataManagement": {
+        "export": {
+          "label": "导出代码片段"
+        },
+        "import": {
+          "errors": {
+            "failed": "导入 “{{title}}” 失败：{{error}}",
+            "occurred_one": "发生了 {{count, number}} 个错误",
+            "occurred_other": "发生了 {{count, number}} 个错误"
+          },
+          "label": "导入代码片段",
+          "progress": "正在导入代码片段..."
+        },
+        "title": "数据管理"
+      },
+      "locale": {
+        "title": "语言"
+      },
+      "search": {
+        "includeCodeInSearch": {
+          "description": "在代码内容中搜索，而不仅仅是标题",
+          "label": "搜索代码内容"
+        },
+        "title": "搜索"
+      },
+      "theme": {
+        "title": "主题"
+      },
+      "view": {
+        "compactView": {
+          "description": "以更紧凑的格式显示代码片段",
+          "label": "紧凑视图"
+        },
+        "previewLines": {
+          "description": "在代码片段列表中显示代码预览",
+          "label": "显示代码预览"
+        },
+        "showCodePreview": {
+          "description": "预览中显示的最大行数（1-20）",
+          "label": "预览行数"
+        },
+        "showLineNumbers": {
+          "description": "在代码块中显示行号",
+          "label": "显示行号"
+        },
+        "title": "视图"
+      }
+    },
+    "export": {
+      "error": {
+        "default": "导出代码片段失败",
+        "noSnippets": "没有可导出的代码片段"
+      },
+      "markdown": {
+        "error": {
+          "default": "导出 Markdown 失败"
+        },
+        "success": {
+          "default": "Markdown 导出成功"
+        },
+        "warning": {
+          "default": "没有可导出的代码片段"
+        }
+      },
+      "success": {
+        "default": "成功导出 {{total}} 个代码片段"
+      }
+    },
+    "import": {
+      "error": {
+        "default": "导入代码片段失败"
+      },
+      "hasFailed": "已导入 {{succeeded}} 个代码片段，{{failed}} 个失败。详情请查看控制台。",
+      "successOnly_one": "成功导入 {{succeeded}} 个代码片段。关闭设置后即可查看。",
+      "successOnly_other": "成功导入 {{succeeded}} 个代码片段。关闭设置后即可查看。"
+    },
+    "title": "设置"
+  }
+}

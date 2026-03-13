@@ -1,0 +1,63 @@
+{
+  "editSnippetModal": {
+    "addSnippet": "添加新片段",
+    "editSnippet": "编辑片段",
+    "error": {
+      "savingFailed": "保存代码片段时发生错误。请重试。"
+    },
+    "form": {
+      "categories": {
+        "counter": "{{categories}}/{{max}} 个分类",
+        "label": "分类（最多 {{max}} 个）",
+        "placeholder": "输入分类并按 Enter 或逗号"
+      },
+      "codeFragments": {
+        "add": "添加新片段",
+        "label": "代码片段（{{fragments}}）"
+      },
+      "description": {
+        "label": "描述",
+        "placeholder": "为该代码片段写一个简短描述"
+      },
+      "isPublic": {
+        "description": "公开代码片段可被任何人查看，无需认证",
+        "label": "将代码片段设为公开"
+      },
+      "title": {
+        "counter": "{{characters}}/{{max}} 个字符",
+        "label": "标题",
+        "placeholder": "输入代码片段标题（最多 {{max}} 个字符）"
+      }
+    },
+    "fragmentRequired": "至少需要一个代码片段",
+    "mustHaveFileNames": "所有片段都必须填写文件名",
+    "unsavedChanges": "你有未保存的更改。确定要关闭吗？"
+  },
+  "searchFiles": "搜索文件...",
+  "noFilesFound": "没有与搜索匹配的文件",
+  "expandSidebar": "展开侧边栏",
+  "filterFiles": "筛选文件",
+  "fileExtensions": "文件扩展名",
+  "noExtension": "无扩展名",
+  "fragmentEditor": {
+    "action": {
+      "collapse": "折叠",
+      "delete": "删除",
+      "expand": "展开"
+    },
+    "form": {
+      "fileName": {
+        "placeholder": "文件名"
+      },
+      "language": {
+        "placeholder": "选择语言",
+        "sections": {
+          "other": "其他",
+          "used": "常用"
+        }
+      }
+    },
+    "moveDown": "下移",
+    "moveUp": "上移"
+  }
+}

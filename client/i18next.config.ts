@@ -8,6 +8,7 @@ export default defineConfig({
     Locale.ru,
     Locale.es,
     Locale.ja,
+    Locale.zh,
   ],
   extract: {
     input: 'src/**/*.{js,jsx,ts,tsx}',

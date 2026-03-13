@@ -1,0 +1,30 @@
+{
+  "action": {
+    "clear": "清空搜索",
+    "newSnippet": "新建片段",
+    "openSettings": "打开设置",
+    "recycleBin": "回收站",
+    "showAll": "显示全部",
+    "showFavorites": "显示收藏"
+  },
+  "categories": {
+    "addNew": "新增",
+    "title": "分类"
+  },
+  "defaultPlaceholder": "搜索代码片段...（输入 # 查看所有可用分类）",
+  "filter": {
+    "language": {
+      "all": "所有语言"
+    }
+  },
+  "sort": {
+    "alphaAsc": "按字母升序 A-Z",
+    "alphaDesc": "按字母降序 Z-A",
+    "newestFirst": "最新优先",
+    "oldestFirst": "最早优先"
+  },
+  "view": {
+    "grid": "网格视图",
+    "list": "列表视图"
+  }
+}

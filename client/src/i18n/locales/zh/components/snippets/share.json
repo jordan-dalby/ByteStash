@@ -1,0 +1,48 @@
+{
+  "sharedSnippetView": {
+    "browsePublicSnippets": "浏览公开代码片段",
+    "loadingSnippet": "正在加载代码片段...",
+    "snippetExpired": "此分享的代码片段已过期",
+    "snippetNotFound": "未找到代码片段"
+  },
+  "shareMenu": {
+    "activeShareLinks": {
+      "buttons": {
+        "copy": "复制链接",
+        "delete": "删除分享链接",
+        "requiresAuth": {
+          "false": "嵌入代码片段",
+          "true": "只有无需认证的代码片段才可嵌入"
+        }
+      },
+      "date": {
+        "expired": "已过期",
+        "neverExpires": "永不过期"
+      },
+      "noLinks": "没有有效的分享链接",
+      "relativeExpiryTime": "{{date}} 后过期",
+      "requiresAuth": {
+        "false": "公开访问",
+        "true": "受保护 - 需要认证"
+      },
+      "title": "有效的分享链接"
+    },
+    "createButtonText": "创建分享链接",
+    "error": {
+      "created": "创建分享链接失败",
+      "deleted": "删除分享链接失败",
+      "invalidDuration": "时长格式无效。请使用 1h、2d、30m 等格式。",
+      "load": "加载分享失败",
+      "unknownExpiryTime": "未知过期时间"
+    },
+    "expiresIn": "过期时间（例如 1h、2d、30m）",
+    "expiresInPlaceholder": "永不过期",
+    "requiresAuth": "需要认证",
+    "subTitle": "创建新的分享链接",
+    "success": {
+      "created": "分享链接已创建",
+      "deleted": "分享链接已删除"
+    },
+    "title": "分享代码片段"
+  }
+}

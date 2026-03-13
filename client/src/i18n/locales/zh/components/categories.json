@@ -1,0 +1,12 @@
+{
+  "categoryList": {
+    "moreCount": "还有 {{moreCount}} 个",
+    "noData": "没有分类",
+    "showLess": "收起"
+  },
+  "categorySuggestions": {
+    "addNewLabel": "新增",
+    "placeholder": "输入以搜索分类...",
+    "title": "分类"
+  }
+}

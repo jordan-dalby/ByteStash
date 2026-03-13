@@ -1,0 +1,31 @@
+{
+  "card": {
+    "apiKeys": {
+      "title": "API 密钥"
+    },
+    "shares": {
+      "title": "分享"
+    },
+    "snippets": {
+      "apiKeys": {
+        "active": "启用"
+      },
+      "shares": {
+        "total": "总数"
+      },
+      "title": "代码片段",
+      "viewType": {
+        "private": "私有",
+        "public": "公开"
+      }
+    },
+    "users": {
+      "authType": {
+        "internal": "内部",
+        "oidc": "OIDC"
+      },
+      "title": "用户"
+    }
+  },
+  "loadingMessage": "正在加载统计信息..."
+}

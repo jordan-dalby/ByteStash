@@ -1,0 +1,49 @@
+{
+  "action": {
+    "copyShareLink": "复制分享链接",
+    "delete": "删除分享",
+    "viewSnippet": "查看代码片段"
+  },
+  "columns": {
+    "labels": {
+      "actions": "操作",
+      "auth": "需要认证",
+      "created": "创建时间",
+      "expires": "过期时间",
+      "id": "分享 ID",
+      "owner": "所有者",
+      "title": "标题"
+    }
+  },
+  "confirmationModal": {
+    "message": "确定要删除这个分享链接吗？拥有该链接的任何人都将无法再访问此代码片段。此操作无法撤销。",
+    "title": "删除分享"
+  },
+  "entityName_one": "分享",
+  "entityName_other": "分享",
+  "error": {
+    "delete": {
+      "default": "删除分享失败"
+    }
+  },
+  "filters": {
+    "authType": {
+      "all": "所有认证类型",
+      "public": "公开",
+      "requiresAuth": "需要认证"
+    },
+    "userId": "按用户 ID 筛选"
+  },
+  "success": {
+    "copied": {
+      "default": "分享链接已复制到剪贴板"
+    },
+    "delete": {
+      "default": "分享删除成功"
+    }
+  },
+  "table": {
+    "emptyMessage": "未找到分享",
+    "loadingMessage": "正在加载分享..."
+  }
+}

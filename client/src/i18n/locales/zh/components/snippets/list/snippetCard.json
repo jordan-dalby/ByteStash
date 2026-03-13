@@ -1,0 +1,37 @@
+{
+  "confirmationModalDelete": {
+    "confirmLabel": {
+      "isRecycleView": {
+        "false": "移至回收站",
+        "true": "永久删除"
+      }
+    },
+    "message": {
+      "isRecycleView": {
+        "false": "确定要将 “{{title}}” 移至回收站吗？",
+        "true": "确定要永久删除 “{{title}}” 吗？此操作无法撤销。"
+      }
+    },
+    "title": {
+      "isRecycleView": {
+        "false": "移至回收站",
+        "true": "确认删除"
+      }
+    }
+  },
+  "confirmationModalRestore": {
+    "message": "确定要恢复 “{{title}}” 吗？",
+    "title": "确认恢复"
+  },
+  "date": {
+    "ago": "{{date}} 前",
+    "expiringSoon": "即将过期",
+    "left": "剩余 {{date}}"
+  },
+  "defaultDescription": "暂无描述",
+  "defaultUpdateTime": "未知",
+  "favorite": "已收藏",
+  "pinned": "已置顶",
+  "public": "公开",
+  "shared": "已分享"
+}

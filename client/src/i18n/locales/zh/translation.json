@@ -1,0 +1,54 @@
+{
+  "action": {
+    "addSnippet": "添加片段",
+    "cancel": "取消",
+    "changePassword": "修改密码",
+    "clear": "清除",
+    "clearAll": "全部清除",
+    "close": "关闭",
+    "confirm": "确认",
+    "createAccount": "创建账户",
+    "delete": "删除",
+    "edit": "编辑",
+    "hidePassword": "隐藏密码",
+    "load": "加载",
+    "maximize": "最大化",
+    "minimize": "最小化",
+    "restore": "还原",
+    "save": "保存",
+    "saving": "保存中...",
+    "showPassword": "显示密码",
+    "signIn": "登录"
+  },
+  "confirmPassword": "确认密码",
+  "loading": "加载中...",
+  "locale": {
+    "en": "English",
+    "es": "Español",
+    "ru": "Русский",
+    "ja": "日本語",
+    "zh": "简体中文"
+  },
+  "no": "否",
+  "or": "或",
+  "pagination": {
+    "next": "下一页",
+    "pageOf": "第 {{currentPage}} 页，共 {{totalPages}} 页",
+    "previous": "上一页",
+    "total": "共 {{total}} 条",
+    "useSnippetPagination": {
+      "error": {
+        "failedSnippetsLoad": "加载代码片段失败",
+        "sessionExpired": "会话已过期，请重新登录。"
+      }
+    }
+  },
+  "password": "密码",
+  "showing": "显示中",
+  "theme": {
+    "dark": "深色",
+    "light": "浅色",
+    "system": "跟随系统"
+  },
+  "username": "用户名"
+}

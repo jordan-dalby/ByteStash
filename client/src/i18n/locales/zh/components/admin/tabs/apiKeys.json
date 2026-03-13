@@ -1,0 +1,33 @@
+{
+  "apiKeyDeletedSuccessfully": "API 密钥删除成功",
+  "columns": {
+    "labels": {
+      "actions": "操作",
+      "created": "创建时间",
+      "lastUsed": "最后使用时间",
+      "name": "名称",
+      "owner": "所有者",
+      "status": "状态"
+    }
+  },
+  "confirmationModal": {
+    "message": "确定要删除这个 API 密钥吗？删除后，该密钥所有者将无法再使用它访问 API。此操作无法撤销。",
+    "title": "删除 API 密钥"
+  },
+  "entityName_one": "API 密钥",
+  "entityName_other": "API 密钥",
+  "error": {
+    "default": "删除 API 密钥失败"
+  },
+  "filters": {
+    "userId": "按用户 ID 筛选"
+  },
+  "status": {
+    "active": "启用",
+    "inactive": "停用"
+  },
+  "table": {
+    "emptyMessage": "未找到 API 密钥",
+    "loadingMessage": "正在加载 API 密钥..."
+  }
+}

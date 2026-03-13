@@ -1,0 +1,57 @@
+{
+  "action": {
+    "delete": "删除代码片段",
+    "makePrivate": "设为私有",
+    "makePublic": "设为公开",
+    "scanForOffensiveContent": "扫描冒犯性内容",
+    "showAllSnippets": "显示全部代码片段",
+    "viewSnippet": "查看代码片段"
+  },
+  "columns": {
+    "labels": {
+      "actions": "操作",
+      "fragments": "片段数",
+      "owner": "所有者",
+      "title": "标题",
+      "updated": "更新时间",
+      "visibility": "可见性"
+    }
+  },
+  "confirmationModal": {
+    "message": "确定要永久删除这个代码片段吗？此操作无法撤销。",
+    "title": "删除代码片段"
+  },
+  "containsOffensiveWords": "包含冒犯性词汇：{{words}}",
+  "entityName_one": "代码片段",
+  "entityName_other": "代码片段",
+  "error": {
+    "delete": {
+      "default": "删除代码片段失败"
+    },
+    "update": {
+      "default": "更新代码片段可见性失败"
+    }
+  },
+  "filters": {
+    "search": "搜索代码片段...",
+    "userId": "用户 ID",
+    "visibility": {
+      "all": "全部可见性",
+      "private": "私有",
+      "public": "公开"
+    }
+  },
+  "offensiveContentMessage": "发现 {{total}} 个{{entityName}}包含冒犯性内容",
+  "success": {
+    "delete": {
+      "default": "代码片段删除成功"
+    },
+    "update": {
+      "default": "代码片段可见性已更新"
+    }
+  },
+  "table": {
+    "emptyMessage": "未找到代码片段",
+    "loadingMessage": "正在加载代码片段..."
+  }
+}

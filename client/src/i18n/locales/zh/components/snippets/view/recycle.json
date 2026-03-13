@@ -1,0 +1,37 @@
+{
+  "recycleSnippetContentArea": {
+    "error": {
+      "deleteSnippet": "删除代码片段失败",
+      "loadSnippets": "加载代码片段失败",
+      "restoreSnippet": "恢复代码片段失败",
+      "sessionExpired": "会话已过期，请重新登录。"
+    },
+    "filter": {
+      "byCategories": "已按分类筛选"
+    },
+    "loadingSnippets": "正在加载代码片段...",
+    "success": {
+      "deleteSnippet": "代码片段删除成功",
+      "restoreSnippet": "代码片段恢复成功"
+    }
+  },
+  "recycleSnippetStorage": {
+    "backToSnippets": "返回代码片段",
+    "confirmationModal": {
+      "message": "确定要永久清空回收站中的所有代码片段吗？此操作无法撤销。",
+      "title": "确认删除"
+    },
+    "description": "回收站中的代码片段将在 30 天后被永久删除",
+    "error": {
+      "clear": "清空回收站失败。请重试。",
+      "sessionExpired": "会话已过期，请重新登录。"
+    },
+    "info": {
+      "noSnippets": "回收站中没有可清空的代码片段"
+    },
+    "recycleBin": "回收站",
+    "success": {
+      "clear": "回收站中的所有代码片段已清空"
+    }
+  }
+}

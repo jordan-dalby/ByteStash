@@ -9,6 +9,7 @@ const DATE_FNS_LOCALE_MAP: Record<string, string> = {
   en: 'enUS',
   es: 'es',
   ru: 'ru',
+  zh: 'zhCN',
 };
 
 async function setDateFnsDefaultOptions(language?: string) {
