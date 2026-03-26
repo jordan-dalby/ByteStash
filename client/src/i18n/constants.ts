@@ -6,6 +6,7 @@ export const LOCALE_ISO_CODES: Record<Locale, string> = {
   [Locale.es]: 'es-ES',
   [Locale.ja]: 'ja-JP',
   [Locale.zh]: 'zh-CN',
+  [Locale.it]: 'it-IT',
 };
 export const DEFAULT_LOCALE: Locale = Locale.en;
 export const DEFAULT_LOCALE_ISO_CODE = LOCALE_ISO_CODES[Locale.en];
