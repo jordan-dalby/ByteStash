@@ -1,0 +1,93 @@
+{
+  "settingsModal": {
+    "block": {
+      "category": {
+        "expandCategories": {
+          "description": "Espandi automaticamente i gruppi di categorie",
+          "label": "Espandi Categorie"
+        },
+        "showCategories": {
+          "description": "Mostra etichette categorie sugli snippet",
+          "label": "Mostra Categorie"
+        },
+        "title": "Categoria"
+      },
+      "dataManagement": {
+        "export": {
+          "label": "Esporta Snippet"
+        },
+        "import": {
+          "errors": {
+            "failed": "Errore importazione snippet \"{{title}}\": {{error}}",
+            "occurred_one": "{{count, number}} errori rilevati",
+            "occurred_other": "{{count, number}} errori rilevati"
+          },
+          "label": "Importa Snippet",
+          "progress": "Importazione snippet in corso..."
+        },
+        "title": "Gestione Dati"
+      },
+      "locale": {
+        "title": "Locale"
+      },
+      "search": {
+        "includeCodeInSearch": {
+          "description": "Ricerca anche all'interno del contenuto del codice, non solo i titoli",
+          "label": "Includi Codice nella ricerca"
+        },
+        "title": "Ricerca"
+      },
+      "theme": {
+        "title": "Tema"
+      },
+      "view": {
+        "compactView": {
+          "description": "Mostra snippet in un formato più compatto",
+          "label": "Visione Compatta"
+        },
+        "previewLines": {
+          "description": "Mostra una preview del codice nella lista snippet",
+          "label": "Mostra Preview Codice"
+        },
+        "showCodePreview": {
+          "description": "Massimo numero di linee da mostrare nella preview (1-20)",
+          "label": "Numero di Linee nella Preview"
+        },
+        "showLineNumbers": {
+          "description": "Mostra numero linea nei blocchi codice",
+          "label": "Mostra Numero Linee"
+        },
+        "title": "Mostra"
+      }
+    },
+    "export": {
+      "error": {
+        "default": "Errore Esportazione snippet",
+        "noSnippets": "Nessun snippet disponibile per l'esportazione"
+      },
+      "markdown": {
+        "error": {
+          "default": "Errore esportazione Markdown"
+        },
+        "success": {
+          "default": "Markdown esportato con successo"
+        },
+        "warning": {
+          "default": "Nessun snippet disponibile per l'esportazione"
+        }
+      },
+      "success": {
+        "default": "{{total}} snippet esportati con successo"
+      }
+    },
+    "import": {
+      "error": {
+        "default": "Errore importazione snippet"
+      },
+      "hasFailed": "Importati {{succeeded}} snippet, {{failed}} hanno dato errore. Controlla la console per i dettagli.",
+      "successOnly_one": "Importati con successo {{succeeded}} snippet. Chiudi le impostazioni per vederli.",
+      "successOnly_other": "Importati con successo {{succeeded}} snippet. Chiudi le impostazioni per vederli."
+    },
+    "title": "Impostazioni"
+  }
+}

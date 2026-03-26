@@ -1,0 +1,12 @@
+{
+  "categoryList": {
+    "moreCount": "{{moreCount}} ancora",
+    "noData": "Nessuna categoria",
+    "showLess": "Mostra meno"
+  },
+  "categorySuggestions": {
+    "addNewLabel": "Aggiungi nuova",
+    "placeholder": "Digita per cercare categorie...",
+    "title": "Categorie"
+  }
+}

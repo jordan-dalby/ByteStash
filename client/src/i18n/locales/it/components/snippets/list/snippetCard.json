@@ -1,0 +1,37 @@
+{
+  "confirmationModalDelete": {
+    "confirmLabel": {
+      "isRecycleView": {
+        "false": "Sposta nel Cestino",
+        "true": "Cancella permanentemente"
+      }
+    },
+    "message": {
+      "isRecycleView": {
+        "false": "Sei sicuro di voler spostare \"{{title}}\" nel Cestino?",
+        "true": "Sei sicuro di voler cancellare permanentemente \"{{title}}\"? L'azione non può essere annullata."
+      }
+    },
+    "title": {
+      "isRecycleView": {
+        "false": "Sposta nel Cestino",
+        "true": "Conferma cancellazione"
+      }
+    }
+  },
+  "confirmationModalRestore": {
+    "message": "Sei sicuro di voler ripristinare \"{{title}}\"?",
+    "title": "Conferma ripristino"
+  },
+  "date": {
+    "ago": "{{date}} fa",
+    "expiringSoon": "in scadenza",
+    "left": "{{date}} mancanti"
+  },
+  "defaultDescription": "Nessuna descrizione disponibile",
+  "defaultUpdateTime": "Sconosciuto",
+  "favorite": "Preferito",
+  "pinned": "Fissato",
+  "public": "Publico",
+  "shared": "Condiviso"
+}

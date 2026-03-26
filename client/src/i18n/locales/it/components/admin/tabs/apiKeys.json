@@ -1,0 +1,33 @@
+{
+  "apiKeyDeletedSuccessfully": "Chiave API cancellata con successo",
+  "columns": {
+    "labels": {
+      "actions": "Azioni",
+      "created": "Creata",
+      "lastUsed": "Ultimo utilizzo",
+      "name": "Nome",
+      "owner": "Proprietario",
+      "status": "Stato"
+    }
+  },
+  "confirmationModal": {
+    "message": "Sei sicuro di voler cancellare questa chiave API? Il suo proprietario non sarà più in grado di accedere all'API. L'azione non può esser annullata.",
+    "title": "Cancella Chiave API"
+  },
+  "entityName_one": "Chiave API",
+  "entityName_other": "Chiavi API",
+  "error": {
+    "default": "Errore cancellazione chiave API"
+  },
+  "filters": {
+    "userId": "Filtra per ID Utente"
+  },
+  "status": {
+    "active": "Attivo",
+    "inactive": "Disattivo"
+  },
+  "table": {
+    "emptyMessage": "Nessuna chiave API trovata",
+    "loadingMessage": "Caricamento chiavi API..."
+  }
+}

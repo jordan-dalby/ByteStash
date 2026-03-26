@@ -1,0 +1,49 @@
+{
+  "action": {
+    "copyShareLink": "Copia link di condivisione",
+    "delete": "Cancella condivisione",
+    "viewSnippet": "Mostra snippet"
+  },
+  "columns": {
+    "labels": {
+      "actions": "Azioni",
+      "auth": "Autenticazione necessaria",
+      "created": "Creato",
+      "expires": "Scade",
+      "id": "ID Condivisione",
+      "owner": "Proprietario",
+      "title": "Titolo"
+    }
+  },
+  "confirmationModal": {
+    "message": "Sei sicuro di voler cancellare questo link di condivisione? Chiunque con il vecchio link non sarà più in grado di accedere a questo snippet. L'azione non può essere annullata.",
+    "title": "Cancella condivisione"
+  },
+  "entityName_one": "condivisione",
+  "entityName_other": "condivisioni",
+  "error": {
+    "delete": {
+      "default": "Errore cancellazione condivisione"
+    }
+  },
+  "filters": {
+    "authType": {
+      "all": "Tutti i tipi di Autenticazione",
+      "public": "Pubblico",
+      "requiresAuth": "Richiede Autenticazione"
+    },
+    "userId": "Filtra per ID Utente"
+  },
+  "success": {
+    "copied": {
+      "default": "Link di condivisione copiato negli appunti"
+    },
+    "delete": {
+      "default": "Link di condivisione cancellato con successo"
+    }
+  },
+  "table": {
+    "emptyMessage": "Nessun Link di condivisione trovato",
+    "loadingMessage": "Caricamento condivisioni..."
+  }
+}

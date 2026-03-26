@@ -1,0 +1,71 @@
+{
+  "copyButton": {
+    "title": "Copia negli appunti"
+  },
+  "downloadArchiveButton": {
+    "error": {
+      "failedDownload": "Errore download archivio"
+    },
+    "fileLabel_one": "{{count, number}} file",
+    "fileLabel_other": "{{count, number}} file",
+    "label": "Scarica tutto",
+    "success": {
+      "downloadedAll": "Tutti i frammenti di codice son stati scaricati"
+    },
+    "title": "Scarica tutto come archivio ZIP"
+  },
+  "downloadButton": {
+    "error": {
+      "failedDownload": "Errore download del file"
+    },
+    "success": {
+      "downloaded": "\"{{fileName}}\" scaricato con successo"
+    },
+    "title": "Scarica {{fileName}}",
+    "warning": {
+      "nothing": "Niente da scaricare"
+    }
+  },
+  "exportButton": {
+    "title": "Esporta come immagine",
+    "tooltip": "Esporta"
+  },
+  "exportModal": {
+    "copyClipboard": "Copia",
+    "downloadPng": "Scarica PNG",
+    "downloadSvg": "Scarica SVG",
+    "errorCopy": "Errore copia immagine",
+    "errorGenerate": "Errore generazione immagine",
+    "shareLinkedIn": "Condividi su LinkedIn",
+    "shareTwitter": "Condividi su X",
+    "successCopy": "Immagine copiata negli appunti!",
+    "title": "Esporta codice"
+  },
+  "fileUploadButton": {
+    "error": {
+      "unknown": "Errore sconosciuto"
+    },
+    "info": {
+      "duplicateDetected": "File duplicati rilevati",
+      "duplicatesDetected_one": "{{count, number}} file duplicati rilevati",
+      "duplicatesDetected_other": "{{count, number}} file duplicati rilevati"
+    },
+    "label": "Carica file di codice",
+    "loadFromUrl": {
+      "contentMaxSizeError": "La dimensione massima deve esser inferiore a {{max}}",
+      "invalidUrl": "Inserisci un URL valido",
+      "label": "Carica da URL",
+      "title": "Carica il codice da un URL (e.g., raw GitHub link)"
+    },
+    "success": {
+      "filesUploaded_one": "{{count, number}} file caricati con successo",
+      "filesUploaded_other": "{{count, number}} file caricati con successo",
+      "fileUploaded": "\"{{fileName}}\" caricato con successo",
+      "someFilesUploaded": "{{successCount}} file su {{total}} caricati con successo"
+    },
+    "title": "Carica file di codice per creare automaticamente frammenti"
+  },
+  "rawButton": {
+    "title": "Apri raw"
+  }
+}

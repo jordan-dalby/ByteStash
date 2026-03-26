@@ -1,0 +1,18 @@
+{
+  "publicSnippetContentArea": {
+    "error": {
+      "addSnippetToCollection": "Errore aggiunta snippet alla tua collezione",
+      "failedLoadSnippets": "Errore caricamento snippet pubblici"
+    },
+    "filter": {
+      "byCategories": "Filtra per categoria"
+    },
+    "info": {
+      "requireAuth": "Effettua l'accesso per aggiungere snippet alla tua collezione"
+    },
+    "loadingSnippets": "Caricamento snippet...",
+    "success": {
+      "addSnippetToCollection": "Snippet aggiunto alla tua collezione"
+    }
+  }
+}

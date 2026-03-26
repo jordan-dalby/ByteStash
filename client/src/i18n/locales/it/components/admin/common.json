@@ -1,0 +1,12 @@
+{
+  "adminTable": {
+    "defaultEmptyMessage": "Nessun Risultato",
+    "defaultLoadingMessage": "Caricamento..."
+  },
+  "filterInput": {
+    "defaultPlaceholder": "Ricerca..."
+  },
+  "filterSelect": {
+    "defaultPlaceholder": "Seleziona..."
+  }
+}

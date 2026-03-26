@@ -1,0 +1,63 @@
+{
+  "action": {
+    "activate": "Attiva Utente",
+    "deactivate": "Disattiva Utente",
+    "delete": "Cancella Utente"
+  },
+  "columns": {
+    "labels": {
+      "actions": "Azioni",
+      "apiKeysCount": "Chiavi API",
+      "authType": "Tipo Autenticazione",
+      "created": "Creato",
+      "email": "Email",
+      "lastLogin": "Ultimo Accesso",
+      "snippetsCount": "Snippets",
+      "status": "Stato",
+      "username": "Nome Utente"
+    }
+  },
+  "confirmationModal": {
+    "message": "Sei sicuro di voler cancellare questo utente? Questo cancellerà tutti i suoi snippet , chiavi api e link di condivisione . L'azione non può essere annullata.",
+    "title": "Delete user"
+  },
+  "entityName_one": "utente",
+  "entityName_other": "usenti",
+  "error": {
+    "delete": {
+      "default": "Errore cancellazione utente"
+    },
+    "update": {
+      "default": "Errore aggiornamento utente"
+    }
+  },
+  "filters": {
+    "authType": {
+      "all": "Tutti i tipi di autenticazione",
+      "internal": "Interno",
+      "oidc": "OIDC"
+    },
+    "search": "Ricerca utenti...",
+    "status": {
+      "active": "Attivo",
+      "all": "Tutti gli stati",
+      "inactive": "Disattivo"
+    }
+  },
+  "status": {
+    "active": "Attivo",
+    "inactive": "Disattivo"
+  },
+  "success": {
+    "delete": {
+      "default": "Utente cancellato con successo"
+    },
+    "update": {
+      "default": "Utente Aggiornato con successo"
+    }
+  },
+  "table": {
+    "emptyMessage": "Nessun utente trovato",
+    "loadingMessage": "Caricamento utenti..."
+  }
+}

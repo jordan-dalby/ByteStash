@@ -1,0 +1,7 @@
+{
+  "changelogModal": {
+    "error": {
+      "default": "Errore caricamento changelog. Riprova più tardi."
+    }
+  }
+}

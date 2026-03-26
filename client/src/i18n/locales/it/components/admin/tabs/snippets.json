@@ -1,0 +1,57 @@
+{
+  "action": {
+    "delete": "Cancella snippet",
+    "makePrivate": "Rendi privato",
+    "makePublic": "Rendi pubblico",
+    "scanForOffensiveContent": "Scansione per Contenuti Offensivi",
+    "showAllSnippets": "Mostra tutti gli Snippet",
+    "viewSnippet": "Mostra snippet"
+  },
+  "columns": {
+    "labels": {
+      "actions": "Azioni",
+      "fragments": "Frammenti",
+      "owner": "Proprietario",
+      "title": "Titolo",
+      "updated": "Aggiornato",
+      "visibility": "Visibilità"
+    }
+  },
+  "confirmationModal": {
+    "message": "Sei sicuro di voler cancellare permanentemente questo snippet? L'azione non può esser annullata.",
+    "title": "Cancella snippet"
+  },
+  "containsOffensiveWords": "Contiene paroli offensive: {{words}}",
+  "entityName_one": "snippet",
+  "entityName_other": "snippets",
+  "error": {
+    "delete": {
+      "default": "Errore cancellazione snippet"
+    },
+    "update": {
+      "default": "Errore aggiornamento visibilità snippet"
+    }
+  },
+  "filters": {
+    "search": "Ricerca snippets...",
+    "userId": "ID Utente",
+    "visibility": {
+      "all": "Tutte le visibilità",
+      "private": "Privato",
+      "public": "Pubblico"
+    }
+  },
+  "offensiveContentMessage": "Trovati {{total}} {{entityName}} con contenuto offensivo",
+  "success": {
+    "delete": {
+      "default": "Snippet cancellato con successo"
+    },
+    "update": {
+      "default": "Visibilità Snippet aggiornata"
+    }
+  },
+  "table": {
+    "emptyMessage": "Nessun snippet trovato",
+    "loadingMessage": "Caricamento snippet..."
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "recycleSnippetContentArea": {
+    "error": {
+      "deleteSnippet": "Errore cancellazione snippet",
+      "loadSnippets": "Errore Caricamento snippet",
+      "restoreSnippet": "Errore ripristino snippet",
+      "sessionExpired": "Sessione Scaduta. Effettua nuovamente l'accesso."
+    },
+    "filter": {
+      "byCategories": "Filtra per categorie"
+    },
+    "loadingSnippets": "Caricamento snippet...",
+    "success": {
+      "deleteSnippet": "Snippet cancellato con successo",
+      "restoreSnippet": "Snippet ripristinato con successo"
+    }
+  },
+  "recycleSnippetStorage": {
+    "backToSnippets": "Torna agli Snippet",
+    "confirmationModal": {
+      "message": "Sei sicuro di voler cancellare permanentemente tutti gli snippet nel cestino? Questa azione non può esser annullata.",
+      "title": "Conferma Cancellazione"
+    },
+    "description": "Gli Snippet nel Cestino verranno cancellati permanentemente automaticamente dopo 30 giorni",
+    "error": {
+      "clear": "Errore svuotamento cestino. Riprova.",
+      "sessionExpired": "Sessione Scaduta. Effettua nuovamente l'accesso."
+    },
+    "info": {
+      "noSnippets": "Cestino vuoto"
+    },
+    "recycleBin": "Cestino",
+    "success": {
+      "clear": "Il cestino è stato svuotato"
+    }
+  }
+}

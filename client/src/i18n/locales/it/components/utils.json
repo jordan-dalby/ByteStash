@@ -1,0 +1,9 @@
+{
+  "config": {
+    "caution": "Attenzione",
+    "important": "Importante",
+    "note": "Nota",
+    "tip": "Suggerimento",
+    "warning": "Avviso"
+  }
+}

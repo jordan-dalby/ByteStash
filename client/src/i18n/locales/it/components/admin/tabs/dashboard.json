@@ -1,0 +1,31 @@
+{
+  "card": {
+    "apiKeys": {
+      "title": "Chiavi API"
+    },
+    "shares": {
+      "title": "Condivisioni"
+    },
+    "snippets": {
+      "apiKeys": {
+        "active": "Attivo"
+      },
+      "shares": {
+        "total": "Totale"
+      },
+      "title": "Snippets",
+      "viewType": {
+        "private": "Privato",
+        "public": "Pubblico"
+      }
+    },
+    "users": {
+      "authType": {
+        "internal": "Interno",
+        "oidc": "OIDC"
+      },
+      "title": "Utenti"
+    }
+  },
+  "loadingMessage": "Caricamento statistiche..."
+}

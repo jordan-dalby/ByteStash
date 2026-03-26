@@ -1,0 +1,56 @@
+{
+  "authAwareSnippetView": {
+    "error": {
+      "snippetLoad": "Errore caricamento snippet",
+      "snippetRequireAuth": "Questo snippet richiede l'autenticazione per esser mostrato"
+    }
+  },
+  "baseSnippetStorage": {
+    "error": {
+      "sessionExpired": "Sessione scaduta. Effettuare nuovamente l'accesso.",
+      "snippetCreated": "Errore creazione snippet",
+      "snippetUpdated": "Errore aggiornamento snippet"
+    },
+    "success": {
+      "displayAll": "Mostrando tutti gli snippet",
+      "displayFavorites": "Mostrando snippet preferiti",
+      "snippetCreated": "Nuovo snippet creato con successo",
+      "snippetUpdated": "Snippet aggiornato con successo"
+    }
+  },
+  "browsePublicSnippets": "Esplora snippet pubblici",
+  "filter": {
+    "filteredByCategories": "Filtra per categorie"
+  },
+  "loadingSnippets": "Caricamento snippet...",
+  "signIn": "Accedi",
+  "sippetNotFound": "Snippet non trovato",
+  "snippetContentArea": {
+    "error": {
+      "duplicateSnippet": "Errore duplicazione snippet",
+      "loadSnippets": "Errore caricamento snippet",
+      "moveSnippetToRecycleBin": "Errore spostamento snippet nel Cestino. Riprova.",
+      "sessionExpired": "Sessione scaduta. Effettua nuovamente l'accesso.",
+      "updateFavoriteStatusAdded": "Errore salvataggio snippet fra i preferiti. Riprova.",
+      "updateFavoriteStatusDeleted": "Errore rimozione snippet dai preferiti. Riprova.",
+      "updatePinStatusAdded": "Errore fissaggio snippet. Riprova.",
+      "updatePinStatusDeleted": "Errore rimozione snippet dai fissati. Riprova."
+    },
+    "success": {
+      "duplicateSnippet": "Snippet duplicato con successo",
+      "moveSnippetToRecycleBin": "Snippet spostato nel Cestino con successo",
+      "updateFavoriteStatusAdded": "Snippet aggiunto ai preferiti con successo",
+      "updateFavoriteStatusDeleted": "Snippet rimosso dai preferiti con successo",
+      "updatePinStatusAdded": "Snippet fissatto con successo",
+      "updatePinStatusDeleted": "Rimozione Snippet dai fissati eseguita con successo"
+    }
+  },
+  "storageHeader": {
+    "private": "Stai guardando i tuoi snippet privati. Solo tu puoi vedere e modificare questi snippet.",
+    "public": "Stai guardando snippet pubblicamente accessibili. Questi snippet sono di sola visione e visibili a chiunque."
+  },
+  "viewSwitch": {
+    "private": "Privato",
+    "public": "Pubblico"
+  }
+}

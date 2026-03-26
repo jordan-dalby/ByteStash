@@ -1,0 +1,30 @@
+{
+  "action": {
+    "clear": "Cancella ricerca",
+    "newSnippet": "Nuovo snippet",
+    "openSettings": "Apri impostazioni",
+    "recycleBin": "Cestino",
+    "showAll": "Mostra tutto",
+    "showFavorites": "Mostra preferiti"
+  },
+  "categories": {
+    "addNew": "Aggiungi Nuovo",
+    "title": "Categorie"
+  },
+  "defaultPlaceholder": "Ricerca snippet... (Digita # per vedere tutte le categorie disponibili)",
+  "filter": {
+    "language": {
+      "all": "Tutti i linguaggi"
+    }
+  },
+  "sort": {
+    "alphaAsc": "Alfabeticamente A-Z",
+    "alphaDesc": "Alfabeticamente Z-A",
+    "newestFirst": "Più recenti prima",
+    "oldestFirst": "Più vecchie prima"
+  },
+  "view": {
+    "grid": "Visione a griglia",
+    "list": "Visione a lista"
+  }
+}

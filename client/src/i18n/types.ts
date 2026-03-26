@@ -4,4 +4,5 @@ export enum Locale {
   es = 'es',
   ja = 'ja',
   zh = 'zh',
+  it = 'it'
 }

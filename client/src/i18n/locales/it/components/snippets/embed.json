@@ -1,0 +1,26 @@
+{
+  "embedCopyButton": {
+    "title": "Copia negli appunti"
+  },
+  "embedModal": {
+    "form": {
+      "embedCode": "Embed Codice",
+      "fragmentToShow": {
+        "all": "Tutti i frammenti",
+        "label": "Frammenti da mostrare (opzionale)"
+      },
+      "showDescription": "Mostra descrizione",
+      "showFileHeaders": "Mostra headers del file",
+      "showPoweredBy": "Mostra \"Offero da ByteStash\"",
+      "showTitle": "Mostra Titolo",
+      "theme": "Tema"
+    },
+    "subTitle": "Personalizza Embed",
+    "title": "Embed Snippet"
+  },
+  "embedView": {
+    "error": {
+      "default": "Errore caricamento snippet"
+    }
+  }
+}

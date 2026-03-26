@@ -1,0 +1,54 @@
+{
+  "action": {
+    "addSnippet": "Aggiungi snippet",
+    "cancel": "Annulla",
+    "changePassword": "Cambia password",
+    "clear": "Cancella",
+    "clearAll": "Cancella tutto",
+    "close": "Chiudi",
+    "confirm": "Conferma",
+    "createAccount": "Crea account",
+    "delete": "Cancella",
+    "edit": "Modifica",
+    "hidePassword": "Nascondi password",
+    "load": "Carica",
+    "maximize": "Ingrandisci",
+    "minimize": "Minimizza",
+    "restore": "Ripristina",
+    "save": "Salva",
+    "saving": "Salvataggio in corso...",
+    "showPassword": "Mostra password",
+    "signIn": "Accedi"
+  },
+  "confirmPassword": "Conferma Password",
+  "loading": "Caricamento in corso...",
+  "locale": {
+    "en": "Inglese",
+    "es": "Spagnolo",
+    "ja": "Giapponese",
+    "ru": "Russo",
+    "it":"Italian"
+  },
+  "no": "no",
+  "or": "oppure",
+  "pagination": {
+    "next": "Prossima",
+    "pageOf": "Pagina {{currentPage}} di {{totalPages}}",
+    "previous": "Precedente",
+    "total": "{{total}} totali",
+    "useSnippetPagination": {
+      "error": {
+        "failedSnippetsLoad": "Errore caricamento snippet",
+        "sessionExpired": "Sessione scaduta. Effettua nuovamente l'accesso"
+      }
+    }
+  },
+  "password": "Password",
+  "showing": "Mostrando",
+  "theme": {
+    "dark": "Scuro",
+    "light": "Bianco",
+    "system": "Sistema"
+  },
+  "username": "Nome Utente"
+}

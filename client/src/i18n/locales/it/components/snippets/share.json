@@ -1,0 +1,48 @@
+{
+  "sharedSnippetView": {
+    "browsePublicSnippets": "Esplora snippet pubblici",
+    "loadingSnippet": "Caricamento snippet...",
+    "snippetExpired": "Questo snippet condiviso è scaduto",
+    "snippetNotFound": "Snippet non trovato"
+  },
+  "shareMenu": {
+    "activeShareLinks": {
+      "buttons": {
+        "copy": "Copia Link",
+        "delete": "Cancella link di condivisione",
+        "requiresAuth": {
+          "false": "Embed snippet",
+          "true": "L'azione può esser eseguita solo su snippet pubblici"
+        }
+      },
+      "date": {
+        "expired": "Scaduto",
+        "neverExpires": "Senza Scadenza"
+      },
+      "noLinks": "Nessun link di condivisione attivo",
+      "relativeExpiryTime": "Scade : {{date}}",
+      "requiresAuth": {
+        "false": "Accesso Pubblico",
+        "true": "Protetto - Autenticazione Richiesta"
+      },
+      "title": "Link di condivisione attivi"
+    },
+    "createButtonText": "Crea Link di condivisione",
+    "error": {
+      "created": "Errore creazione link di condivisione",
+      "deleted": "Errore cancellazione link di condivisione",
+      "invalidDuration": "Formata durata non valido. Usa: 1h, 2d, 30m etc.",
+      "load": "Errore caricamento snippet condivisi",
+      "unknownExpiryTime": "Data di scadenza sconosciuta"
+    },
+    "expiresIn": "Scade tra (es. 1h, 2d, 30m)",
+    "expiresInPlaceholder": "Mai",
+    "requiresAuth": "Autenticazione Richiesta",
+    "subTitle": "Crea nuovo link di condivisione",
+    "success": {
+      "created": "Link di condivisione creato",
+      "deleted": "Link di condivisione cancellato"
+    },
+    "title": "Condividi Snippet"
+  }
+}

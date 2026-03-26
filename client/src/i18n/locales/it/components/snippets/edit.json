@@ -1,0 +1,63 @@
+{
+  "editSnippetModal": {
+    "addSnippet": "Aggiungi nuovo snippet",
+    "editSnippet": "Modifica snippet",
+    "error": {
+      "savingFailed": "Errore durante il salvataggio dello snippet. Riprova."
+    },
+    "form": {
+      "categories": {
+        "counter": "{{categories}}/{{max}} categorie",
+        "label": "Categorie (massime {{max}})",
+        "placeholder": "Digita una categoria e premi 'Invio' o 'Virgola'"
+      },
+      "codeFragments": {
+        "add": "Aggiungi nuovo frammento",
+        "label": "Frammenti di codice ({{fragments}})"
+      },
+      "description": {
+        "label": "Descrizione",
+        "placeholder": "Scrivi una breve descrizione del tuo snippet"
+      },
+      "isPublic": {
+        "description": "Gli snippet pubblici possono esser visibili da chiunque, anche senza autenticazione",
+        "label": "Rendi snippet pubblico"
+      },
+      "title": {
+        "counter": "{{characters}}/{{max}} caratteri",
+        "label": "Titolo",
+        "placeholder": "Digita il titolo del tuo snippet (massimo {{max}} caratteri)"
+      }
+    },
+    "fragmentRequired": "Almeno un frammento di codice è richiesto",
+    "mustHaveFileNames": "Tutti i frammenti devono avere un nome",
+    "unsavedChanges": "Hai modifiche non salvate. Sei sicuro di voler chiudere?"
+  },
+  "searchFiles": "Ricerca file...",
+  "noFilesFound": "Nessun file corrisponde alla ricerca",
+  "expandSidebar": "Espandi Barra Laterale",
+  "filterFiles": "Filtra file",
+  "fileExtensions": "Estensione File",
+  "noExtension": "Nessuna estensione",
+  "fragmentEditor": {
+    "action": {
+      "collapse": "Riduci",
+      "delete": "Cancella",
+      "expand": "Espandi"
+    },
+    "form": {
+      "fileName": {
+        "placeholder": "Nome File"
+      },
+      "language": {
+        "placeholder": "Selezione Linguaggio",
+        "sections": {
+          "other": "Altri",
+          "used": "Usati"
+        }
+      }
+    },
+    "moveDown": "Muovi sopra",
+    "moveUp": "Muovi sotto"
+  }
+}
