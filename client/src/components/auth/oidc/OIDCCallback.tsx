@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../hooks/useAuth';
@@ -13,8 +13,12 @@ export const OIDCCallback: React.FC = () => {
   const { login } = useAuth();
   const { addToast } = useToast();
   const handleOIDCError = useOidcErrorHandler();
+  const processedRef = useRef(false);
 
   useEffect(() => {
+    if (processedRef.current) return;
+    processedRef.current = true;
+
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
     const error = params.get('error');

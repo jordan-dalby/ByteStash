@@ -74,26 +74,32 @@ router.get('/logout', async (req, res) => {
     const authHeader = req.headers.cookie;
     const token = authHeader && authHeader.split('=')[1];
 
+    // Clear the auth cookie
+    res.clearCookie('bytestash_token', { path: '/' });
+
+    // Reset logged_in state
+    oidc.loggedIn = false;
+
     if (!token) {
-      return res.status(401).json({ valid: false });
+      return res.redirect(`${process.env.BASE_PATH || ''}/auth/logout_callback`);
     }
 
     const baseUrl = getBaseUrl(req);
-    const logoutUrl = await oidc.getLogoutUrl(
-      baseUrl,
-      token // Encrpyted ID Token created when creating the IdP session
-    );
+    const logoutUrl = await oidc.getLogoutUrl(baseUrl, token);
 
-    Logger.debug('Generated Logout URL:', logoutUrl);
-
-    // Erase the OIDCConfig instance to destroy the session in the server
-    OIDCConfig.instance = null;
-
-    res.redirect(logoutUrl);
+    if (logoutUrl) {
+      Logger.debug('Generated Logout URL:', logoutUrl);
+      res.redirect(logoutUrl);
+    } else {
+      // Provider doesn't support end_session_endpoint (e.g., Google)
+      // Perform local-only logout
+      const logoutCallbackUrl = `${process.env.BASE_PATH || ''}/auth/logout_callback`;
+      res.redirect(logoutCallbackUrl);
+    }
   } catch (error) {
     Logger.error('OIDC logout error:', error);
-    const errorMessage = encodeURIComponent(error.message || 'Unknown error');
-    res.redirect(`/login?error=provider_error&message=${errorMessage}`);
+    res.clearCookie('bytestash_token', { path: '/' });
+    res.redirect(`${process.env.BASE_PATH || ''}/auth/logout_callback`);
   }
 });
 

@@ -129,11 +129,19 @@ class OIDCConfig {
   }
 
   async getLogoutUrl(baseUrl, id_token) {
+    const metadata = this.config.serverMetadata();
+
+    if (!metadata.end_session_endpoint) {
+      Logger.debug('Provider does not support end_session_endpoint, using local-only logout');
+      return null;
+    }
+
     const callback_url = this.getCallbackLogoutUrl(baseUrl);
     const decoded = jwt.verify(id_token, JWT_SECRET);
 
     if (!decoded.id_token) {
-      return res.status(401).json({ valid: false });
+      Logger.debug('No id_token found in JWT, using local-only logout');
+      return null;
     }
     Logger.debug(callback_url);
 
