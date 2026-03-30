@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../hooks/useAuth';
@@ -9,8 +9,12 @@ export const OIDCLogoutCallback: React.FC = () => {
   const { t: translate } = useTranslation('components/auth');
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const processedRef = useRef(false);
 
   useEffect(() => {
+      if (processedRef.current) return;
+      processedRef.current = true;
+
       logout();
       navigate('/', { replace: true });
   }, [logout]);
