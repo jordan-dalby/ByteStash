@@ -43,6 +43,10 @@ async function getOrCreateAnonymousUser() {
 }
 
 const authenticateToken = async (req, res, next) => {
+  if (req.apiKey) {
+    return next();
+  }
+
   if (DISABLE_ACCOUNTS) {
     try {
       const anonymousUser = await getOrCreateAnonymousUser();
