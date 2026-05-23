@@ -1,0 +1,23 @@
+# Development image for ByteStash
+FROM node:22-alpine AS base
+
+
+FROM base AS client
+# Install the dependencies from client
+WORKDIR /client
+COPY client/package.json ./
+RUN npm install
+EXPOSE 3000
+CMD ["npm", "run", "start", "--", "--host"]
+
+
+FROM base AS server
+# Install the dependencies from server
+WORKDIR /server
+COPY server/package.json ./
+RUN apk add --no-cache --virtual .build-deps python3 make g++ gcc
+RUN npm install
+# Create directory for snippets
+RUN mkdir -p /data/snippets
+EXPOSE 5000
+CMD ["npx", "nodemon", "--watch", "src", "src/app.js"]
