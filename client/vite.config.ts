@@ -16,7 +16,7 @@ export default defineConfig({
     allowedHosts: allowedHosts,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: process.env.BACKEND_API_TARGET || 'http://localhost:5000',
         changeOrigin: true,
       },
     },
