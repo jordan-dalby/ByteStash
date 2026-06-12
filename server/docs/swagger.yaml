@@ -18,6 +18,12 @@ components:
       in: header
       name: x-api-key
       description: API key for CLI access
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: >
+        ByteStash API key sent as a bearer token (Authorization: Bearer <key>).
+        Used by the MCP endpoint, which most remote MCP clients authenticate with.
   schemas:
     Fragment:
       type: object
@@ -879,3 +885,33 @@ paths:
           description: Snippet not found
         '500':
           description: Internal server error
+  /mcp:
+    post:
+      summary: Remote MCP (Model Context Protocol) endpoint for AI clients
+      description: >
+        JSON-RPC 2.0 endpoint over the MCP Streamable HTTP transport. Lets MCP-capable
+        AI clients (Claude, OpenAI, Perplexity) list, read, create, update and delete the
+        authenticated user's snippets. Authenticate with a ByteStash API key sent either as
+        `Authorization: Bearer <key>` or the `x-api-key` header. Available tools: list_snippets,
+        get_snippet, create_snippet, update_snippet, delete_snippet, list_metadata. See the
+        README "MCP (AI assistants)" section for client configuration. The request/response
+        bodies are JSON-RPC envelopes, so they are not modelled in detail here.
+      tags:
+        - MCP
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: A JSON-RPC 2.0 request (e.g. initialize, tools/list, tools/call)
+      responses:
+        '200':
+          description: JSON-RPC 2.0 response
+        '401':
+          description: Missing or invalid API key
+        '405':
+          description: Method not allowed (use POST for MCP requests)

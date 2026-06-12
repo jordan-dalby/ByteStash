@@ -4,6 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
+      # Serves the web UI, the REST API (/api), and the remote MCP endpoint (/mcp)
+      # for AI assistants — all on the same port, authenticated with a ByteStash API key.
       - "5000:5000"
     environment:
       # e.g. write /bytestash for a domain such as my.domain/bytestash, leave blank in every other case

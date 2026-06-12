@@ -9,8 +9,10 @@ import oidcRoutes from "./routes/oidcRoutes.js";
 import embedRoutes from "./routes/embedRoutes.js";
 import apiKeyRoutes from "./routes/apiKeyRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import mcpRoutes from "./routes/mcpRoutes.js";
 import { authenticateToken } from "./middleware/auth.js";
 import { authenticateApiKey } from "./middleware/apiKeyAuth.js";
+import { authenticateMcp } from "./middleware/mcpAuth.js";
 import { requireAdmin } from "./middleware/adminAuth.js";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
@@ -54,6 +56,11 @@ app.use(`${basePath}/api/share`, shareRoutes);
 app.use(`${basePath}/api/public/snippets`, publicRoutes);
 app.use(`${basePath}/api/embed`, embedRoutes);
 app.use(`${basePath}/api/admin`, authenticateToken, requireAdmin, adminRoutes);
+
+// Remote MCP endpoint for AI clients (Claude, OpenAI, Perplexity). Served on the same
+// host/port as the app, authenticated with a ByteStash API key (Authorization: Bearer
+// <key> or x-api-key). Connect a client to: <base-url>${basePath}/mcp
+app.use(`${basePath}/mcp`, authenticateMcp, mcpRoutes);
 
 app.use(
   `${basePath}/manifest.json`,

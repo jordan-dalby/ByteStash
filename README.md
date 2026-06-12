@@ -16,6 +16,7 @@ Password: demodemo
 - Create and Edit Snippets: Easily add new code snippets or update existing ones with an intuitive interface.
 - Filter by Language and Content: Quickly find the right snippet by filtering based on programming language or keywords in the content.
 - Secure Storage: All snippets are securely stored in a sqlite database, ensuring your code remains safe and accessible only to you.
+- AI Integration (MCP): Connect AI assistants such as Claude, OpenAI and Perplexity through a built-in [Model Context Protocol](https://modelcontextprotocol.io) endpoint to search and manage your snippets, authenticated with your existing API key. See [MCP (AI assistants)](#mcp-ai-assistants).
 
 ## Howto
 ### Unraid
@@ -63,6 +64,53 @@ services:
 ## API Documentation
 Once the server is running you can explore the API via Swagger UI. Open
 `/api-docs` in your browser to view the documentation for all endpoints.
+
+## MCP (AI assistants)
+ByteStash exposes a remote [Model Context Protocol](https://modelcontextprotocol.io)
+endpoint so AI assistants such as **Claude** (desktop & web), **OpenAI/ChatGPT** and
+**Perplexity** can search, read and manage your snippets directly.
+
+- **Endpoint:** `https://<your-host>/mcp` (or `https://<your-host><BASE_PATH>/mcp` when a
+  base path is configured). It is served on the same host/port as the app, so nothing extra
+  needs to be exposed in your deployment.
+- **Transport:** Streamable HTTP.
+- **Auth:** the **same API key** used by the REST API. Create one under
+  *Settings → API Keys* in the UI, then send it as `Authorization: Bearer <api-key>`
+  (or the `x-api-key` header). The MCP tools only ever access snippets owned by that key.
+
+### Available tools
+`list_snippets`, `get_snippet`, `create_snippet`, `update_snippet`, `delete_snippet`,
+`list_metadata`.
+
+### Connecting clients
+- **Claude Desktop** (`claude_desktop_config.json`):
+  ```json
+  {
+    "mcpServers": {
+      "bytestash": {
+        "type": "http",
+        "url": "https://your-host/mcp",
+        "headers": { "Authorization": "Bearer YOUR_API_KEY" }
+      }
+    }
+  }
+  ```
+- **Claude.ai / web & other custom connectors:** add a custom connector pointing at
+  `https://your-host/mcp` and supply the `Authorization: Bearer YOUR_API_KEY` header.
+- **OpenAI Responses API:** pass it as an MCP tool:
+  ```json
+  {
+    "type": "mcp",
+    "server_label": "bytestash",
+    "server_url": "https://your-host/mcp",
+    "headers": { "Authorization": "Bearer YOUR_API_KEY" }
+  }
+  ```
+- **Perplexity:** add a remote MCP connector with the URL above and the same
+  `Authorization` header.
+
+> The endpoint requires HTTPS for remote clients — terminate TLS at your reverse
+> proxy/ingress as you already do for the web UI.
 
 ## Contributing
 Contributions are welcome! Please submit a pull request or open an issue for any improvements or bug fixes.
