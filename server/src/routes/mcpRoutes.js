@@ -15,8 +15,26 @@ const router = express.Router();
  * authenticated user on req.user.
  */
 router.post('/', async (req, res) => {
-  let transport;
-  let server;
+  let server = null;
+  let transport = null;
+
+  // Idempotent cleanup, shared by the normal-close listener and the error path,
+  // so resources are released exactly once whichever fires first (a throwing
+  // second close() in the 'close' listener would otherwise be uncaught).
+  let closed = false;
+  const cleanup = () => {
+    if (closed) return;
+    closed = true;
+    if (transport) {
+      try { transport.close(); } catch { /* ignore cleanup errors */ }
+    }
+    if (server) {
+      try { server.close(); } catch { /* ignore cleanup errors */ }
+    }
+  };
+
+  res.on('close', cleanup);
+
   try {
     server = createMcpServer(req.user.id);
     transport = new StreamableHTTPServerTransport({
@@ -24,15 +42,11 @@ router.post('/', async (req, res) => {
       enableJsonResponse: true,
     });
 
-    res.on('close', () => {
-      transport.close();
-      server.close();
-    });
-
     await server.connect(transport);
     await transport.handleRequest(req, res, req.body);
   } catch (error) {
     Logger.error('Error handling MCP request:', error);
+    cleanup();
     if (!res.headersSent) {
       res.status(500).json({
         jsonrpc: '2.0',
