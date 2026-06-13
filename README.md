@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/jordan-dalby-bytestash-badge.png)](https://mseep.ai/app/jordan-dalby-bytestash)
+
 # ByteStash
 <p align="center">
   <img src="https://raw.githubusercontent.com/jordan-dalby/ByteStash/refs/heads/main/client/public/logo192.png" />
