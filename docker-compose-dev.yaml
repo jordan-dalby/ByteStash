@@ -7,7 +7,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      # Backend API taget: Points to the ExpressJS container running the REST APIs
+      # Backend API target: Points to the ExpressJS container running the REST APIs
       - BACKEND_API_TARGET=http://server:5000
     volumes:
       - "./client:/client"
@@ -33,7 +33,7 @@ services:
       # is this bytestash instance open to new accounts being created?
       - ALLOW_NEW_ACCOUNTS=true
       # Should debug mode be enabled? Essentially enables logging, in most cases leave this as false
-      - DEBUG=false
+      - DEBUG=true
       # Should we use accounts at all? When enabled, it will be like starting a fresh account so export your snippets, no login required
       - DISABLE_ACCOUNTS=false
       # Should internal accounts be disabled?

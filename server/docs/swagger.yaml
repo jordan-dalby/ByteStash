@@ -47,6 +47,22 @@ components:
           type: string
         description:
           type: string
+        user_id:
+          type: integer
+        username:
+          type: string
+        is_public:
+          type: integer
+          description: 0 or 1
+        is_pinned:
+          type: integer
+          description: 0 or 1
+        is_favorite:
+          type: integer
+          description: 0 or 1
+        expiry_date:
+          type: string
+          nullable: true
         categories:
           type: array
           items:
@@ -59,6 +75,24 @@ components:
           type: string
         share_count:
           type: integer
+    PaginatedSnippets:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Snippet'
+        pagination:
+          type: object
+          properties:
+            total:
+              type: integer
+            offset:
+              type: integer
+            limit:
+              type: integer
+            hasMore:
+              type: boolean
     Share:
       type: object
       properties:
@@ -235,21 +269,75 @@ paths:
           description: Anonymous login not allowed
   /api/snippets:
     get:
-      summary: Get all snippets for current user
+      summary: Get all snippets for current user (paginated)
       tags:
         - Snippets
       security:
         - JwtAuth: []
         - ApiKeyAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 100
+          description: Page size (1-100, default 50)
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+          description: Number of snippets to skip
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Filter by title/description (and code when searchCode=true)
+        - name: searchCode
+          in: query
+          schema:
+            type: boolean
+          description: Include fragment code in the search
+        - name: language
+          in: query
+          schema:
+            type: string
+          description: Filter by fragment language
+        - name: category
+          in: query
+          schema:
+            type: string
+          description: Comma-separated list of categories (matches snippets having ALL of them)
+        - name: favorites
+          in: query
+          schema:
+            type: boolean
+          description: Only return favorited snippets
+        - name: pinned
+          in: query
+          schema:
+            type: boolean
+          description: Only return pinned snippets
+        - name: recycled
+          in: query
+          schema:
+            type: boolean
+          description: Only return snippets in the recycle bin
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [newest, oldest, alpha-asc, alpha-desc]
+            default: newest
+          description: Sort order
       responses:
         '200':
-          description: List of snippets
+          description: Paginated list of snippets
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Snippet'
+                $ref: '#/components/schemas/PaginatedSnippets'
         '401':
           description: Authentication required
     post:
@@ -672,215 +760,6 @@ paths:
                     type: string
         '401':
           description: Authentication required for protected share
-        '404':
-          description: Snippet not found
-        '500':
-          description: Internal server error
-  /api/v1/snippets:
-    get:
-      summary: Get all snippets for current user (API)
-      tags:
-        - API Snippets
-      security:
-        - ApiKeyAuth: []
-      responses:
-        '200':
-          description: List of snippets
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Snippet'
-        '401':
-          description: API key required
-        '500':
-          description: Internal server error
-  /api/v1/snippets/push:
-    post:
-      summary: Create a new snippet with file uploads (API)
-      tags:
-        - API Snippets
-      security:
-        - ApiKeyAuth: []
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                description:
-                  type: string
-                is_public:
-                  type: boolean
-                categories:
-                  type: string
-                  description: Comma-separated list of categories
-                files:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-                fragments:
-                  type: string
-                  description: JSON array of fragments
-      responses:
-        '201':
-          description: Snippet created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Snippet'
-        '400':
-          description: At least one fragment is required
-        '401':
-          description: API key required
-        '500':
-          description: Internal server error
-  /api/v1/snippets/search:
-    get:
-      summary: Search snippets (API)
-      tags:
-        - API Snippets
-      security:
-        - ApiKeyAuth: []
-      parameters:
-        - name: q
-          in: query
-          required: false
-          schema:
-            type: string
-          description: Search term to filter snippets
-        - name: sort
-          in: query
-          required: false
-          schema:
-            type: string
-            enum: [newest, oldest, alpha-asc, alpha-desc]
-          description: Sort order for results
-        - name: searchCode
-          in: query
-          required: false
-          schema:
-            type: boolean
-          description: Whether to search within code fragments
-      responses:
-        '200':
-          description: Filtered and sorted list of snippets
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Snippet'
-        '401':
-          description: API key required
-        '500':
-          description: Internal server error
-  /api/v1/snippets/{id}:
-    get:
-      summary: Get snippet by id (API)
-      tags:
-        - API Snippets
-      security:
-        - ApiKeyAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Snippet
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Snippet'
-        '401':
-          description: API key required
-        '404':
-          description: Snippet not found
-        '500':
-          description: Internal server error
-    put:
-      summary: Update snippet by id (API)
-      tags:
-        - API Snippets
-      security:
-        - ApiKeyAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                description:
-                  type: string
-                is_public:
-                  type: boolean
-                categories:
-                  type: string
-                  description: Comma-separated list of categories
-                files:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-                fragments:
-                  type: string
-                  description: JSON array of fragments
-      responses:
-        '200':
-          description: Updated snippet
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Snippet'
-        '400':
-          description: At least one fragment is required
-        '401':
-          description: API key required
-        '404':
-          description: Snippet not found
-        '500':
-          description: Internal server error
-    delete:
-      summary: Delete snippet (API)
-      tags:
-        - API Snippets
-      security:
-        - ApiKeyAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Snippet deleted
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-        '401':
-          description: API key required
         '404':
           description: Snippet not found
         '500':

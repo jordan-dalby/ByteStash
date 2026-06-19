@@ -20,4 +20,4 @@ RUN npm install
 # Create directory for snippets
 RUN mkdir -p /data/snippets
 EXPOSE 5000
-CMD ["npx", "nodemon", "--watch", "src", "src/app.js"]
+CMD ["npx", "nodemon", "-L", "--watch", "src", "src/app.js"]
