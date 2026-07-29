@@ -4,14 +4,6 @@
     "dateTimeAgo": "{{dateTime}} 前",
     "defaultDescription": "暂无描述"
   },
-  "files": "个文件",
-  "collapseSidebar": "收起侧边栏",
-  "expandSidebar": "展开侧边栏",
-  "searchFiles": "搜索文件...",
-  "noFilesFound": "没有与搜索匹配的文件",
-  "filterFiles": "筛选文件",
-  "fileExtensions": "文件扩展名",
-  "noExtension": "无扩展名",
   "snippetModal": {
     "confirmationModal": {
       "confirmLabel": {

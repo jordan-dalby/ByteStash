@@ -33,9 +33,6 @@
     "mustHaveFileNames": "すべてのフラグメントにはファイル名が必要です",
     "unsavedChanges": "保存されていない変更があります。閉じてもよろしいですか？"
   },
-  "expandSidebar": "サイドバーを展開する",
-  "fileExtensions": "ファイル拡張子",
-  "filterFiles": "ファイルを絞り込む",
   "fragmentEditor": {
     "action": {
       "collapse": "折りたたむ",
@@ -56,8 +53,5 @@
     },
     "moveDown": "下に移動",
     "moveUp": "上に移動"
-  },
-  "noExtension": "拡張子なし",
-  "noFilesFound": "ファイルが見つかりません",
-  "searchFiles": "ファイルを検索する"
+  }
 }

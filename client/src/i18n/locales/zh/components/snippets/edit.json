@@ -33,12 +33,6 @@
     "mustHaveFileNames": "所有片段都必须填写文件名",
     "unsavedChanges": "你有未保存的更改。确定要关闭吗？"
   },
-  "searchFiles": "搜索文件...",
-  "noFilesFound": "没有与搜索匹配的文件",
-  "expandSidebar": "展开侧边栏",
-  "filterFiles": "筛选文件",
-  "fileExtensions": "文件扩展名",
-  "noExtension": "无扩展名",
   "fragmentEditor": {
     "action": {
       "collapse": "折叠",

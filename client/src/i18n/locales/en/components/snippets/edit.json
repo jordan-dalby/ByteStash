@@ -33,12 +33,6 @@
     "mustHaveFileNames": "All fragments must have file names",
     "unsavedChanges": "You have unsaved changes. Are you sure you want to close?"
   },
-  "searchFiles": "Search files...",
-  "noFilesFound": "No files found matching your search",
-  "expandSidebar": "Expand Sidebar",
-  "filterFiles": "Filter files",
-  "fileExtensions": "File extensions",
-  "noExtension": "No extension",
   "fragmentEditor": {
     "action": {
       "collapse": "Collapse",

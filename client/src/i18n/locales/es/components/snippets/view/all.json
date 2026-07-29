@@ -3,14 +3,6 @@
     "dateTimeAgo": "Hace {{dateTime}}",
     "defaultDescription": "Sin descripción disponible"
   },
-  "files": "archivos",
-  "collapseSidebar": "Contraer panel",
-  "expandSidebar": "Expandir panel",
-  "searchFiles": "Buscar archivos...",
-  "noFilesFound": "No se encontraron archivos que coincidan con tu búsqueda",
-  "filterFiles": "Filtrar archivos",
-  "fileExtensions": "Extensiones de archivo",
-  "noExtension": "Sin extensión",
   "snippetModal": {
     "confirmationModal": {
       "confirmLabel": {

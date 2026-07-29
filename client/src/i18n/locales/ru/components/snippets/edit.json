@@ -33,12 +33,6 @@
     "mustHaveFileNames": "Все фрагменты должны иметь имя файла",
     "unsavedChanges": "У вас есть несохраненные изменения. Вы уверены, что хотите закрыть?"
   },
-  "searchFiles": "Поиск файлов...",
-  "noFilesFound": "Файлы не найдены",
-  "expandSidebar": "Развернуть панель",
-  "filterFiles": "Фильтр файлов",
-  "fileExtensions": "Расширения файлов",
-  "noExtension": "Без расширения",
   "fragmentEditor": {
     "action": {
       "collapse": "Свернуть",

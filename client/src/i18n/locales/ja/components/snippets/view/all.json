@@ -1,17 +1,9 @@
 {
-  "collapseSidebar": "サイドバーを折りたたむ",
   "defaultUpdateTime": "不明",
-  "expandSidebar": "サイドバーを展開する",
-  "fileExtensions": "ファイル拡張子",
-  "files": "ファイル",
-  "filterFiles": "ファイルを絞り込む",
   "fullCodeView": {
     "dateTimeAgo": "{{dateTime}}前",
     "defaultDescription": "説明なし"
   },
-  "noExtension": "拡張子なし",
-  "noFilesFound": "ファイルが見つかりません",
-  "searchFiles": "ファイルを検索する",
   "snippetModal": {
     "confirmationModal": {
       "confirmLabel": {

@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import "prismjs";
 import "prismjs/components/prism-markup-templating.js";
 import "prismjs/themes/prism.css";
-import { Plus, Search, PanelLeftClose, PanelLeftOpen, ListFilter, Check } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Switch } from "../../../components/common/switch/Switch";
 import { CodeFragment, Snippet } from "../../../types/snippets";
-import { detectLanguageFromFileName, getFileIcon, getFullFileName } from "../../../utils/language/languageUtils";
+import { detectLanguageFromFileName } from "../../../utils/language/languageUtils";
 import CategoryList from "../../categories/CategoryList";
 import CategorySuggestions from "../../categories/CategorySuggestions";
 import FileUploadButton from "../../common/buttons/FileUploadButton";
@@ -41,85 +41,6 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPublic, setIsPublic] = useState(snippetToEdit?.is_public || false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [activeFragmentIndex, setActiveFragmentIndex] = useState(0);
-
-  // File Tree states
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [hiddenExtensions, setHiddenExtensions] = useState<Set<string>>(new Set());
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const filterRef = useRef<HTMLDivElement>(null);
-  const [editingFileIndex, setEditingFileIndex] = useState<number | null>(null);
-  const editInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
-        setIsFilterOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const extensionStats = useMemo(() => {
-    const counts: Record<string, number> = {};
-    let noExtCount = 0;
-    fragments.forEach((f) => {
-      const fullName = getFullFileName(f.file_name, f.language);
-      if (fullName.includes('.')) {
-        const ext = '.' + fullName.split('.').pop()?.toLowerCase();
-        counts[ext] = (counts[ext] || 0) + 1;
-      } else {
-        noExtCount++;
-      }
-    });
-    const result = Object.entries(counts).map(([ext, count]) => ({ ext, count })).sort((a, b) => a.ext.localeCompare(b.ext));
-    if (noExtCount > 0) {
-      result.push({ ext: '__no_ext__', count: noExtCount });
-    }
-    return result;
-  }, [fragments]);
-
-  const toggleExtension = (ext: string) => {
-    setHiddenExtensions(prev => {
-      const next = new Set(prev);
-      if (next.has(ext)) {
-        next.delete(ext);
-      } else {
-        next.add(ext);
-      }
-      return next;
-    });
-  };
-
-  const filteredFragments = useMemo(() => {
-    return fragments.filter((f) => {
-      const fullName = getFullFileName(f.file_name, f.language).toLowerCase();
-      const matchesSearch = !searchQuery.trim() || fullName.includes(searchQuery.toLowerCase());
-      
-      let ext = '__no_ext__';
-      if (fullName.includes('.')) {
-        ext = '.' + fullName.split('.').pop()?.toLowerCase();
-      }
-      const matchesExt = !hiddenExtensions.has(ext);
-      return matchesSearch && matchesExt;
-    });
-  }, [fragments, searchQuery, hiddenExtensions]);
-
-  useEffect(() => {
-    if (editingFileIndex !== null && editInputRef.current) {
-      editInputRef.current.focus();
-      // Select the filename chunk without the extension
-      const fileName = fragments[editingFileIndex]?.file_name || "";
-      const dotIndex = fileName.lastIndexOf(".");
-      if (dotIndex > 0) {
-        editInputRef.current.setSelectionRange(0, dotIndex);
-      } else {
-        editInputRef.current.select();
-      }
-    }
-  }, [editingFileIndex]);
 
   const handleFileNameChange = (index: number, newName: string) => {
     setFragments((current) => {
@@ -134,16 +55,6 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
       return newFragments;
     });
     setHasUnsavedChanges(true);
-  };
-
-  const handleFileNameKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
-    if (e.key === "Enter") {
-      setEditingFileIndex(null);
-    } else if (e.key === "Escape") {
-      setEditingFileIndex(null);
-    }
   };
 
   const resetForm = () => {
@@ -203,20 +114,15 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
   };
 
   const handleAddFragment = () => {
-    setFragments((current) => {
-      const newFragments = [
-        ...current,
-        {
-          file_name: `file${current.length + 1}`,
-          code: "",
-          language: "",
-          position: current.length,
-        },
-      ];
-      setActiveFragmentIndex(newFragments.length - 1);
-      setEditingFileIndex(newFragments.length - 1); // Edit inline directly
-      return newFragments;
-    });
+    setFragments((current) => [
+      ...current,
+      {
+        file_name: `file${current.length + 1}`,
+        code: "",
+        language: "",
+        position: current.length,
+      },
+    ]);
     setHasUnsavedChanges(true);
   };
 
@@ -226,17 +132,13 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
     language: string;
     position: number;
   }) => {
-    setFragments((current) => {
-      const newFragments = [
-        ...current,
-        {
-          ...fileData,
-          position: current.length,
-        },
-      ];
-      setActiveFragmentIndex(newFragments.length - 1);
-      return newFragments;
-    });
+    setFragments((current) => [
+      ...current,
+      {
+        ...fileData,
+        position: current.length,
+      },
+    ]);
     setHasUnsavedChanges(true);
   };
 
@@ -261,15 +163,31 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
   };
 
   const handleDeleteFragment = (index: number) => {
-    if (fragments.length > 1) {
-      setFragments((current) => current.filter((_, i) => i !== index));
-      if (activeFragmentIndex === index) {
-        setActiveFragmentIndex(Math.max(0, index - 1));
-      } else if (activeFragmentIndex > index) {
-        setActiveFragmentIndex(activeFragmentIndex - 1);
-      }
-      setHasUnsavedChanges(true);
-    }
+    if (fragments.length <= 1) return;
+
+    setFragments((current) =>
+      current
+        .filter((_, i) => i !== index)
+        .map((fragment, i) => ({ ...fragment, position: i }))
+    );
+    setHasUnsavedChanges(true);
+  };
+
+  const moveFragment = (fromIndex: number, direction: "up" | "down") => {
+    const toIndex = direction === "up" ? fromIndex - 1 : fromIndex + 1;
+
+    if (toIndex < 0 || toIndex >= fragments.length) return;
+
+    setFragments((current) => {
+      const newFragments = [...current];
+      const [movedFragment] = newFragments.splice(fromIndex, 1);
+      newFragments.splice(toIndex, 0, movedFragment);
+      return newFragments.map((fragment, index) => ({
+        ...fragment,
+        position: index,
+      }));
+    });
+    setHasUnsavedChanges(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -336,12 +254,6 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
     >
       <style>
         {`
-          /* Force the modal to use full height when possible */
-          .modal-content-wrapper {
-             max-height: 85vh;
-             display: flex;
-             flex-direction: column;
-          }
           .modal-footer {
             position: sticky;
             background: var(--footer-bg);
@@ -502,165 +414,37 @@ const EditSnippetModal: React.FC<EditSnippetModalProps> = ({
                   />
                 </div>
 
-                <div className="flex flex-col md:flex-row border border-light-border dark:border-dark-border rounded-lg overflow-hidden bg-light-surface dark:bg-dark-surface shadow-sm h-[500px]">
-                  {/* Sidebar (File Tree) */}
-                  {isSidebarOpen && (
-                    <div className="w-full md:w-56 xl:w-64 shrink-0 border-b md:border-b-0 md:border-r border-light-border dark:border-dark-border flex flex-col bg-light-bg/50 dark:bg-dark-bg/50 transition-all duration-300">
-                      <div className="px-3 py-2 border-b border-light-border dark:border-dark-border flex flex-col gap-2 bg-light-hover/30 dark:bg-dark-hover/30">
-                        <div className="flex items-center justify-between text-xs font-semibold text-light-text-secondary dark:text-dark-text-secondary">
-                          <span>{translate('editSnippetModal.form.codeFragments.label', { fragments: fragments.length })}</span>
-                          <button 
-                            type="button"
-                            onClick={() => setIsSidebarOpen(false)}
-                            className="p-1 hover:bg-light-hover dark:hover:bg-dark-hover rounded transition-colors"
-                          >
-                            <PanelLeftClose size={14} />
-                          </button>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="relative flex-1">
-                            <Search size={12} className="absolute left-2 top-1/2 -translate-y-1/2 text-light-text-secondary dark:text-dark-text-secondary" />
-                            <input 
-                              type="text" 
-                              value={searchQuery}
-                              onChange={(e) => setSearchQuery(e.target.value)}
-                              placeholder={translate('searchFiles')}
-                              className="w-full pl-6 pr-2 py-1 text-xs bg-light-surface dark:bg-dark-surface border border-light-border dark:border-dark-border rounded focus:outline-none focus:border-light-primary dark:focus:border-dark-primary text-light-text dark:text-dark-text placeholder-light-text-secondary/50 dark:placeholder-dark-text-secondary/50"
-                            />
-                          </div>
-                          {extensionStats.length > 0 && (
-                            <div className="relative shrink-0" ref={filterRef}>
-                              <button
-                                type="button"
-                                onClick={() => setIsFilterOpen(!isFilterOpen)}
-                                className={`p-1 rounded border border-light-border dark:border-dark-border hover:bg-light-hover dark:hover:bg-dark-hover transition-colors flex items-center justify-center h-[26px] w-[26px] ${isFilterOpen ? 'bg-light-hover dark:bg-dark-hover' : 'bg-light-surface dark:bg-dark-surface'}`}
-                                title={translate('filterFiles')}
-                              >
-                                <ListFilter size={14} className="text-light-text-secondary dark:text-dark-text-secondary" />
-                              </button>
+                <div className="space-y-4">
+                  {fragments.map((fragment, index) => (
+                    <FragmentEditor
+                      key={index}
+                      fragment={fragment}
+                      onUpdate={(updated) => handleUpdateFragment(index, updated)}
+                      onFileNameChange={(newName) => handleFileNameChange(index, newName)}
+                      onDelete={() => handleDeleteFragment(index)}
+                      showLineNumbers={showLineNumbers}
+                      onMoveUp={() => moveFragment(index, "up")}
+                      onMoveDown={() => moveFragment(index, "down")}
+                      canMoveUp={index > 0}
+                      canMoveDown={index < fragments.length - 1}
+                      canDelete={fragments.length > 1}
+                    />
+                  ))}
 
-                              {isFilterOpen && (
-                                <div className="absolute left-0 left-auto md:left-full md:ml-1 md:-mt-8 right-0 md:right-auto top-full mt-1 w-56 bg-light-surface dark:bg-dark-surface border border-light-border dark:border-dark-border rounded-lg shadow-xl z-50 py-2 flex flex-col">
-                                  <div className="px-3 pb-2 text-xs font-semibold text-light-text-secondary dark:text-dark-text-secondary border-b border-light-border dark:border-dark-border mb-1">
-                                    {translate('fileExtensions')}
-                                  </div>
-                                  <div className="max-h-60 overflow-y-auto custom-scrollbar">
-                                    {extensionStats.map(({ ext, count }) => {
-                                      const checked = !hiddenExtensions.has(ext);
-                                      return (
-                                        <button
-                                          type="button"
-                                          key={ext}
-                                          onClick={() => toggleExtension(ext)}
-                                          className="w-full px-3 py-1.5 flex items-center justify-between hover:bg-light-hover dark:hover:bg-dark-hover text-sm text-light-text dark:text-dark-text transition-colors group"
-                                        >
-                                          <div className="flex items-center gap-2">
-                                            <div className="w-4 h-4 flex items-center justify-center shrink-0">
-                                              <Check size={14} className={`transition-opacity ${checked ? 'opacity-100 text-light-primary dark:text-dark-primary' : 'opacity-0'}`} />
-                                            </div>
-                                            <span className="truncate max-w-[130px] text-left">{ext === '__no_ext__' ? translate('noExtension') : ext}</span>
-                                          </div>
-                                          <span className="text-xs bg-light-bg dark:bg-dark-bg px-1.5 py-0.5 rounded-full text-light-text-secondary dark:text-dark-text-secondary group-hover:bg-light-surface dark:group-hover:bg-dark-surface">
-                                            {count}
-                                          </span>
-                                        </button>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex-1 overflow-y-auto max-h-[500px]">
-                        {filteredFragments.map((fragment) => {
-                          const fullName = getFullFileName(fragment.file_name, fragment.language);
-                          const originalIndex = fragments.findIndex(f => f.position === fragment.position && f.file_name === fragment.file_name && f.code === fragment.code);
-                          const displayIndex = originalIndex >= 0 ? originalIndex : fragments.indexOf(fragment);
-                          const isActive = activeFragmentIndex === displayIndex;
-                          const isEditing = editingFileIndex === displayIndex;
-
-                          return (
-                            <div 
-                              key={displayIndex} 
-                              className={`w-full text-left px-3 py-1.5 text-sm flex items-center gap-2 transition-colors border-l-2 ${
-                                isActive
-                                  ? "bg-light-hover dark:bg-dark-hover text-light-text dark:text-dark-text border-light-primary dark:border-dark-primary"
-                                  : "border-transparent text-light-text-secondary dark:text-dark-text-secondary hover:bg-light-hover/50 dark:hover:bg-dark-hover/50"
-                              }`}
-                            >
-                              <div className="shrink-0 w-3.5 h-3.5 flex items-center justify-center">
-                                {getFileIcon(fragment.file_name, fragment.language, "w-full h-full text-light-text-secondary dark:text-dark-text-secondary")}
-                              </div>
-                              {isEditing ? (
-                                <input
-                                  ref={editInputRef}
-                                  type="text"
-                                  value={fullName}
-                                  onChange={(e) => handleFileNameChange(displayIndex, e.target.value)}
-                                  onBlur={() => setEditingFileIndex(null)}
-                                  onKeyDown={(e) => handleFileNameKeyDown(e)}
-                                  className="w-full bg-light-surface dark:bg-dark-surface border border-light-primary dark:border-dark-primary rounded px-1 text-sm text-light-text dark:text-dark-text outline-none"
-                                />
-                              ) : (
-                                <div 
-                                  className="truncate flex-1 cursor-pointer select-none"
-                                  onClick={() => setActiveFragmentIndex(displayIndex)}
-                                  onDoubleClick={() => setEditingFileIndex(displayIndex)}
-                                >
-                                  {fullName || '...'}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                        {filteredFragments.length === 0 && (
-                          <div className="px-3 py-4 text-xs text-center text-light-text-secondary dark:text-dark-text-secondary">
-                            {translate('noFilesFound')}
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-2 border-t border-light-border dark:border-dark-border bg-light-surface dark:bg-dark-surface">
-                        <button 
-                          type="button" 
-                          onClick={handleAddFragment} 
-                          className="w-full flex items-center justify-center gap-1 p-1.5 text-xs font-semibold rounded bg-light-primary/10 dark:bg-dark-primary/10 text-light-primary dark:text-dark-primary hover:bg-light-primary/20 dark:hover:bg-dark-primary/20 transition-colors"
-                        >
-                          <Plus size={14}/> {translate('editSnippetModal.form.codeFragments.add')}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Main Editor */}
-                  <div className="flex-1 min-w-0 flex flex-col bg-light-bg dark:bg-dark-bg overflow-y-auto relative">
-                    {!isSidebarOpen && (
-                      <button
-                        type="button"
-                        onClick={() => setIsSidebarOpen(true)}
-                        className="absolute top-2.5 left-2.5 z-10 p-1.5 bg-light-surface dark:bg-dark-surface border border-light-border dark:border-dark-border hover:bg-light-hover dark:hover:bg-dark-hover rounded transition-colors text-light-text-secondary dark:text-dark-text-secondary flex items-center justify-center shadow-sm"
-                        title={translate('expandSidebar')}
-                      >
-                        <PanelLeftOpen size={16} />
-                      </button>
-                    )}
-                    {(() => {
-                      const activeIndex = activeFragmentIndex >= fragments.length ? 0 : activeFragmentIndex;
-                      const activeFragment = fragments[activeIndex];
-                      if (!activeFragment) return null;
-                      
-                      return (
-                        <FragmentEditor
-                          key={`editor-${activeIndex}`}
-                          fragment={activeFragment}
-                          onUpdate={(updated) => handleUpdateFragment(activeIndex, updated)}
-                          onDelete={() => handleDeleteFragment(activeIndex)}
-                          showLineNumbers={showLineNumbers}
-                        />
-                      );
-                    })()}
-                  </div>
+                  {/* New Add Fragment button positioned below fragments */}
+                  <button
+                    type="button"
+                    onClick={handleAddFragment}
+                    className="flex items-center justify-center w-full gap-2 px-4 py-3 transition-all duration-200 border-2 border-dashed rounded-lg add-fragment-button border-light-border dark:border-dark-border hover:border-light-primary dark:hover:border-dark-primary hover:bg-light-hover dark:hover:bg-dark-hover text-light-text-secondary dark:text-dark-text-secondary hover:text-light-primary dark:hover:text-dark-primary group"
+                  >
+                    <Plus
+                      size={20}
+                      className="transition-transform group-hover:scale-110"
+                    />
+                    <span className="text-sm font-medium">
+                      {translate('editSnippetModal.form.codeFragments.add')}
+                    </span>
+                  </button>
                 </div>
               </div>
             </div>

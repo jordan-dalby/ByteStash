@@ -3,14 +3,6 @@
     "dateTimeAgo": "{{dateTime}} назад",
     "defaultDescription": "Нет описания"
   },
-  "files": "файлов",
-  "collapseSidebar": "Свернуть панель",
-  "expandSidebar": "Развернуть панель",
-  "searchFiles": "Поиск файлов...",
-  "noFilesFound": "Файлы не найдены",
-  "filterFiles": "Фильтр файлов",
-  "fileExtensions": "Расширения файлов",
-  "noExtension": "Без расширения",
   "defaultUpdateTime": "Неизвестно",
   "snippetModal": {
     "confirmationModal": {

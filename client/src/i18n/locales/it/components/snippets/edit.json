@@ -33,12 +33,6 @@
     "mustHaveFileNames": "Tutti i frammenti devono avere un nome",
     "unsavedChanges": "Hai modifiche non salvate. Sei sicuro di voler chiudere?"
   },
-  "searchFiles": "Ricerca file...",
-  "noFilesFound": "Nessun file corrisponde alla ricerca",
-  "expandSidebar": "Espandi Barra Laterale",
-  "filterFiles": "Filtra file",
-  "fileExtensions": "Estensione File",
-  "noExtension": "Nessuna estensione",
   "fragmentEditor": {
     "action": {
       "collapse": "Riduci",
