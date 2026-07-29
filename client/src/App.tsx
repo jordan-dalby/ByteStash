@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate, useParams } from 'rea
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { SettingsProvider } from './contexts/SettingsContext';
 import { useAuth } from './hooks/useAuth';
 import { LoginPage } from './components/auth/LoginPage';
 import { RegisterPage } from './components/auth/RegisterPage';
@@ -80,19 +81,21 @@ const App: React.FC = () => {
           <div className="min-h-screen bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text">
             <ToastProvider>
               <AuthProvider>
-                <Routes>
-                  <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-                  <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
-                  <Route path={ROUTES.AUTH_CALLBACK} element={<OIDCCallback />} />
-                  <Route path={ROUTES.LOGOUT_CALLBACK} element={<OIDCLogoutCallback />} />
-                  <Route path={ROUTES.SHARED_SNIPPET} element={<SharedSnippetView />} />
-                  <Route path={ROUTES.PUBLIC_SNIPPETS} element={<PublicSnippetStorage />} />
-                  <Route path={ROUTES.RECYCLE} element={<RecycleSnippetStorage />} />
-                  <Route path={ROUTES.EMBED} element={<EmbedViewWrapper />} />
-                  <Route path={ROUTES.SNIPPET} element={<SnippetPage />} />
-                  <Route path="/admin/*" element={<AdminPage />} />
-                  <Route path={ROUTES.HOME} element={<AuthenticatedApp />} />
-                </Routes>
+                <SettingsProvider>
+                  <Routes>
+                    <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+                    <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
+                    <Route path={ROUTES.AUTH_CALLBACK} element={<OIDCCallback />} />
+                    <Route path={ROUTES.LOGOUT_CALLBACK} element={<OIDCLogoutCallback />} />
+                    <Route path={ROUTES.SHARED_SNIPPET} element={<SharedSnippetView />} />
+                    <Route path={ROUTES.PUBLIC_SNIPPETS} element={<PublicSnippetStorage />} />
+                    <Route path={ROUTES.RECYCLE} element={<RecycleSnippetStorage />} />
+                    <Route path={ROUTES.EMBED} element={<EmbedViewWrapper />} />
+                    <Route path={ROUTES.SNIPPET} element={<SnippetPage />} />
+                    <Route path="/admin/*" element={<AdminPage />} />
+                    <Route path={ROUTES.HOME} element={<AuthenticatedApp />} />
+                  </Routes>
+                </SettingsProvider>
               </AuthProvider>
             </ToastProvider>
           </div>

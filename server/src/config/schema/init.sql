@@ -62,6 +62,13 @@ CREATE TABLE IF NOT EXISTS api_keys (
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS user_settings (
+    user_id INTEGER PRIMARY KEY,
+    settings TEXT NOT NULL DEFAULT '{}',
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+
 CREATE INDEX IF NOT EXISTS idx_users_username ON users (username);
 
 CREATE INDEX IF NOT EXISTS idx_snippets_user_id ON snippets (user_id);

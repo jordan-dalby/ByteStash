@@ -115,6 +115,49 @@ components:
           type: string
         created_at:
           type: string
+    UserSettings:
+      type: object
+      description: >
+        Per-user interface preferences. Only keys the user has explicitly set are
+        stored; the client merges the response over its own defaults, so any key
+        may be absent. Unknown keys are ignored on write.
+      properties:
+        theme:
+          type: string
+          enum: [light, dark, system]
+        locale:
+          type: string
+          enum: [en, ru, es, ja, zh, it]
+        viewMode:
+          type: string
+          enum: [grid, list]
+        compactView:
+          type: boolean
+        showCodePreview:
+          type: boolean
+        previewLines:
+          type: integer
+          minimum: 1
+          maximum: 20
+        includeCodeInSearch:
+          type: boolean
+        showCategories:
+          type: boolean
+        expandCategories:
+          type: boolean
+        showLineNumbers:
+          type: boolean
+        showFavorites:
+          type: boolean
+    UserSettingsResponse:
+      type: object
+      properties:
+        settings:
+          $ref: '#/components/schemas/UserSettings'
+        updatedAt:
+          type: string
+          nullable: true
+          description: Null when the user has never saved any settings
 paths:
   /api/auth/login:
     post:
@@ -659,6 +702,72 @@ paths:
           description: API key not found
         '500':
           description: Failed to delete API key
+  /api/settings:
+    get:
+      summary: Get the authenticated user's interface preferences
+      tags:
+        - Settings
+      security:
+        - JwtAuth: []
+      responses:
+        '200':
+          description: The user's stored settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSettingsResponse'
+        '401':
+          description: Authentication required
+        '500':
+          description: Failed to fetch settings
+    patch:
+      summary: Merge a partial set of preferences into the stored ones
+      description: >
+        Only the supplied keys are changed, so concurrent clients saving
+        different preferences do not overwrite each other.
+      tags:
+        - Settings
+      security:
+        - JwtAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                settings:
+                  $ref: '#/components/schemas/UserSettings'
+      responses:
+        '200':
+          description: The updated settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSettingsResponse'
+        '400':
+          description: A supplied setting had an invalid value
+        '401':
+          description: Authentication required
+        '500':
+          description: Failed to update settings
+    delete:
+      summary: Reset the authenticated user's preferences to defaults
+      tags:
+        - Settings
+      security:
+        - JwtAuth: []
+      responses:
+        '200':
+          description: Settings cleared
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSettingsResponse'
+        '401':
+          description: Authentication required
+        '500':
+          description: Failed to reset settings
   /api/auth/oidc/config:
     get:
       summary: Get OIDC configuration

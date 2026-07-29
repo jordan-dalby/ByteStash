@@ -35,7 +35,7 @@ services:
       # Should debug mode be enabled? Essentially enables logging, in most cases leave this as false
       - DEBUG=true
       # Should we use accounts at all? When enabled, it will be like starting a fresh account so export your snippets, no login required
-      - DISABLE_ACCOUNTS=true
+      - DISABLE_ACCOUNTS=false
       # Should internal accounts be disabled?
       - DISABLE_INTERNAL_ACCOUNTS=false
       # Allow password changes (false by default)
