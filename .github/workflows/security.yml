@@ -18,3 +18,30 @@ jobs:
           echo "Repository: ${{ github.repository }}"
           echo "Triggered by: ${{ github.event_name }}"
           ls -la
+  semgrep:
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep
+        run: semgrep ci
+        env:
+          SEMGREP_RULES: >-
+            p/javascript
+            p/typescript
+            p/react
+            p/nodejs
+            p/owasp-top-ten
+  trivy:
+    runs-on: ubuntu-latest
+    container:
+      image: aquasec/trivy:latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy filesystem scan
+        run: trivy fs --severity HIGH,CRITICAL --exit-code 1 --no-progress .
