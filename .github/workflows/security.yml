@@ -107,6 +107,12 @@ jobs:
         working-directory: ci
         run: docker compose -f docker-compose.ci.yaml ps
 
+      - name: Run pytest (config audit + functionality)
+        working-directory: ci
+        run: |
+          pip install --quiet -r tests/requirements.txt
+          python -m pytest tests/ -v
+
       - name: Tear down
         if: always()                    # guaranteed cleanup even on failure
         working-directory: ci
