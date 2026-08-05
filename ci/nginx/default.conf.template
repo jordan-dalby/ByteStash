@@ -1,0 +1,203 @@
+# ByteStash hardened reverse proxy.
+#
+# Rendered by the nginx entrypoint:
+#   /etc/nginx/templates/conf.d/default.conf.template -> /etc/nginx/conf.d/default.conf
+# Only real environment variables are substituted, so nginx runtime variables
+# ($host, $remote_addr) pass through untouched.
+
+# --- rate limit zones --------------------------------------------
+# login: this is the actual control. The login endpoint has no rate limiting,
+# lockout, backoff or CAPTCHA. Failed attempts are not counted or tracked, so
+# credential guessing runs at network speed. (CWE-307, CWE-799, CWE-770)
+limit_req_zone $binary_remote_addr zone=login:10m rate=5r/m;
+
+# api: a coarse abuse control, NOT the credential-guessing defence.
+#
+# This was 60r/m and it was wrong. ByteStash ships an MCP server and API keys,
+# so it is built for automated clients: a single crawler tripped this within
+# seconds and got 429s on 425 requests, including 224 on /api/public/snippets.
+# A real MCP client or API integration would hit the same wall.
+#
+# 600r/m (10/s sustained per IP) still stops a naive flood while leaving
+# legitimate automation alone. Connection count, memory and pid ceilings are
+# what actually bound flooding; this zone was buying little at 60r/m and
+# costing real functionality.
+limit_req_zone $binary_remote_addr zone=api:10m rate=600r/m;
+
+limit_conn_zone $binary_remote_addr zone=conn:10m;
+
+log_format sec escape=json
+  '{"ts":"$time_iso8601","ip":"$remote_addr","host":"$host",'
+  '"method":"$request_method","uri":"$request_uri","status":$status,'
+  '"bytes":$body_bytes_sent,"rt":$request_time,"ua":"$http_user_agent"}';
+
+# --- host allowlist ----------------------------------------------
+# getBaseUrl() in server/src/routes/oidcRoutes.js builds the application base
+# URL from X-Forwarded-Host (falling back to Host) and X-Forwarded-Proto, with
+# no allowlist of permitted hostnames. server/src/app.js sets
+# trust proxy = true, so those client-supplied headers are trusted. That base
+# URL becomes the OIDC redirect_uri sent to the identity provider.
+# (CWE-644, CWE-601)
+#
+# This default server absorbs every request whose Host is not SERVER_NAME, so
+# the application never sees an attacker-chosen host.
+server {
+    listen 8080 default_server;
+    listen 8443 ssl default_server;
+    server_name _;
+
+    ssl_certificate     /etc/nginx/certs/bytestash.crt;
+    ssl_certificate_key /etc/nginx/certs/bytestash.key;
+
+    # The image ships a healthcheck that curls https://127.0.0.1:8443/healthz.
+    # Its Host header is 127.0.0.1, not SERVER_NAME, so it lands here and would
+    # get 444, leaving the container permanently unhealthy.
+    #
+    # Answering it from loopback only does not widen the allowlist: an external
+    # client still cannot reach the application with a forged Host, and this
+    # returns a fixed string with no application data.
+    #
+    # NOTE: 'return 444' must live inside a location, not at server level.
+    # A server-level return executes in the rewrite phase, before location
+    # matching, and would swallow /healthz too.
+    location = /healthz {
+        allow 127.0.0.1;
+        allow ::1;
+        deny all;
+        access_log off;
+        default_type text/plain;
+        return 200 "ok\n";
+    }
+
+    location / {
+        return 444;
+    }
+}
+
+# --- HTTP to HTTPS -----------------------------------------------
+server {
+    listen 8080;
+    server_name ${SERVER_NAME};
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 8443 ssl;
+    http2 on;
+    server_name ${SERVER_NAME};
+
+    access_log /var/log/modsecurity/access.log sec;
+
+    # --- TLS -----------------------------------------------------
+    # See the guide for certificate options. Self-signed is for local testing
+    # only; use a CA-issued certificate for any reachable deployment.
+    ssl_certificate     /etc/nginx/certs/bytestash.crt;
+    ssl_certificate_key /etc/nginx/certs/bytestash.key;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_ciphers         ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305;
+    ssl_prefer_server_ciphers off;
+    ssl_session_cache   shared:SSL:10m;
+    ssl_session_timeout 1d;
+    ssl_session_tickets off;
+
+    # NOTE: do NOT add modsecurity / modsecurity_rules_file here.
+    # The image's own /etc/nginx/nginx.conf already sets:
+    #     modsecurity on;
+    #     modsecurity_rules_file /etc/modsecurity.d/setup.conf;
+    # at the http level, and these inherit http -> server -> location.
+    # Repeating the rules_file loads setup.conf a second time and nginx aborts
+    # with "Rule id: 200000 is duplicated".
+    # Confirm CRS is active after any edit:
+    #   curl -k -o /dev/null -w '%{http_code}' "https://<host>/?x=/etc/passwd"   -> 403
+
+    # --- security headers ----------------------------------------
+    # The application sets none of these.
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;
+    add_header X-Content-Type-Options    "nosniff" always;
+    add_header Referrer-Policy           "no-referrer" always;
+    add_header Permissions-Policy        "geolocation=(), camera=(), microphone=(), payment=(), usb=()" always;
+    add_header Cross-Origin-Opener-Policy   "same-origin" always;
+    add_header Cross-Origin-Resource-Policy "same-origin" always;
+
+    # Clickjacking protection.
+    #
+    # TRADE-OFF: this disables ByteStash's snippet-embed feature, which exists
+    # to be iframed by third-party pages. If you rely on embedding, replace
+    # both directives with a frame-ancestors allowlist naming the sites
+    # permitted to embed, e.g.
+    #   Content-Security-Policy: ... frame-ancestors https://your-blog.example;
+    # and drop X-Frame-Options. Do not simply remove them.
+    add_header X-Frame-Options "DENY" always;
+
+    # CSP is intentionally not maximally strict. Monaco Editor and Mermaid both
+    # require 'unsafe-eval', and the build emits inline styles. A nonce-based
+    # policy would need application changes. This still closes clickjacking,
+    # form hijacking, base-tag injection and plugin embedding.
+    #
+    # img-src omits https:, so external images referenced in markdown snippets
+    # will not load. Add https: if you need them.
+    #
+    # KNOWN ARTIFACT: Express's default error handler sets its own
+    # "Content-Security-Policy: default-src 'none'" on 404 and 500 pages.
+    # add_header appends rather than replaces, so those responses carry two CSP
+    # headers. Browsers enforce the INTERSECTION of multiple policies, so error
+    # pages end up stricter than this one, which is fine. Scanners read the
+    # first header and will report on Express's policy rather than this one.
+    #
+    # Do NOT "fix" that with proxy_hide_header Content-Security-Policy. It would
+    # weaken error pages to 'self' in exchange for a tidier scan report, which
+    # is changing security posture to please a tool.
+    add_header Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; worker-src 'self' blob:" always;
+
+    # --- fingerprinting ------------------------------------------
+    proxy_hide_header X-Powered-By;
+    server_tokens off;
+
+    client_max_body_size 2m;
+    limit_conn conn 20;
+
+    # --- API documentation is not public -------------------------
+    # The application serves Swagger UI at /api-docs with no authentication,
+    # exposing the full API schema to anonymous users. Read it from the
+    # repository instead.
+    location /api-docs {
+        return 404;
+    }
+
+    # --- authentication endpoints --------------------------------
+    location = /api/auth/login {
+        limit_req zone=login burst=3 nodelay;
+        limit_req_status 429;
+        include /etc/nginx/conf.d/bytestash_proxy.inc;
+    }
+
+    location = /api/auth/register {
+        limit_req zone=login burst=3 nodelay;
+        limit_req_status 429;
+        include /etc/nginx/conf.d/bytestash_proxy.inc;
+    }
+
+    location = /api/auth/change-password {
+        limit_req zone=login burst=3 nodelay;
+        limit_req_status 429;
+        include /etc/nginx/conf.d/bytestash_proxy.inc;
+    }
+
+    location /api/ {
+        limit_req zone=api burst=100 nodelay;
+        limit_req_status 429;
+        include /etc/nginx/conf.d/bytestash_proxy.inc;
+    }
+
+    # MCP is an automation endpoint by design. A tight burst here throttles
+    # exactly the clients the feature exists for.
+    location /mcp {
+        limit_req zone=api burst=100 nodelay;
+        limit_req_status 429;
+        include /etc/nginx/conf.d/bytestash_proxy.inc;
+    }
+
+    location / {
+        include /etc/nginx/conf.d/bytestash_proxy.inc;
+    }
+}

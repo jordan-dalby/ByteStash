@@ -66,12 +66,12 @@ jobs:
           echo "Trivy:    ${{ needs.trivy.result }}"
           echo "Gitleaks: ${{ needs.gitleaks.result }}"
 
-  # ---------- DYNAMIC PHASE (proof of plumbing) ----------
-  dynamic-smoke:
-    name: Dynamic plumbing test
+# ---------- DYNAMIC PHASE: deploy the hardened stack ----------
+  dynamic-deploy:
+    name: Dynamic deploy (hardened stack)
     runs-on: ubuntu-latest
     needs: static-summary
-    if: always()
+    if: always()                        # Runs regardless of static findings
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -79,26 +79,35 @@ jobs:
       - name: Confirm docker is available
         run: docker version
 
-      - name: Start a throwaway nginx
+      - name: Generate ephemeral cert + secret, fix config perms
+        working-directory: ci
         run: |
-          docker run -d --name smoke-nginx -p 8080:80 nginx:alpine
-          echo "Waiting for nginx to answer..."
-          for i in $(seq 1 10); do
-            if curl -fsS http://localhost:8080 >/dev/null 2>&1; then
-              echo "nginx is up."
-              break
-            fi
-            echo "  attempt $i, not ready yet"
-            sleep 1
-          done
+          mkdir -p certs secrets
+          openssl req -x509 -newkey rsa:2048 -nodes \
+            -keyout certs/bytestash.key -out certs/bytestash.crt \
+            -days 1 -subj "/CN=bytestash.local" \
+            -addext "subjectAltName=DNS:bytestash.local"
+          openssl rand -hex 32 > secrets/jwt_secret
+          chmod 644 certs/bytestash.key certs/bytestash.crt secrets/jwt_secret
+          chmod 644 nginx/default.conf.template nginx/bytestash_proxy.inc \
+                    modsec/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
 
-      - name: Prove we can reach it
+      - name: Create and chown volumes
+        working-directory: ci
         run: |
-          curl -fsS http://localhost:8080 | head -5
-          echo "Reached nginx successfully."
+          docker compose -f docker-compose.ci.yaml up --no-start
+          docker run --rm -v bytestashci_bytestash-data:/data alpine chown -R 1000:1000 /data
+          docker run --rm -v bytestashci_waf-logs:/logs alpine chown -R 101:101 /logs
+
+      - name: Bring up the hardened stack
+        working-directory: ci
+        run: docker compose -f docker-compose.ci.yaml up -d --wait
+
+      - name: Show status
+        working-directory: ci
+        run: docker compose -f docker-compose.ci.yaml ps
 
       - name: Tear down
-        if: always()
-        run: |
-          docker rm -f smoke-nginx || true
-          echo "Cleaned up."
+        if: always()                    # guaranteed cleanup even on failure
+        working-directory: ci
+        run: docker compose -f docker-compose.ci.yaml down -v || true

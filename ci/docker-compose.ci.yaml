@@ -1,0 +1,100 @@
+name: bytestashci
+
+# CI-only hardened stack. Two services. Secrets and certs generated at runtime.
+# Backend network is fully isolated (no OIDC egress).
+
+services:
+
+  bytestash:
+    image: ghcr.io/jordan-dalby/bytestash:latest
+    container_name: bytestash-app
+    restart: "no"                      # CI: a crash should stay down, not loop
+    networks: [backend]
+
+    # --- hardening (each asserted by the config audit) ---
+    user: "1000:1000"                  # image sets no USER; would run as root
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 512m
+    pids_limit: 200
+    cpus: 1.0
+
+    environment:
+      - JWT_SECRET_FILE=/run/secrets/jwt_secret    # strong secret, generated at runtime
+      - NODE_ENV=production                        # suppresses stack traces
+      - DEBUG=false                                # debug logs SQL, user IDs, traces
+      - TOKEN_EXPIRY=15m                           # bounds stale-session window
+      - ALLOW_NEW_ACCOUNTS=true                    # CI needs registration for tests
+      - ADMIN_USERNAMES=ciadmin
+      - DISABLE_ACCOUNTS=false
+      - DISABLE_INTERNAL_ACCOUNTS=false
+      - ALLOW_PASSWORD_CHANGES=true
+      - BASE_PATH=
+      - OIDC_ENABLED=false                         # local-auth-only in CI
+
+    volumes:
+      - ./secrets:/run/secrets:ro                  # directory mount, not file
+      - bytestash-data:/data/snippets
+
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5000/api/auth/config').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  waf:
+    image: owasp/modsecurity-crs:nginx-alpine
+    container_name: bytestash-waf
+    restart: "no"
+    depends_on:
+      bytestash:
+        condition: service_healthy
+    networks: [edge, backend]
+    ports:
+      - "8080:8080"                    # CI: high ports, no privilege needed
+      - "8443:8443"
+
+    environment:
+      - SERVER_NAME=bytestash.local
+      - BACKEND=http://bytestash:5000
+      - MODSEC_RULE_ENGINE=On
+      - BLOCKING_PARANOIA=1
+      - DETECTION_PARANOIA=1
+      - ANOMALY_INBOUND=5
+      - ANOMALY_OUTBOUND=4
+      - ALLOWED_METHODS=GET HEAD POST OPTIONS PUT DELETE PATCH   # app uses PUT/DELETE/PATCH
+      - MODSEC_REQ_BODY_ACCESS=On
+      - MODSEC_REQ_BODY_LIMIT=2097152
+      - MODSEC_REQ_BODY_NOFILES_LIMIT=131072
+      - MODSEC_AUDIT_ENGINE=RelevantOnly
+      - MODSEC_AUDIT_LOG=/var/log/modsecurity/audit.log
+      - MODSEC_AUDIT_LOG_FORMAT=JSON
+      - MODSEC_AUDIT_LOG_TYPE=Serial
+
+    volumes:
+      - ./certs:/etc/nginx/certs:ro
+      - ./nginx/default.conf.template:/etc/nginx/templates/conf.d/default.conf.template:ro
+      - ./nginx/bytestash_proxy.inc:/etc/nginx/conf.d/bytestash_proxy.inc:ro
+      - ./modsec/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf:/opt/owasp-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf:ro
+      - waf-logs:/var/log/modsecurity
+
+    cap_drop: [ALL]
+    cap_add: [CHOWN, SETGID, SETUID]   # entrypoint chowns its own log dir
+    security_opt: [no-new-privileges:true]
+    mem_limit: 256m
+    pids_limit: 200
+
+networks:
+  edge:
+    driver: bridge
+  backend:
+    driver: bridge
+    internal: true                     # no OIDC, so no egress: stricter than Lab 5
+
+volumes:
+  bytestash-data:
+  waf-logs:

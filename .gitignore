@@ -7,3 +7,6 @@ dist
 kube.yml
 
 example-fragment.js
+
+ci/certs/
+ci/secrets/
