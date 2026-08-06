@@ -48,6 +48,7 @@ jobs:
           run: |
             trivy image \
               --severity HIGH,CRITICAL \
+              --exit-code 1 \
               --no-progress \
               ghcr.io/jordan-dalby/bytestash:latest
   gitleaks:
@@ -63,8 +64,8 @@ jobs:
         run: gitleaks dir . --verbose --exit-code 1
 
 # ---------- DYNAMIC PHASE: deploy the hardened stack ----------
-  dynamic-deploy:
-    name: Dynamic deploy (hardened stack)
+  dynamic-testing:
+    name: DAST on Hardened Stack
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -127,7 +128,7 @@ jobs:
   notify-issue:
       name: Notify (GitHub Issue)
       runs-on: ubuntu-latest
-      needs: [semgrep, trivy, trivy-image, gitleaks, dynamic-deploy]
+      needs: [semgrep, trivy, trivy-image, gitleaks, dynamic-testing]
       if: ${{ always() && vars.NOTIFY_ISSUE == 'true' }}
       permissions:
         issues: write
@@ -137,12 +138,12 @@ jobs:
             GH_TOKEN: ${{ github.token }}
             REPO: ${{ github.repository }}
             RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-            RESULTS: >-
+            RESULTS: |
               semgrep=${{ needs.semgrep.result }}
               trivy=${{ needs.trivy.result }}
               trivy-image=${{ needs.trivy-image.result }}
               gitleaks=${{ needs.gitleaks.result }}
-              dynamic=${{ needs.dynamic-deploy.result }}
+              dynamic=${{ needs.dynamic-testing.result }}
           run: |
             # did anything fail?
             if ! echo "$RESULTS" | grep -q "failure"; then
@@ -160,18 +161,28 @@ jobs:
             # dedupe: skip if an open pipeline issue already exists
             existing=$(gh issue list --repo "$REPO" --state open \
                          --label "security-pipeline" --json number --jq 'length')
-            if [ "$existing" -gt 0 ]; then
-              echo "An open security-pipeline issue already exists; skipping."
-              exit 0
+            if [ -n "$existing" ]; then
+              gh issue comment "$existing" --repo "$REPO" \
+                --body "Security pipeline failed again on a later run.
+
+            Results:
+            \`\`\`
+            $RESULTS
+            \`\`\`
+
+            Full run: $RUN_URL"
+              echo "Commented on existing issue #$existing."
+            else
+              gh issue create --repo "$REPO" \
+                --title "Security pipeline: findings detected" \
+                --label "security-pipeline" \
+                --body "The security pipeline reported one or more findings.
+
+            Results:
+            \`\`\`
+            $RESULTS
+            \`\`\`
+
+            Full run: $RUN_URL"
+              echo "Created a new issue."
             fi
-
-            gh issue create --repo "$REPO" \
-              --title "Security pipeline: findings detected" \
-              --label "security-pipeline" \
-              --body "The security pipeline reported one or more findings.
-
-            Results: $RESULTS
-
-            Full run: $RUN_URL
-
-            This issue was opened automatically. It will not be duplicated while open."
