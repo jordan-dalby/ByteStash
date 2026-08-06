@@ -160,7 +160,7 @@ jobs:
 
             # dedupe: skip if an open pipeline issue already exists
             existing=$(gh issue list --repo "$REPO" --state open \
-                         --label "security-pipeline" --json number --jq 'length')
+                                     --label "security-pipeline" --json number --jq '.[0].number // empty')
             if [ -n "$existing" ]; then
               gh issue comment "$existing" --repo "$REPO" \
                 --body "Security pipeline failed again on a later run.
