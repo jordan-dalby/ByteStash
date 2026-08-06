@@ -12,8 +12,8 @@ HOST = {"Host": "bytestash.local", "Content-Type": "application/json"}
 # TB-B: User <-> Authentication boundary
 # ============================================================
 
-def test_tbb_spoofing_forged_default_secret_jwt():
-    """STRIDE Spoofing / TB-B. A token forged with ByteStash's known-weak
+def test_spoofing_forged_default_secret_jwt():
+    """A token forged with ByteStash's known-weak
     default secret ('your-secret') must be rejected, proving the deployment
     signs with a strong secret (VP-1, maps to Lab finding B-01).
 
@@ -31,8 +31,8 @@ def test_tbb_spoofing_forged_default_secret_jwt():
         f"forged-default-secret token was NOT rejected (got {r.status_code}) — auth bypass!"
 
 
-def test_tbb_spoofing_alg_none_token():
-    """STRIDE Spoofing / TB-B. A token using 'alg:none' (no signature) must be
+def test_spoofing_alg_none_token():
+    """A token using 'alg:none' (no signature) must be
     rejected. The attack removes signing entirely, betting the server skips
     verification. Maps to VP-11 and modsec rule 10004."""
     # PyJWT requires explicit opt-in to even ENCODE an unsigned token
@@ -59,8 +59,8 @@ def _tamper_jwt_claims(token, new_claims):
     return f"{header_b64}.{tampered_payload}.{sig_b64}"
 
 
-def test_tbb_tampering_modified_claims_rejected(user_a):
-    """STRIDE Tampering / TB-B. A validly-issued token whose claims are altered
+def test_tampering_modified_claims_rejected(user_a):
+    """A validly-issued token whose claims are altered
     (here, the user id/username changed to impersonate another account) must be
     rejected, because altering the payload invalidates the HMAC signature."""
     real_token = user_a["token"]
@@ -80,8 +80,8 @@ def test_tbb_tampering_modified_claims_rejected(user_a):
         f"tampered-claims token was NOT rejected (got {r.status_code}) — signature not verified!"
 
 
-def test_tbb_info_disclosure_idor_private_snippet(user_a, user_b):
-    """STRIDE Information Disclosure / TB-B. User B must NOT be able to read
+def test_info_disclosure_idor_private_snippet(user_a, user_b):
+    """User B must NOT be able to read
     user A's private snippet by its ID. Tests authorization (ownership check),
     not just authentication. This is OWASP A01 Broken Access Control / IDOR."""
     a_auth = {**HOST, "bytestashauth": f"bearer {user_a['token']}"}
@@ -119,8 +119,8 @@ def test_tbb_info_disclosure_idor_private_snippet(user_a, user_b):
             "IDOR: user A's confidential snippet content leaked to user B!"
 
 
-def test_tbc_elevation_nonadmin_denied_admin_route(user_a, admin_user):
-    """STRIDE Elevation of Privilege / TB-C. A regular authenticated user must
+def test_elevation_nonadmin_denied_admin_route(user_a, admin_user):
+    """A regular authenticated user must
     be denied access to an admin-only endpoint (403). Verifies the app checks
     authorization (admin role), not merely authentication."""
     admin_auth = {**HOST, "bytestashauth": f"bearer {admin_user['token']}"}
@@ -141,8 +141,8 @@ def test_tbc_elevation_nonadmin_denied_admin_route(user_a, admin_user):
         f"privilege escalation: non-admin reached {ADMIN_ROUTE} (got {r_user.status_code})!"
 
 
-def test_tbc_spoofing_forged_admin_token_rejected(user_a):
-    """STRIDE Spoofing / TB-C. A token forged to claim an admin username must
+def test_spoofing_forged_admin_token_rejected(user_a):
+    """A token forged to claim an admin username must
     not grant admin access. Admin is decided by the username claim, so this
     tests that the claim can't be spoofed without the real signing secret.
     Combines the weak-secret forge (VP-1) with the username-based admin model."""
@@ -160,8 +160,8 @@ def test_tbc_spoofing_forged_admin_token_rejected(user_a):
         f"admin spoofing: forged admin token was accepted (got {r.status_code}) — privilege bypass!"
 
 
-def test_tbd_tampering_login_sqli_does_not_authenticate():
-    """STRIDE Tampering / TB-D. A classic SQL-injection payload in the login
+def test_tampering_login_sqli_does_not_authenticate():
+    """A classic SQL-injection payload in the login
     username must not authenticate. ByteStash uses prepared statements, so the
     payload is treated as a literal username and login fails cleanly rather
     than injecting. Verifies the app<->DB query boundary."""
