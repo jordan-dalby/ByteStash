@@ -1,5 +1,6 @@
 import { CodeFragment, Snippet } from "../../types/snippets";
 import * as monaco from "monaco-editor";
+import { registerX3Language } from "./x3-4gl-language"; 
 import { 
   FileJson, 
   FileText, 
@@ -504,6 +505,12 @@ const LANGUAGE_MAPPING: LanguageMapping = {
     monacoAlias: "plaintext",
     label: "plaintext",
   },
+  // X3 4GL Source Files
+     x3: {
+     aliases: ["x3src", "src", "sage-x3", "4gl", "x3-4gl"],
+     monacoAlias: "x3-4gl",
+     label: "X3 4GL",
+   },
 };
 
 const getAllLanguageIdentifiers = (): Set<string> => {
@@ -595,6 +602,9 @@ export const getUniqueLanguages = (fragments: CodeFragment[]): string => {
 };
 
 export const configureMonaco = () => {
+
+  registerX3Language(); 
+  
   monaco.editor.defineTheme("bytestash-dark", {
     base: "vs-dark",
     inherit: true,
