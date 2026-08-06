@@ -166,19 +166,19 @@ server {
 
     # --- authentication endpoints --------------------------------
     location = /api/auth/login {
-        limit_req zone=login burst=3 nodelay;
+        limit_req zone=login burst=10 nodelay;
         limit_req_status 429;
         include /etc/nginx/conf.d/bytestash_proxy.inc;
     }
 
     location = /api/auth/register {
-        limit_req zone=login burst=3 nodelay;
+        limit_req zone=login burst=10 nodelay;
         limit_req_status 429;
         include /etc/nginx/conf.d/bytestash_proxy.inc;
     }
 
     location = /api/auth/change-password {
-        limit_req zone=login burst=3 nodelay;
+        limit_req zone=login burst=10 nodelay;
         limit_req_status 429;
         include /etc/nginx/conf.d/bytestash_proxy.inc;
     }

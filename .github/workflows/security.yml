@@ -28,7 +28,7 @@ jobs:
             p/nodejs
             p/owasp-top-ten
   trivy:
-    name: Dependencies (Trivy)
+    name: SCA (Trivy)
     runs-on: ubuntu-latest
     container:
       image: aquasec/trivy:latest
@@ -38,8 +38,20 @@ jobs:
 
       - name: Run Trivy filesystem scan
         run: trivy fs --severity HIGH,CRITICAL --exit-code 1 --no-progress .
+  trivy-image:
+      name: Container Vulnerability Scan (Trivy)
+      runs-on: ubuntu-latest
+      container:
+        image: aquasec/trivy:latest
+      steps:
+        - name: Scan the published ByteStash image
+          run: |
+            trivy image \
+              --severity HIGH,CRITICAL \
+              --no-progress \
+              ghcr.io/jordan-dalby/bytestash:latest
   gitleaks:
-    name: Secrets (Gitleaks)
+    name: Secrets Detection (Gitleaks)
     runs-on: ubuntu-latest
     container:
       image: zricethezav/gitleaks:latest
@@ -50,28 +62,10 @@ jobs:
       - name: Run Gitleaks
         run: gitleaks dir . --verbose --exit-code 1
 
-  # ---------- STATIC PHASE GATE ----------
-  # "The static phase has completed." The dynamic phase will hang off this.
-
-  static-summary:
-    name: Static phase summary
-    runs-on: ubuntu-latest
-    needs: [semgrep, trivy, gitleaks]
-    if: always()
-    steps:
-      - name: Report static phase result
-        run: |
-          echo "Static phase finished."
-          echo "Semgrep:  ${{ needs.semgrep.result }}"
-          echo "Trivy:    ${{ needs.trivy.result }}"
-          echo "Gitleaks: ${{ needs.gitleaks.result }}"
-
 # ---------- DYNAMIC PHASE: deploy the hardened stack ----------
   dynamic-deploy:
     name: Dynamic deploy (hardened stack)
     runs-on: ubuntu-latest
-    needs: static-summary
-    if: always()                        # Runs regardless of static findings
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -107,13 +101,77 @@ jobs:
         working-directory: ci
         run: docker compose -f docker-compose.ci.yaml ps
 
-      - name: Run pytest (config audit + functionality)
+      - name: Install test dependencies
         working-directory: ci
-        run: |
-          pip install --quiet -r tests/requirements.txt
-          python -m pytest tests/ -v
+        run: pip install --quiet -r tests/requirements.txt
+
+      - name: Run Config Audit
+        working-directory: ci
+        run: pytest tests/test_config_audit.py -v
+
+      - name: Run Functionality Tests
+        working-directory: ci
+        run: pytest tests/test_functionality.py -v
+
+      - name: Run Security Tests
+        working-directory: ci
+        run: pytest tests/test_security.py -v
 
       - name: Tear down
         if: always()                    # guaranteed cleanup even on failure
         working-directory: ci
         run: docker compose -f docker-compose.ci.yaml down -v || true
+
+  # ------------ Create or Update a Github Issue if any security test fails -----------------
+
+  notify-issue:
+      name: Notify (GitHub Issue)
+      runs-on: ubuntu-latest
+      needs: [semgrep, trivy, trivy-image, gitleaks, dynamic-deploy]
+      if: ${{ always() && vars.NOTIFY_ISSUE == 'true' }}
+      permissions:
+        issues: write
+      steps:
+        - name: Open an issue if any security job failed
+          env:
+            GH_TOKEN: ${{ github.token }}
+            REPO: ${{ github.repository }}
+            RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            RESULTS: >-
+              semgrep=${{ needs.semgrep.result }}
+              trivy=${{ needs.trivy.result }}
+              trivy-image=${{ needs.trivy-image.result }}
+              gitleaks=${{ needs.gitleaks.result }}
+              dynamic=${{ needs.dynamic-deploy.result }}
+          run: |
+            # did anything fail?
+            if ! echo "$RESULTS" | grep -q "failure"; then
+              echo "No failures; nothing to notify."
+              exit 0
+            fi
+
+            # ensure the label exists (idempotent; --force = no error if present)
+            gh label create "security-pipeline" \
+              --repo "$REPO" \
+              --color "B60205" \
+              --description "Findings reported by the security pipeline" \
+              --force
+
+            # dedupe: skip if an open pipeline issue already exists
+            existing=$(gh issue list --repo "$REPO" --state open \
+                         --label "security-pipeline" --json number --jq 'length')
+            if [ "$existing" -gt 0 ]; then
+              echo "An open security-pipeline issue already exists; skipping."
+              exit 0
+            fi
+
+            gh issue create --repo "$REPO" \
+              --title "Security pipeline: findings detected" \
+              --label "security-pipeline" \
+              --body "The security pipeline reported one or more findings.
+
+            Results: $RESULTS
+
+            Full run: $RUN_URL
+
+            This issue was opened automatically. It will not be duplicated while open."
