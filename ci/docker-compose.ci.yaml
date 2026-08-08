@@ -6,7 +6,7 @@ name: bytestashci
 services:
 
   bytestash:
-    image: ghcr.io/jordan-dalby/bytestash:latest
+    image: ${BYTESTASH_IMAGE}
     container_name: bytestash-app
     restart: "no"                      # CI: a crash should stay down, not loop
     networks: [backend]
