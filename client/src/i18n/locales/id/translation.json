@@ -1,0 +1,56 @@
+{
+  "action": {
+    "addSnippet": "Tambah snippet",
+    "cancel": "Batal",
+    "changePassword": "Ubah kata sandi",
+    "clear": "Bersihkan",
+    "clearAll": "Bersihkan semua",
+    "close": "Tutup",
+    "confirm": "Konfirmasi",
+    "createAccount": "Buat akun",
+    "delete": "Hapus",
+    "edit": "Edit",
+    "hidePassword": "Sembunyikan kata sandi",
+    "load": "Muat",
+    "maximize": "Maksimalkan",
+    "minimize": "Minimalkan",
+    "restore": "Pulihkan",
+    "save": "Simpan",
+    "saving": "Menyimpan...",
+    "showPassword": "Tampilkan kata sandi",
+    "signIn": "Masuk"
+  },
+  "confirmPassword": "Konfirmasi Kata Sandi",
+  "loading": "Memuat...",
+  "locale": {
+    "en": "Inggris",
+    "es": "Spanyol",
+    "id": "Indonesia",
+    "it": "Italia",
+    "ja": "Jepang",
+    "ru": "Rusia",
+    "zh": "Mandarin"
+  },
+  "no": "tidak",
+  "or": "atau",
+  "pagination": {
+    "next": "Berikutnya",
+    "pageOf": "Halaman {{currentPage}} dari {{totalPages}}",
+    "previous": "Sebelumnya",
+    "total": "{{total}} total",
+    "useSnippetPagination": {
+      "error": {
+        "failedSnippetsLoad": "Gagal memuat snippet",
+        "sessionExpired": "Sesi telah berakhir. Silakan login kembali."
+      }
+    }
+  },
+  "password": "Kata Sandi",
+  "showing": "Menampilkan",
+  "theme": {
+    "dark": "Gelap",
+    "light": "Terang",
+    "system": "Sistem"
+  },
+  "username": "Nama Pengguna"
+}

@@ -1,0 +1,93 @@
+{
+  "settingsModal": {
+    "block": {
+      "category": {
+        "expandCategories": {
+          "description": "Otomatis perluas grup kategori",
+          "label": "Perluas Kategori"
+        },
+        "showCategories": {
+          "description": "Tampilkan label kategori untuk snippet",
+          "label": "Tampilkan Kategori"
+        },
+        "title": "Kategori"
+      },
+      "dataManagement": {
+        "export": {
+          "label": "Ekspor Snippet"
+        },
+        "import": {
+          "errors": {
+            "failed": "Gagal mengimpor \"{{title}}\": {{error}}",
+            "occurred_one": "{{count, number}} kesalahan terjadi",
+            "occurred_other": "{{count, number}} kesalahan terjadi"
+          },
+          "label": "Impor Snippet",
+          "progress": "Mengimpor snippet..."
+        },
+        "title": "Manajemen data"
+      },
+      "locale": {
+        "title": "Bahasa"
+      },
+      "search": {
+        "includeCodeInSearch": {
+          "description": "Cari di dalam konten kode, bukan hanya judul",
+          "label": "Sertakan Kode dalam Pencarian"
+        },
+        "title": "Pencarian"
+      },
+      "theme": {
+        "title": "Tema"
+      },
+      "view": {
+        "compactView": {
+          "description": "Tampilkan snippet dalam format yang lebih ringkas",
+          "label": "Tampilan Ringkas"
+        },
+        "previewLines": {
+          "description": "Tampilkan pratinjau kode dalam daftar snippet",
+          "label": "Tampilkan Pratinjau Kode"
+        },
+        "showCodePreview": {
+          "description": "Jumlah maksimum baris yang ditampilkan pada pratinjau (1-20)",
+          "label": "Jumlah Baris Pratinjau"
+        },
+        "showLineNumbers": {
+          "description": "Tampilkan nomor baris pada blok kode",
+          "label": "Tampilkan Nomor Baris"
+        },
+        "title": "Tampilan"
+      }
+    },
+    "export": {
+      "error": {
+        "default": "Gagal mengekspor snippet",
+        "noSnippets": "Tidak ada snippet yang tersedia untuk diekspor"
+      },
+      "markdown": {
+        "error": {
+          "default": "Gagal mengekspor Markdown"
+        },
+        "success": {
+          "default": "Ekspor Markdown berhasil"
+        },
+        "warning": {
+          "default": "Tidak ada snippet yang tersedia untuk diekspor"
+        }
+      },
+      "success": {
+        "default": "{{total}} snippet berhasil diekspor"
+      }
+    },
+    "import": {
+      "error": {
+        "default": "Gagal mengimpor snippet"
+      },
+      "hasFailed": "Berhasil mengimpor {{succeeded}} snippet, {{failed}} gagal. Periksa konsol untuk detailnya.",
+      "successOnly_one": "Berhasil mengimpor {{succeeded}} snippet. Tutup pengaturan untuk melihatnya.",
+      "successOnly_other": "Berhasil mengimpor {{succeeded}} snippet. Tutup pengaturan untuk melihatnya."
+    },
+    "title": "Pengaturan"
+  }
+}

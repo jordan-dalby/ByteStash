@@ -1,0 +1,31 @@
+{
+  "card": {
+    "apiKeys": {
+      "title": "Kunci API"
+    },
+    "shares": {
+      "title": "Berbagi"
+    },
+    "snippets": {
+      "apiKeys": {
+        "active": "Aktif"
+      },
+      "shares": {
+        "total": "Total"
+      },
+      "title": "Snippet",
+      "viewType": {
+        "private": "Privat",
+        "public": "Publik"
+      }
+    },
+    "users": {
+      "authType": {
+        "internal": "Internal",
+        "oidc": "OIDC"
+      },
+      "title": "Pengguna"
+    }
+  },
+  "loadingMessage": "Memuat statistik..."
+}

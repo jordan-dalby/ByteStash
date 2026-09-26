@@ -26,6 +26,20 @@
       "nothing": "没有可下载的内容"
     }
   },
+  "exportButton": {
+    "tooltip": "导出"
+  },
+  "exportModal": {
+    "copyClipboard": "复制",
+    "downloadPng": "下载 PNG",
+    "downloadSvg": "下载 SVG",
+    "errorCopy": "复制图片失败",
+    "errorGenerate": "生成图片失败",
+    "shareLinkedIn": "分享到 LinkedIn",
+    "shareTwitter": "分享到 X",
+    "successCopy": "图片已复制到剪贴板！",
+    "title": "导出代码"
+  },
   "fileUploadButton": {
     "error": {
       "unknown": "未知错误"

@@ -1,0 +1,26 @@
+{
+  "embedCopyButton": {
+    "title": "Salin ke clipboard"
+  },
+  "embedModal": {
+    "form": {
+      "embedCode": "Kode Sematan",
+      "fragmentToShow": {
+        "all": "Semua fragmen",
+        "label": "Fragmen yang ditampilkan (opsional)"
+      },
+      "showDescription": "Tampilkan deskripsi",
+      "showFileHeaders": "Tampilkan header berkas",
+      "showPoweredBy": "Tampilkan \"Didukung oleh ByteStash\"",
+      "showTitle": "Tampilkan judul",
+      "theme": "Tema"
+    },
+    "subTitle": "Sesuaikan Sematan",
+    "title": "Sematkan Snippet"
+  },
+  "embedView": {
+    "error": {
+      "default": "Gagal memuat snippet"
+    }
+  }
+}

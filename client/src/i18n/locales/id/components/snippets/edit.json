@@ -1,0 +1,57 @@
+{
+  "editSnippetModal": {
+    "addSnippet": "Tambah snippet baru",
+    "editSnippet": "Edit snippet",
+    "error": {
+      "savingFailed": "Terjadi kesalahan saat menyimpan snippet. Silakan coba lagi."
+    },
+    "form": {
+      "categories": {
+        "counter": "{{categories}}/{{max}} kategori",
+        "label": "Kategori (maks {{max}})",
+        "placeholder": "Ketik kategori lalu tekan Enter atau koma"
+      },
+      "codeFragments": {
+        "add": "Tambah fragmen baru",
+        "label": "Fragmen Kode ({{fragments}})"
+      },
+      "description": {
+        "label": "Deskripsi",
+        "placeholder": "Tulis deskripsi singkat tentang snippet ini"
+      },
+      "isPublic": {
+        "description": "Snippet publik dapat dilihat oleh siapa saja tanpa autentikasi",
+        "label": "Jadikan snippet publik"
+      },
+      "title": {
+        "counter": "{{characters}}/{{max}} karakter",
+        "label": "Judul",
+        "placeholder": "Masukkan judul snippet (maks {{max}} karakter)"
+      }
+    },
+    "fragmentRequired": "Minimal satu fragmen kode diperlukan",
+    "mustHaveFileNames": "Semua fragmen harus memiliki nama berkas",
+    "unsavedChanges": "Anda memiliki perubahan yang belum disimpan. Apakah Anda yakin ingin menutupnya?"
+  },
+  "fragmentEditor": {
+    "action": {
+      "collapse": "Ciutkan",
+      "delete": "Hapus",
+      "expand": "Perluas"
+    },
+    "form": {
+      "fileName": {
+        "placeholder": "Nama berkas"
+      },
+      "language": {
+        "placeholder": "Pilih bahasa",
+        "sections": {
+          "other": "Lainnya",
+          "used": "Digunakan"
+        }
+      }
+    },
+    "moveDown": "Pindahkan ke bawah",
+    "moveUp": "Pindahkan ke atas"
+  }
+}

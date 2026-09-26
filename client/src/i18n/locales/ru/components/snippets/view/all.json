@@ -1,9 +1,9 @@
 {
+  "defaultUpdateTime": "Неизвестно",
   "fullCodeView": {
     "dateTimeAgo": "{{dateTime}} назад",
     "defaultDescription": "Нет описания"
   },
-  "defaultUpdateTime": "Неизвестно",
   "snippetModal": {
     "confirmationModal": {
       "confirmLabel": {

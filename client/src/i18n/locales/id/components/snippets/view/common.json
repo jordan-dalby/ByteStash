@@ -1,0 +1,56 @@
+{
+  "authAwareSnippetView": {
+    "error": {
+      "snippetLoad": "Gagal memuat snippet",
+      "snippetRequireAuth": "Snippet ini memerlukan autentikasi untuk dilihat"
+    }
+  },
+  "baseSnippetStorage": {
+    "error": {
+      "sessionExpired": "Sesi telah berakhir. Silakan login kembali.",
+      "snippetCreated": "Gagal membuat snippet",
+      "snippetUpdated": "Gagal memperbarui snippet"
+    },
+    "success": {
+      "displayAll": "Menampilkan semua snippet",
+      "displayFavorites": "Menampilkan snippet favorit",
+      "snippetCreated": "Snippet baru berhasil dibuat",
+      "snippetUpdated": "Snippet berhasil diperbarui"
+    }
+  },
+  "browsePublicSnippets": "Jelajahi snippet publik",
+  "filter": {
+    "filteredByCategories": "Difilter berdasarkan kategori"
+  },
+  "loadingSnippets": "Memuat snippet...",
+  "signIn": "Masuk",
+  "sippetNotFound": "Snippet tidak ditemukan",
+  "snippetContentArea": {
+    "error": {
+      "duplicateSnippet": "Gagal menduplikat snippet",
+      "loadSnippets": "Gagal memuat snippet",
+      "moveSnippetToRecycleBin": "Gagal memindahkan snippet ke tempat sampah. Silakan coba lagi.",
+      "sessionExpired": "Sesi telah berakhir. Silakan login kembali.",
+      "updateFavoriteStatusAdded": "Gagal memperbarui status favorit. Silakan coba lagi.",
+      "updateFavoriteStatusDeleted": "Gagal memperbarui status favorit. Silakan coba lagi.",
+      "updatePinStatusAdded": "Gagal memperbarui status sematan. Silakan coba lagi.",
+      "updatePinStatusDeleted": "Gagal memperbarui status sematan. Silakan coba lagi."
+    },
+    "success": {
+      "duplicateSnippet": "Snippet berhasil diduplikat",
+      "moveSnippetToRecycleBin": "Snippet berhasil dipindahkan ke tempat sampah",
+      "updateFavoriteStatusAdded": "Snippet berhasil ditambahkan ke favorit",
+      "updateFavoriteStatusDeleted": "Snippet berhasil dihapus dari favorit",
+      "updatePinStatusAdded": "Snippet berhasil disematkan",
+      "updatePinStatusDeleted": "Sematan snippet berhasil dilepas"
+    }
+  },
+  "storageHeader": {
+    "private": "Anda sedang melihat snippet privat Anda. Hanya Anda yang dapat melihat dan mengubah snippet ini.",
+    "public": "Anda sedang melihat snippet yang dibagikan secara publik. Snippet ini bersifat hanya-baca dan terlihat oleh semua orang."
+  },
+  "viewSwitch": {
+    "private": "Privat",
+    "public": "Publik"
+  }
+}

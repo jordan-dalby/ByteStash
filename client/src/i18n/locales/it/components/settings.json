@@ -20,6 +20,7 @@
           "errors": {
             "failed": "Errore importazione snippet \"{{title}}\": {{error}}",
             "occurred_one": "{{count, number}} errori rilevati",
+            "occurred_many": "{{count, number}} errori rilevati",
             "occurred_other": "{{count, number}} errori rilevati"
           },
           "label": "Importa Snippet",
@@ -86,6 +87,7 @@
       },
       "hasFailed": "Importati {{succeeded}} snippet, {{failed}} hanno dato errore. Controlla la console per i dettagli.",
       "successOnly_one": "Importati con successo {{succeeded}} snippet. Chiudi le impostazioni per vederli.",
+      "successOnly_many": "Importati con successo {{succeeded}} snippet. Chiudi le impostazioni per vederli.",
       "successOnly_other": "Importati con successo {{succeeded}} snippet. Chiudi le impostazioni per vederli."
     },
     "title": "Impostazioni"

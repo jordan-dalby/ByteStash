@@ -1,0 +1,9 @@
+{
+  "config": {
+    "caution": "Perhatian",
+    "important": "Penting",
+    "note": "Catatan",
+    "tip": "Tip",
+    "warning": "Peringatan"
+  }
+}

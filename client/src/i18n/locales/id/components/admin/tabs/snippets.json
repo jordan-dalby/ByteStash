@@ -1,0 +1,57 @@
+{
+  "action": {
+    "delete": "Hapus snippet",
+    "makePrivate": "Jadikan privat",
+    "makePublic": "Jadikan publik",
+    "scanForOffensiveContent": "Pindai Konten Ofensif",
+    "showAllSnippets": "Tampilkan Semua Snippet",
+    "viewSnippet": "Lihat snippet"
+  },
+  "columns": {
+    "labels": {
+      "actions": "Aksi",
+      "fragments": "Fragmen",
+      "owner": "Pemilik",
+      "title": "Judul",
+      "updated": "Diperbarui",
+      "visibility": "Visibilitas"
+    }
+  },
+  "confirmationModal": {
+    "message": "Apakah Anda yakin ingin menghapus snippet ini secara permanen? Tindakan ini tidak dapat dibatalkan.",
+    "title": "Hapus snippet"
+  },
+  "containsOffensiveWords": "Mengandung kata ofensif: {{words}}",
+  "entityName_one": "snippet",
+  "entityName_other": "snippet",
+  "error": {
+    "delete": {
+      "default": "Gagal menghapus snippet"
+    },
+    "update": {
+      "default": "Gagal memperbarui visibilitas snippet"
+    }
+  },
+  "filters": {
+    "search": "Cari snippet...",
+    "userId": "ID Pengguna",
+    "visibility": {
+      "all": "Semua visibilitas",
+      "private": "Privat",
+      "public": "Publik"
+    }
+  },
+  "offensiveContentMessage": "Ditemukan {{total}} {{entityName}} dengan konten ofensif",
+  "success": {
+    "delete": {
+      "default": "Snippet berhasil dihapus"
+    },
+    "update": {
+      "default": "Visibilitas snippet diperbarui"
+    }
+  },
+  "table": {
+    "emptyMessage": "Tidak ada snippet yang ditemukan",
+    "loadingMessage": "Memuat snippet..."
+  }
+}

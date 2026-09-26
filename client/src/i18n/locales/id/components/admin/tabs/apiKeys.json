@@ -1,0 +1,33 @@
+{
+  "apiKeyDeletedSuccessfully": "Kunci API berhasil dihapus",
+  "columns": {
+    "labels": {
+      "actions": "Aksi",
+      "created": "Dibuat",
+      "lastUsed": "Terakhir digunakan",
+      "name": "Nama",
+      "owner": "Pemilik",
+      "status": "Status"
+    }
+  },
+  "confirmationModal": {
+    "message": "Apakah Anda yakin ingin menghapus kunci API ini? Pemilik kunci tidak akan bisa lagi menggunakannya untuk mengakses API. Tindakan ini tidak dapat dibatalkan.",
+    "title": "Hapus Kunci API"
+  },
+  "entityName_one": "kunci API",
+  "entityName_other": "kunci API",
+  "error": {
+    "default": "Gagal menghapus kunci API"
+  },
+  "filters": {
+    "userId": "Filter berdasarkan ID Pengguna"
+  },
+  "status": {
+    "active": "Aktif",
+    "inactive": "Tidak aktif"
+  },
+  "table": {
+    "emptyMessage": "Tidak ada kunci API yang ditemukan",
+    "loadingMessage": "Memuat kunci API..."
+  }
+}

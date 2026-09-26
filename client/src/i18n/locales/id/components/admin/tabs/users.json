@@ -1,0 +1,63 @@
+{
+  "action": {
+    "activate": "Aktifkan pengguna",
+    "deactivate": "Nonaktifkan pengguna",
+    "delete": "Hapus pengguna"
+  },
+  "columns": {
+    "labels": {
+      "actions": "Aksi",
+      "apiKeysCount": "Kunci API",
+      "authType": "Jenis autentikasi",
+      "created": "Dibuat",
+      "email": "Email",
+      "lastLogin": "Login terakhir",
+      "snippetsCount": "Snippet",
+      "status": "Status",
+      "username": "Nama pengguna"
+    }
+  },
+  "confirmationModal": {
+    "message": "Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini akan menghapus secara permanen semua snippet, kunci API, dan berbagi milik pengguna tersebut. Tindakan ini tidak dapat dibatalkan.",
+    "title": "Hapus pengguna"
+  },
+  "entityName_one": "pengguna",
+  "entityName_other": "pengguna",
+  "error": {
+    "delete": {
+      "default": "Gagal menghapus pengguna"
+    },
+    "update": {
+      "default": "Gagal memperbarui pengguna"
+    }
+  },
+  "filters": {
+    "authType": {
+      "all": "Semua Jenis Autentikasi",
+      "internal": "Internal",
+      "oidc": "OIDC"
+    },
+    "search": "Cari pengguna...",
+    "status": {
+      "active": "Aktif",
+      "all": "Semua Status",
+      "inactive": "Tidak aktif"
+    }
+  },
+  "status": {
+    "active": "Aktif",
+    "inactive": "Tidak aktif"
+  },
+  "success": {
+    "delete": {
+      "default": "Pengguna berhasil dihapus"
+    },
+    "update": {
+      "default": "Status pengguna diperbarui"
+    }
+  },
+  "table": {
+    "emptyMessage": "Tidak ada pengguna yang ditemukan",
+    "loadingMessage": "Memuat pengguna..."
+  }
+}

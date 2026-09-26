@@ -7,6 +7,7 @@
       "failedDownload": "Errore download archivio"
     },
     "fileLabel_one": "{{count, number}} file",
+    "fileLabel_many": "{{count, number}} file",
     "fileLabel_other": "{{count, number}} file",
     "label": "Scarica tutto",
     "success": {
@@ -48,6 +49,7 @@
     "info": {
       "duplicateDetected": "File duplicati rilevati",
       "duplicatesDetected_one": "{{count, number}} file duplicati rilevati",
+      "duplicatesDetected_many": "{{count, number}} file duplicati rilevati",
       "duplicatesDetected_other": "{{count, number}} file duplicati rilevati"
     },
     "label": "Carica file di codice",
@@ -59,6 +61,7 @@
     },
     "success": {
       "filesUploaded_one": "{{count, number}} file caricati con successo",
+      "filesUploaded_many": "{{count, number}} file caricati con successo",
       "filesUploaded_other": "{{count, number}} file caricati con successo",
       "fileUploaded": "\"{{fileName}}\" caricato con successo",
       "someFilesUploaded": "{{successCount}} file su {{total}} caricati con successo"

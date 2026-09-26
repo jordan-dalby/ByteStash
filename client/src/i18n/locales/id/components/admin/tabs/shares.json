@@ -1,0 +1,49 @@
+{
+  "action": {
+    "copyShareLink": "Salin tautan berbagi",
+    "delete": "Hapus berbagi",
+    "viewSnippet": "Lihat snippet"
+  },
+  "columns": {
+    "labels": {
+      "actions": "Aksi",
+      "auth": "Perlu autentikasi",
+      "created": "Dibuat",
+      "expires": "Kedaluwarsa",
+      "id": "ID Berbagi",
+      "owner": "Pemilik",
+      "title": "Judul"
+    }
+  },
+  "confirmationModal": {
+    "message": "Apakah Anda yakin ingin menghapus tautan berbagi ini? Siapa pun yang memiliki tautan ini tidak akan bisa lagi mengakses snippet tersebut. Tindakan ini tidak dapat dibatalkan.",
+    "title": "Hapus berbagi"
+  },
+  "entityName_one": "berbagi",
+  "entityName_other": "berbagi",
+  "error": {
+    "delete": {
+      "default": "Gagal menghapus berbagi"
+    }
+  },
+  "filters": {
+    "authType": {
+      "all": "Semua Jenis Autentikasi",
+      "public": "Publik",
+      "requiresAuth": "Perlu Autentikasi"
+    },
+    "userId": "Filter berdasarkan ID Pengguna"
+  },
+  "success": {
+    "copied": {
+      "default": "Tautan berbagi disalin ke clipboard"
+    },
+    "delete": {
+      "default": "Berbagi berhasil dihapus"
+    }
+  },
+  "table": {
+    "emptyMessage": "Tidak ada berbagi yang ditemukan",
+    "loadingMessage": "Memuat berbagi..."
+  }
+}

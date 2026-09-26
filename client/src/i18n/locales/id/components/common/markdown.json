@@ -1,0 +1,15 @@
+{
+  "mermaid": {
+    "copyCode": "Salin kode Mermaid",
+    "downloadPNG": "Unduh sebagai PNG",
+    "downloadSVG": "Unduh sebagai SVG",
+    "exitFullscreen": "Keluar layar penuh",
+    "fullscreen": "Layar penuh",
+    "renderError": "Gagal merender diagram Mermaid:",
+    "renderErrorFallback": "Terjadi kesalahan saat merender diagram",
+    "resetView": "Atur ulang tampilan",
+    "title": "Diagram Mermaid",
+    "zoomIn": "Perbesar",
+    "zoomOut": "Perkecil"
+  }
+}
