@@ -1,0 +1,37 @@
+{
+  "recycleSnippetContentArea": {
+    "error": {
+      "deleteSnippet": "Gagal menghapus snippet",
+      "loadSnippets": "Gagal memuat snippet",
+      "restoreSnippet": "Gagal memulihkan snippet",
+      "sessionExpired": "Sesi telah berakhir. Silakan login kembali."
+    },
+    "filter": {
+      "byCategories": "Difilter berdasarkan kategori"
+    },
+    "loadingSnippets": "Memuat snippet...",
+    "success": {
+      "deleteSnippet": "Snippet berhasil dihapus",
+      "restoreSnippet": "Snippet berhasil dipulihkan"
+    }
+  },
+  "recycleSnippetStorage": {
+    "backToSnippets": "Kembali ke Snippet",
+    "confirmationModal": {
+      "message": "Apakah Anda yakin ingin menghapus secara permanen semua snippet di tempat sampah? Tindakan ini tidak dapat dibatalkan.",
+      "title": "Konfirmasi Penghapusan"
+    },
+    "description": "Snippet di tempat sampah akan dihapus secara permanen setelah 30 hari",
+    "error": {
+      "clear": "Gagal mengosongkan tempat sampah. Silakan coba lagi.",
+      "sessionExpired": "Sesi telah berakhir. Silakan login kembali."
+    },
+    "info": {
+      "noSnippets": "Tidak ada snippet di tempat sampah untuk dikosongkan"
+    },
+    "recycleBin": "Tempat Sampah",
+    "success": {
+      "clear": "Semua snippet di tempat sampah telah dikosongkan"
+    }
+  }
+}

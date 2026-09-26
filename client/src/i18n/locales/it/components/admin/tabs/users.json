@@ -22,7 +22,8 @@
     "title": "Delete user"
   },
   "entityName_one": "utente",
-  "entityName_other": "usenti",
+  "entityName_many": "utenti",
+  "entityName_other": "utenti",
   "error": {
     "delete": {
       "default": "Errore cancellazione utente"

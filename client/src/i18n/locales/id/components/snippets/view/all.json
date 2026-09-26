@@ -1,0 +1,29 @@
+{
+  "defaultUpdateTime": "Tidak diketahui",
+  "fullCodeView": {
+    "dateTimeAgo": "{{dateTime}} yang lalu",
+    "defaultDescription": "Tidak ada deskripsi tersedia"
+  },
+  "snippetModal": {
+    "confirmationModal": {
+      "confirmLabel": {
+        "isRecycleView": {
+          "false": "Pindahkan ke Tempat Sampah",
+          "true": "Hapus Permanen"
+        }
+      },
+      "message": {
+        "isRecycleView": {
+          "false": "Apakah Anda yakin ingin memindahkan \"{{title}}\" ke Tempat Sampah?",
+          "true": "Apakah Anda yakin ingin menghapus \"{{title}}\" secara permanen? Tindakan ini tidak dapat dibatalkan."
+        }
+      },
+      "title": {
+        "isRecycleView": {
+          "false": "Pindahkan ke Tempat Sampah",
+          "true": "Konfirmasi Penghapusan"
+        }
+      }
+    }
+  }
+}

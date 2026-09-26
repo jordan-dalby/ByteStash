@@ -1,0 +1,71 @@
+{
+  "copyButton": {
+    "title": "Salin ke clipboard"
+  },
+  "downloadArchiveButton": {
+    "error": {
+      "failedDownload": "Gagal mengunduh arsip"
+    },
+    "fileLabel_one": "{{count, number}} berkas",
+    "fileLabel_other": "{{count, number}} berkas",
+    "label": "Unduh semua",
+    "success": {
+      "downloadedAll": "Semua fragmen kode berhasil diunduh"
+    },
+    "title": "Unduh semua berkas sebagai arsip ZIP"
+  },
+  "downloadButton": {
+    "error": {
+      "failedDownload": "Gagal mengunduh berkas"
+    },
+    "success": {
+      "downloaded": "\"{{fileName}}\" berhasil diunduh"
+    },
+    "title": "Unduh {{fileName}}",
+    "warning": {
+      "nothing": "Tidak ada yang bisa diunduh"
+    }
+  },
+  "exportButton": {
+    "title": "Ekspor sebagai gambar",
+    "tooltip": "Ekspor"
+  },
+  "exportModal": {
+    "copyClipboard": "Salin",
+    "downloadPng": "Unduh PNG",
+    "downloadSvg": "Unduh SVG",
+    "errorCopy": "Gagal menyalin gambar",
+    "errorGenerate": "Gagal membuat gambar",
+    "shareLinkedIn": "Bagikan ke LinkedIn",
+    "shareTwitter": "Bagikan ke X",
+    "successCopy": "Gambar disalin ke clipboard!",
+    "title": "Ekspor kode"
+  },
+  "fileUploadButton": {
+    "error": {
+      "unknown": "Kesalahan tidak diketahui"
+    },
+    "info": {
+      "duplicateDetected": "Berkas duplikat terdeteksi",
+      "duplicatesDetected_one": "{{count, number}} berkas duplikat terdeteksi",
+      "duplicatesDetected_other": "{{count, number}} berkas duplikat terdeteksi"
+    },
+    "label": "Unggah berkas kode",
+    "loadFromUrl": {
+      "contentMaxSizeError": "Ukuran konten harus kurang dari {{max}}",
+      "invalidUrl": "Silakan masukkan URL yang valid",
+      "label": "Muat dari URL",
+      "title": "Muat kode dari URL (misalnya, tautan GitHub mentah)"
+    },
+    "success": {
+      "filesUploaded_one": "{{count, number}} berkas berhasil diunggah",
+      "filesUploaded_other": "{{count, number}} berkas berhasil diunggah",
+      "fileUploaded": "\"{{fileName}}\" berhasil diunggah",
+      "someFilesUploaded": "{{successCount}} dari {{total}} berkas berhasil diunggah"
+    },
+    "title": "Unggah berkas kode untuk membuat fragmen otomatis"
+  },
+  "rawButton": {
+    "title": "Buka mentah"
+  }
+}

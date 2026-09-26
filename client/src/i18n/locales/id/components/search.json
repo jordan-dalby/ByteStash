@@ -1,0 +1,30 @@
+{
+  "action": {
+    "clear": "Bersihkan pencarian",
+    "newSnippet": "Snippet baru",
+    "openSettings": "Buka pengaturan",
+    "recycleBin": "Tempat sampah",
+    "showAll": "Tampilkan semua",
+    "showFavorites": "Tampilkan favorit"
+  },
+  "categories": {
+    "addNew": "Tambah baru",
+    "title": "Kategori"
+  },
+  "defaultPlaceholder": "Cari snippet... (Ketik # untuk melihat semua kategori yang tersedia)",
+  "filter": {
+    "language": {
+      "all": "Semua bahasa"
+    }
+  },
+  "sort": {
+    "alphaAsc": "Abjad A-Z",
+    "alphaDesc": "Abjad Z-A",
+    "newestFirst": "Terbaru Lebih Dulu",
+    "oldestFirst": "Terlama Lebih Dulu"
+  },
+  "view": {
+    "grid": "Tampilan grid",
+    "list": "Tampilan daftar"
+  }
+}

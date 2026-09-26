@@ -1,0 +1,37 @@
+{
+  "confirmationModalDelete": {
+    "confirmLabel": {
+      "isRecycleView": {
+        "false": "Pindahkan ke Tempat Sampah",
+        "true": "Hapus Permanen"
+      }
+    },
+    "message": {
+      "isRecycleView": {
+        "false": "Apakah Anda yakin ingin memindahkan \"{{title}}\" ke Tempat Sampah?",
+        "true": "Apakah Anda yakin ingin menghapus \"{{title}}\" secara permanen? Tindakan ini tidak dapat dibatalkan."
+      }
+    },
+    "title": {
+      "isRecycleView": {
+        "false": "Pindahkan ke Tempat Sampah",
+        "true": "Konfirmasi Penghapusan"
+      }
+    }
+  },
+  "confirmationModalRestore": {
+    "message": "Apakah Anda yakin ingin memulihkan \"{{title}}\"?",
+    "title": "Konfirmasi Pemulihan"
+  },
+  "date": {
+    "ago": "{{date}} yang lalu",
+    "expiringSoon": "Akan segera kedaluwarsa",
+    "left": "{{date}} tersisa"
+  },
+  "defaultDescription": "Tidak ada deskripsi tersedia",
+  "defaultUpdateTime": "Tidak diketahui",
+  "favorite": "Favorit",
+  "pinned": "Disematkan",
+  "public": "Publik",
+  "shared": "Dibagikan"
+}

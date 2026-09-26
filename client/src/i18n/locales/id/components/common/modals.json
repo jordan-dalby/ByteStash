@@ -1,0 +1,7 @@
+{
+  "changelogModal": {
+    "error": {
+      "default": "Gagal memuat catatan perubahan. Silakan coba lagi nanti."
+    }
+  }
+}

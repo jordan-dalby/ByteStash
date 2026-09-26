@@ -1,0 +1,48 @@
+{
+  "sharedSnippetView": {
+    "browsePublicSnippets": "Jelajahi snippet publik",
+    "loadingSnippet": "Memuat snippet...",
+    "snippetExpired": "Snippet yang dibagikan ini telah kedaluwarsa",
+    "snippetNotFound": "Snippet tidak ditemukan"
+  },
+  "shareMenu": {
+    "activeShareLinks": {
+      "buttons": {
+        "copy": "Salin tautan",
+        "delete": "Hapus tautan berbagi",
+        "requiresAuth": {
+          "false": "Sematkan snippet",
+          "true": "Hanya snippet tanpa autentikasi yang dapat disematkan"
+        }
+      },
+      "date": {
+        "expired": "Kedaluwarsa",
+        "neverExpires": "Tidak Pernah Kedaluwarsa"
+      },
+      "noLinks": "Tidak ada tautan berbagi aktif",
+      "relativeExpiryTime": "Kedaluwarsa dalam {{date}}",
+      "requiresAuth": {
+        "false": "Akses publik",
+        "true": "Dilindungi - Perlu autentikasi"
+      },
+      "title": "Tautan Berbagi Aktif"
+    },
+    "createButtonText": "Buat Tautan Berbagi",
+    "error": {
+      "created": "Gagal membuat tautan berbagi",
+      "deleted": "Gagal menghapus tautan berbagi",
+      "invalidDuration": "Format durasi tidak valid. Gunakan 1h, 2d, 30m dst.",
+      "load": "Gagal memuat data berbagi",
+      "unknownExpiryTime": "Waktu kedaluwarsa tidak diketahui"
+    },
+    "expiresIn": "Kedaluwarsa dalam (mis. 1h, 2d, 30m)",
+    "expiresInPlaceholder": "Tidak pernah",
+    "requiresAuth": "Perlu autentikasi",
+    "subTitle": "Buat Tautan Berbagi Baru",
+    "success": {
+      "created": "Tautan berbagi dibuat",
+      "deleted": "Tautan berbagi dihapus"
+    },
+    "title": "Bagikan Snippet"
+  }
+}

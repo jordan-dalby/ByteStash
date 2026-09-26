@@ -1,0 +1,18 @@
+{
+  "publicSnippetContentArea": {
+    "error": {
+      "addSnippetToCollection": "Gagal menambahkan snippet ke koleksi Anda",
+      "failedLoadSnippets": "Gagal memuat snippet publik"
+    },
+    "filter": {
+      "byCategories": "Difilter berdasarkan kategori"
+    },
+    "info": {
+      "requireAuth": "Silakan masuk untuk menambahkan snippet ini ke koleksi Anda"
+    },
+    "loadingSnippets": "Memuat snippet...",
+    "success": {
+      "addSnippetToCollection": "Snippet berhasil ditambahkan ke koleksi Anda"
+    }
+  }
+}

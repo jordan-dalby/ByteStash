@@ -1,0 +1,12 @@
+{
+  "categoryList": {
+    "moreCount": "{{moreCount}} lainnya",
+    "noData": "Tidak ada kategori",
+    "showLess": "Tampilkan lebih sedikit"
+  },
+  "categorySuggestions": {
+    "addNewLabel": "Tambah baru",
+    "placeholder": "Ketik untuk mencari kategori...",
+    "title": "Kategori"
+  }
+}

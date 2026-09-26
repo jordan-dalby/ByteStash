@@ -23,6 +23,7 @@
   },
   "containsOffensiveWords": "Contiene paroli offensive: {{words}}",
   "entityName_one": "snippet",
+  "entityName_many": "snippets",
   "entityName_other": "snippets",
   "error": {
     "delete": {

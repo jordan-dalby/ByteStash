@@ -15,6 +15,7 @@
     "title": "Cancella Chiave API"
   },
   "entityName_one": "Chiave API",
+  "entityName_many": "Chiavi API",
   "entityName_other": "Chiavi API",
   "error": {
     "default": "Errore cancellazione chiave API"

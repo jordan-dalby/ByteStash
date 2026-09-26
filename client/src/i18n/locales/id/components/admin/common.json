@@ -1,0 +1,12 @@
+{
+  "adminTable": {
+    "defaultEmptyMessage": "Data tidak ditemukan",
+    "defaultLoadingMessage": "Memuat..."
+  },
+  "filterInput": {
+    "defaultPlaceholder": "Cari..."
+  },
+  "filterSelect": {
+    "defaultPlaceholder": "Pilih..."
+  }
+}

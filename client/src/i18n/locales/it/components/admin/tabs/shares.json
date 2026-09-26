@@ -20,6 +20,7 @@
     "title": "Cancella condivisione"
   },
   "entityName_one": "condivisione",
+  "entityName_many": "condivisioni",
   "entityName_other": "condivisioni",
   "error": {
     "delete": {
