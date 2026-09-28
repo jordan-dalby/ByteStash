@@ -40,7 +40,6 @@ services:
       # See https://github.com/jordan-dalby/ByteStash/wiki/FAQ#environment-variables
       #ALLOWED_HOSTS: localhost,my.domain.com,my.domain.net
       BASE_PATH: ""
-      JWT_SECRET: your-secret
       TOKEN_EXPIRY: 24h
       ALLOW_NEW_ACCOUNTS: "true"
       DEBUG: "true"

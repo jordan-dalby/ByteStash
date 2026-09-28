@@ -22,12 +22,16 @@ let checkpointInterval = null;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-function getDatabasePath() {
-  const dbPath = join(__dirname, "../../../data/snippets");
-  if (!fs.existsSync(dbPath)) {
-    fs.mkdirSync(dbPath, { recursive: true });
+function getDataDirectory() {
+  const dataDir = join(__dirname, "../../../data/snippets");
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
   }
-  return join(dbPath, "snippets.db");
+  return dataDir;
+}
+
+function getDatabasePath() {
+  return join(getDataDirectory(), "snippets.db");
 }
 
 function checkpointDatabase() {
@@ -167,4 +171,4 @@ function shutdownDatabase() {
   }
 }
 
-export { initializeDatabase, getDb, shutdownDatabase, checkpointDatabase };
+export { initializeDatabase, getDb, shutdownDatabase, checkpointDatabase, getDataDirectory };

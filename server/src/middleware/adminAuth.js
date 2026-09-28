@@ -8,7 +8,7 @@ const adminUsernames = (process.env.ADMIN_USERNAMES || '')
 Logger.debug('Admin usernames configured:', adminUsernames.length > 0 ? adminUsernames : 'none');
 
 export const requireAdmin = (req, res, next) => {
-  if (!req.user) {
+  if (!req.user?.username) {
     return res.status(401).json({ message: 'Authentication required' });
   }
 

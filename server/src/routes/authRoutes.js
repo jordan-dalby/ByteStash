@@ -1,6 +1,6 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS, DISABLE_ACCOUNTS, DISABLE_INTERNAL_ACCOUNTS, getOrCreateAnonymousUser, authenticateToken, ALLOW_PASSWORD_CHANGES } from '../middleware/auth.js';
+import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS, DISABLE_ACCOUNTS, DISABLE_INTERNAL_ACCOUNTS, getOrCreateAnonymousUser, authenticateToken, getUserFromToken, ALLOW_PASSWORD_CHANGES } from '../middleware/auth.js';
 import userService from '../services/userService.js';
 import userRepository from '../repositories/userRepository.js';
 import { getDb } from '../config/database.js';
@@ -120,9 +120,8 @@ router.get('/verify', async (req, res) => {
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await userService.findById(decoded.id);
-    
+    const user = await getUserFromToken(token);
+
     if (!user) {
       return res.status(401).json({ valid: false });
     }

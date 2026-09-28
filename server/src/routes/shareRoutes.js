@@ -1,6 +1,5 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
-import { JWT_SECRET, authenticateToken } from '../middleware/auth.js';
+import { authenticateToken, getUserFromToken } from '../middleware/auth.js';
 import shareRepository from '../repositories/shareRepository.js';
 import Logger from '../logger.js';
 
@@ -44,9 +43,7 @@ router.get('/:id', async (req, res) => {
         return res.status(401).json({ error: 'Authentication required' });
       }
 
-      try {
-        jwt.verify(token, JWT_SECRET);
-      } catch (err) {
+      if (!(await getUserFromToken(token))) {
         return res.status(401).json({ error: 'Invalid or expired token' });
       }
     }
