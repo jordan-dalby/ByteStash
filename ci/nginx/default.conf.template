@@ -3,7 +3,7 @@
 # Rendered by the nginx entrypoint:
 #   /etc/nginx/templates/conf.d/default.conf.template -> /etc/nginx/conf.d/default.conf
 # Only real environment variables are substituted, so nginx runtime variables
-# ($host, $remote_addr) pass through untouched.
+# ($remote_addr, $request_uri) pass through untouched.
 
 # --- rate limit zones --------------------------------------------
 # login: this is the actual control. The login endpoint has no rate limiting,
@@ -27,7 +27,7 @@ limit_req_zone $binary_remote_addr zone=api:10m rate=600r/m;
 limit_conn_zone $binary_remote_addr zone=conn:10m;
 
 log_format sec escape=json
-  '{"ts":"$time_iso8601","ip":"$remote_addr","host":"$host",'
+  '{"ts":"$time_iso8601","ip":"$remote_addr","host":"$host",'  # nosemgrep: generic.nginx.security.request-host-used.request-host-used
   '"method":"$request_method","uri":"$request_uri","status":$status,'
   '"bytes":$body_bytes_sent,"rt":$request_time,"ua":"$http_user_agent"}';
 
@@ -78,7 +78,7 @@ server {
 server {
     listen 8080;
     server_name ${SERVER_NAME};
-    return 301 https://$host$request_uri;
+    return 301 https://$server_name$request_uri;
 }
 
 server {

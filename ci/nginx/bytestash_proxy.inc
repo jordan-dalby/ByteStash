@@ -7,15 +7,15 @@
 # X-Forwarded-Host and X-Forwarded-SSL to build the OIDC redirect_uri; all
 # three are pinned below.
 #
-# $server_name is used rather than $host on purpose. $host derives from the
-# client's Host header. It is already constrained by the default-server block,
-# but pinning to $server_name means the value cannot vary with client input at
-# all.
+# Host and X-Forwarded-Host are pinned to $server_name rather than taken from
+# the client's Host header. The header is already constrained by the
+# default-server block, but pinning means the value cannot vary with client
+# input at all.
 
 proxy_pass http://bytestash:5000;
 proxy_http_version 1.1;
 
-proxy_set_header Host              $host;
+proxy_set_header Host              $server_name;
 proxy_set_header X-Real-IP         $remote_addr;
 proxy_set_header X-Forwarded-For   $remote_addr;
 proxy_set_header X-Forwarded-Proto https;
