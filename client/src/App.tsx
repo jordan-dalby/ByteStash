@@ -76,7 +76,7 @@ const EmbedViewWrapper: React.FC = () => {
 const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router basename={window.__BASE_PATH__} future={{ v7_relativeSplatPath: true }}>
+      <Router basename={window.__BASE_PATH__}>
         <ThemeProvider>
           <div className="min-h-screen bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text">
             <ToastProvider>
