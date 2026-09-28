@@ -52,3 +52,5 @@ jobs:
           platforms: linux/amd64
           tags: ${{ steps.docker-metadata.outputs.tags }}
           labels: ${{ steps.docker-metadata.outputs.labels }}
+          build-args: |
+            APP_VERSION=${{ steps.docker-metadata.outputs.version }}

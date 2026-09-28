@@ -10,4 +10,4 @@ export const DEFAULT_SETTINGS = {
   theme: 'system',
 } as const;
 
-export const APP_VERSION = '1.5.12';
+export const APP_VERSION = import.meta.env.VITE_APP_VERSION || 'dev';
