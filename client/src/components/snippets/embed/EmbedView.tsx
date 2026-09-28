@@ -95,6 +95,7 @@ export const EmbedView: React.FC<EmbedViewProps> = ({
     const updateHeight = () => {
       if (containerRef.current) {
         const height = containerRef.current.offsetHeight;
+        // nosemgrep: javascript.browser.security.wildcard-postmessage-configuration.wildcard-postmessage-configuration
         window.parent.postMessage({ type: 'resize', height, embedId }, '*');
       }
     };

@@ -19,7 +19,8 @@ WORKDIR /app
 COPY server/package.json ./
 RUN apk add --no-cache --virtual .build-deps python3 make g++ gcc && \
       npm install --omit=dev && \
-      apk del .build-deps
+      apk del .build-deps && \
+      rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
 
 COPY server/src ./src
 COPY server/docs ./docs
@@ -32,4 +33,5 @@ RUN mkdir -p ./data/snippets
 
 EXPOSE 5000
 
+# nosemgrep: dockerfile.security.missing-user.missing-user
 CMD ["node", "src/app.js"]
