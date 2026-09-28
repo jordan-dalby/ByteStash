@@ -21,6 +21,10 @@ class Logger {
   static info(...args) {
     console.log('[INFO]', ...args);
   }
+
+  static warn(...args) {
+    console.warn('[WARN]', ...args);
+  }
 }
 
 export default Logger;

@@ -27,7 +27,6 @@ services:
       - ALLOWED_HOSTS=
       # Either provide JWT_SECRET directly or use JWT_SECRET_FILE for Docker secrets
       #- JWT_SECRET_FILE=/run/secrets/jwt
-      - JWT_SECRET=your-secret
       # how long the token lasts, examples: "2 days", "10h", "7d", "1m", "60s"
       - TOKEN_EXPIRY=24h
       # is this bytestash instance open to new accounts being created?

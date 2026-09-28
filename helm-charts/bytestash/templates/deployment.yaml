@@ -73,8 +73,10 @@ spec:
                 name: {{ .Values.bytestash.existingJwtSecret.secretName | quote }}
                 key: {{ .Values.bytestash.existingJwtSecret.expirityKey | quote }}
           {{- else }}
+          {{- if .Values.bytestash.jwtSecret }}
           - name: JWT_SECRET
             value: {{ .Values.bytestash.jwtSecret | quote }}
+          {{- end }}
           - name: TOKEN_EXPIRY
             value: {{ .Values.bytestash.jwtExpirity | quote }}
           {{- end }}
