@@ -110,7 +110,7 @@ function initializeDatabase() {
     });
 
     db.pragma("foreign_keys = ON");
-    db.pragma("journal_mode = WAL");
+    db.pragma("journal_mode = DELETE");
 
     backupDatabase(dbPath);
 
