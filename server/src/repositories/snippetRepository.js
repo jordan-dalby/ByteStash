@@ -325,13 +325,14 @@ class SnippetRepository {
       const db = getDb();
 
       return db.transaction(() => {
-        this.updateSnippetStmt.run(
+        const result = this.updateSnippetStmt.run(
           title,
           description,
           isPublic ? 1 : 0,
           id,
           userId
         );
+        if (result.changes === 0) return null; // not found or not owned by this user
 
         this.deleteFragmentsStmt.run(id, userId);
         fragments.forEach((fragment, index) => {
