@@ -17,7 +17,7 @@ export interface SearchAndFilterProps {
   metadata: { categories: string[]; languages: string[] };
   onSearchChange: (search: string) => void;
   onLanguageChange: (language: string) => void;
-  onCategoryToggle: (category: string) => void;
+  onCategoryToggle: (category: string, search?: string) => void;
   onSortChange: (sort: string) => void;
   viewMode: "grid" | "list";
   setViewMode: (mode: "grid" | "list") => void;

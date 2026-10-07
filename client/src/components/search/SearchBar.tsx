@@ -9,7 +9,7 @@ import { debounce } from '../../utils/helpers/debounce';
 interface SearchBarProps {
   value?: string;
   onChange: (value: string) => void;
-  onCategorySelect: (category: string) => void;
+  onCategorySelect: (category: string, search: string) => void;
   existingCategories: string[];
   selectedCategories: string[];
   placeholder?: string;
@@ -128,11 +128,8 @@ export const SearchBar = memo(forwardRef<SearchBarRef, SearchBarProps>(({
     // Update input value
     setInputValue(newValue);
 
-    // Immediately call onChange with the cleaned value (no debounce)
-    onChange(newValue);
-
-    // Select the category
-    onCategorySelect(newCategory.toLowerCase());
+    debouncedOnChange.cancel();
+    onCategorySelect(newCategory.toLowerCase(), newValue);
   };
 
   const handleClear = () => {
