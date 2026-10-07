@@ -26,6 +26,7 @@ const PublicSnippetStorage: React.FC = () => {
     showCategories,
     expandCategories,
     showLineNumbers,
+    wordWrap,
     theme,
     locale,
   } = useSettings();
@@ -169,6 +170,7 @@ const PublicSnippetStorage: React.FC = () => {
           showCategories,
           expandCategories,
           showLineNumbers,
+          wordWrap,
           theme,
           locale,
         }}

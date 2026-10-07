@@ -35,6 +35,7 @@ const RecycleSnippetStorage: React.FC = () => {
     showCategories,
     expandCategories,
     showLineNumbers,
+    wordWrap,
     theme,
     locale,
   } = useSettings();
@@ -251,6 +252,7 @@ const RecycleSnippetStorage: React.FC = () => {
           showCategories,
           expandCategories,
           showLineNumbers,
+          wordWrap,
           theme,
           locale,
         }}

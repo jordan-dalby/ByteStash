@@ -58,7 +58,11 @@
           "description": "Mostrar números de línea en bloques de código",
           "label": "Mostrar números de línea"
         },
-        "title": "Vista"
+        "title": "Vista",
+        "wordWrap": {
+          "description": "Ajustar las líneas largas en la vista completa del fragmento en lugar de desplazarse horizontalmente",
+          "label": "Ajuste de línea"
+        }
       }
     },
     "export": {

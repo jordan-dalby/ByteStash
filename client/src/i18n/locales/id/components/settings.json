@@ -57,7 +57,11 @@
           "description": "Tampilkan nomor baris pada blok kode",
           "label": "Tampilkan Nomor Baris"
         },
-        "title": "Tampilan"
+        "title": "Tampilan",
+        "wordWrap": {
+          "description": "Lipat baris panjang pada tampilan snippet penuh alih-alih menggulir secara horizontal",
+          "label": "Lipat Baris"
+        }
       }
     },
     "export": {

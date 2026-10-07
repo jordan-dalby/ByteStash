@@ -57,7 +57,11 @@
           "description": "在代码块中显示行号",
           "label": "显示行号"
         },
-        "title": "视图"
+        "title": "视图",
+        "wordWrap": {
+          "description": "在完整代码片段视图中对长行自动换行，而不是水平滚动",
+          "label": "自动换行"
+        }
       }
     },
     "export": {

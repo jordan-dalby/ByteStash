@@ -57,7 +57,11 @@
           "description": "Display line numbers in code blocks",
           "label": "Show Line Numbers"
         },
-        "title": "View"
+        "title": "View",
+        "wordWrap": {
+          "description": "Wrap long lines in the full snippet view instead of scrolling horizontally",
+          "label": "Word Wrap"
+        }
       }
     },
     "export": {
