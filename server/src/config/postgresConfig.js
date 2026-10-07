@@ -19,6 +19,7 @@ function getSslConfig() {
     return { rejectUnauthorized: true };
   }
   if (mode === "no-verify") {
+    // nosemgrep: problem-based-packs.insecure-transport.js-node.bypass-tls-verification.bypass-tls-verification
     return { rejectUnauthorized: false };
   }
   if (["false", "0", "disable"].includes(mode)) {
