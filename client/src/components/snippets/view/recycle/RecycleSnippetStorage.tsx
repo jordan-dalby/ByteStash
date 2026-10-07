@@ -122,9 +122,17 @@ const RecycleSnippetStorage: React.FC = () => {
     });
   }, [setSearchParams]);
 
-  const handleCategoryToggle = useCallback((category: string) => {
+  const handleCategoryToggle = useCallback((category: string, search?: string) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
+      if (search !== undefined) {
+        const trimmedSearch = search.trim();
+        if (trimmedSearch) {
+          next.set("search", trimmedSearch);
+        } else {
+          next.delete("search");
+        }
+      }
       const current = next.get("categories")?.split(",").filter(Boolean) || [];
       const updated = current.includes(category)
         ? current.filter(c => c !== category)
