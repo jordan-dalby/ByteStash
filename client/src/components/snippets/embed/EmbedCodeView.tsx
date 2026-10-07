@@ -8,6 +8,7 @@ import {
 import {
   getLanguageLabel,
   getMonacoLanguage,
+  isPlaintextLanguage,
 } from "../../../utils/language/languageUtils";
 import EmbedCopyButton from "./EmbedCopyButton";
 
@@ -153,8 +154,8 @@ export const EmbedCodeView: React.FC<EmbedCodeBlockProps> = ({
               wrapLines={true}
               lineProps={{
                 style: {
-                  whiteSpace: "pre",
-                  wordBreak: "break-all",
+                  whiteSpace: isPlaintextLanguage(language) ? "pre-wrap" : "pre",
+                  wordBreak: isPlaintextLanguage(language) ? "break-word" : "break-all",
                   paddingLeft: 0,
                 },
               }}

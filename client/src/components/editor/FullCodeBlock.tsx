@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import MarkdownRenderer from "../common/markdown/MarkdownRenderer";
-import Editor from "@monaco-editor/react";
+import Editor, { OnMount } from "@monaco-editor/react";
 import {
   getLanguageLabel,
   getMonacoLanguage,
+  isPlaintextLanguage,
 } from "../../utils/language/languageUtils";
 import CopyButton from "../common/buttons/CopyButton";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -54,6 +55,7 @@ export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({
 
   const isDark = effectiveTheme === "dark";
   const isMarkdown = getLanguageLabel(language) === "markdown";
+  const isPlaintext = isPlaintextLanguage(language);
   const [highlighterHeight, setHighlighterHeight] = useState<string>("100px");
   const containerRef = useRef<HTMLDivElement>(null);
   const LINE_HEIGHT = 19;
@@ -65,16 +67,27 @@ export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({
       resizeObserver.observe(containerRef.current);
     }
     return () => resizeObserver.disconnect();
-  }, [code]);
+  }, [code, isPlaintext]);
 
   const updateHighlighterHeight = () => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || isPlaintext) return;
 
     const lineCount = code.split("\n").length;
     const contentHeight = lineCount * LINE_HEIGHT + 35;
     const newHeight = Math.min(500, Math.max(100, contentHeight));
     setHighlighterHeight(`${newHeight}px`);
   };
+
+  const handleEditorDidMount: OnMount = (editor, monaco) => {
+    const updateWrappedHeight = () => {
+      if (editor.getOption(monaco.editor.EditorOption.wordWrap) !== "on") return;
+      const newHeight = Math.min(500, Math.max(100, editor.getContentHeight()));
+      setHighlighterHeight(`${newHeight}px`);
+    };
+    editor.onDidContentSizeChange(updateWrappedHeight);
+    updateWrappedHeight();
+  };
+
   const backgroundColor = isDark ? "#1E1E1E" : "#ffffff";
 
   return (
@@ -119,11 +132,12 @@ export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({
               language={getMonacoLanguage(language)}
               theme={isDark ? "vs-dark" : "light"}
               value={code}
+              onMount={handleEditorDidMount}
               options={{
                 readOnly: true,
                 minimap: { enabled: false },
                 scrollBeyondLastLine: false,
-                wordWrap: "off",
+                wordWrap: isPlaintext ? "on" : "off",
                 padding: { top: 16, bottom: 16 },
                 lineNumbers: showLineNumbers ? "on" : "off",
                 renderLineHighlight: "none",
