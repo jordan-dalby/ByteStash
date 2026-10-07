@@ -1,8 +1,6 @@
 import * as client from 'openid-client';
 import Logger from '../logger.js';
 import { URL } from 'url';
-import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '../middleware/auth.js';
 class OIDCConfig {
   static instance = null;
   static loggedIn = false;
@@ -137,19 +135,13 @@ class OIDCConfig {
     }
 
     const callback_url = this.getCallbackLogoutUrl(baseUrl);
-    const decoded = jwt.verify(id_token, JWT_SECRET);
-
-    if (!decoded.id_token) {
-      Logger.debug('No id_token found in JWT, using local-only logout');
-      return null;
-    }
     Logger.debug(callback_url);
 
     const parameters = {
       post_logout_redirect_uri: callback_url,
       client_id: process.env.OIDC_CLIENT_ID,
       state: client.randomState(),
-      id_token_hint: decoded.id_token
+      id_token_hint: id_token
     };
 
     return client.buildEndSessionUrl(this.config, parameters);
