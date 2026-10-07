@@ -80,9 +80,9 @@ export const RegisterPage: React.FC = () => {
 
     try {
       const response = await register(username, password);
-      if (response.token && response.user) {
+      if (response.user) {
         await refreshAuthConfig();
-        login(response.token, response.user);
+        login(response.user);
       }
     } catch (err: any) {
       const errorMessage = err.error || translate('register.error.default');

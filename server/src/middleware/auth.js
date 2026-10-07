@@ -9,6 +9,7 @@ import { getDataDirectory } from '../config/database.js';
 const KNOWN_DEFAULT_SECRETS = new Set(['your-secret', 'your-secret-key']);
 const MIN_SECRET_LENGTH = 32;
 const JWT_ALGORITHMS = ['HS256'];
+const AUTH_COOKIE = 'bytestash_token';
 
 function readConfiguredSecret() {
   if (process.env.JWT_SECRET_FILE) {
@@ -125,6 +126,37 @@ async function getUserFromToken(token) {
   return user;
 }
 
+function authCookieOptions(req) {
+  return {
+    httpOnly: true,
+    secure: req.secure || req.get('X-Forwarded-SSL') === 'on',
+    sameSite: 'lax',
+    path: process.env.BASE_PATH || '/',
+  };
+}
+
+function setAuthCookie(req, res, token) {
+  const options = authCookieOptions(req);
+  const { exp } = jwt.decode(token) || {};
+  if (exp) {
+    options.expires = new Date(exp * 1000);
+  }
+  res.cookie(AUTH_COOKIE, token, options);
+}
+
+function clearAuthCookie(req, res) {
+  const options = authCookieOptions(req);
+  res.clearCookie(AUTH_COOKIE, options);
+  if (options.path !== '/') {
+    res.clearCookie(AUTH_COOKIE, { ...options, path: '/' });
+  }
+}
+
+function getTokenFromRequest(req) {
+  const authHeader = req.headers['bytestashauth'];
+  return (authHeader && authHeader.split(' ')[1]) || req.cookies?.[AUTH_COOKIE];
+}
+
 const authenticateToken = async (req, res, next) => {
   if (req.apiKey) {
     return next();
@@ -141,14 +173,7 @@ const authenticateToken = async (req, res, next) => {
     }
   }
 
-  // Try to get token from header first (for API calls)
-  const authHeader = req.headers['bytestashauth'];
-  let token = authHeader && authHeader.split(' ')[1];
-
-  // If no header token, try to get from cookie (for browser access)
-  if (!token && req.cookies) {
-    token = req.cookies.bytestash_token;
-  }
+  const token = getTokenFromRequest(req);
 
   if (!token) {
     return res.status(401).json({ error: 'Authentication required' });
@@ -157,6 +182,7 @@ const authenticateToken = async (req, res, next) => {
   try {
     const user = await getUserFromToken(token);
     if (!user) {
+      clearAuthCookie(req, res);
       return res.status(403).json({ error: 'Invalid token' });
     }
     req.user = user;
@@ -170,6 +196,9 @@ const authenticateToken = async (req, res, next) => {
 export {
   authenticateToken,
   getUserFromToken,
+  getTokenFromRequest,
+  setAuthCookie,
+  clearAuthCookie,
   JWT_SECRET,
   TOKEN_EXPIRY,
   ALLOW_NEW_ACCOUNTS,

@@ -23,13 +23,6 @@ export class ApiClient {
     const headers = new Headers(options.headers);
     headers.set('Content-Type', 'application/json');
 
-    if (options.requiresAuth) {
-      const token = localStorage.getItem('token');
-      if (token) {
-        headers.set('bytestashauth', `Bearer ${token}`);
-      }
-    }
-
     return headers;
   }
 
@@ -46,6 +39,7 @@ export class ApiClient {
     try {
       const response = await fetch(`${this.basePath}${endpoint}`, {
         ...options,
+        credentials: 'same-origin',
         headers: this.getHeaders(options),
       });
 

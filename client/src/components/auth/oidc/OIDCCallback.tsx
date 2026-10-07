@@ -6,6 +6,7 @@ import { Loader2 } from 'lucide-react';
 import { PageContainer } from '../../common/layout/PageContainer';
 import { useOidcErrorHandler } from '../../../hooks/useOidcErrorHandler';
 import { useToast } from '../../../hooks/useToast';
+import { verifyToken } from '../../../utils/api/auth';
 
 export const OIDCCallback: React.FC = () => {
   const { t: translate } = useTranslation('components/auth');
@@ -20,20 +21,27 @@ export const OIDCCallback: React.FC = () => {
     processedRef.current = true;
 
     const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
     const error = params.get('error');
     const message = params.get('message');
 
-    if (token) {
-      login(token, null);
-      navigate('/', { replace: true });
-    } else if (error) {
+    if (error) {
       handleOIDCError(error, undefined, message || undefined);
       navigate('/login', { replace: true });
-    } else {
-      handleOIDCError('auth_failed');
-      navigate('/login', { replace: true });
+      return;
     }
+
+    verifyToken()
+      .then((response) => {
+        if (!response.valid || !response.user) {
+          throw new Error('Session not established');
+        }
+        login(response.user);
+        navigate('/', { replace: true });
+      })
+      .catch(() => {
+        handleOIDCError('auth_failed');
+        navigate('/login', { replace: true });
+      });
   }, [login, navigate, addToast]);
 
   return (

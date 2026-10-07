@@ -1,6 +1,6 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS, DISABLE_ACCOUNTS, DISABLE_INTERNAL_ACCOUNTS, getOrCreateAnonymousUser, authenticateToken, getUserFromToken, ALLOW_PASSWORD_CHANGES } from '../middleware/auth.js';
+import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS, DISABLE_ACCOUNTS, DISABLE_INTERNAL_ACCOUNTS, getOrCreateAnonymousUser, authenticateToken, getUserFromToken, getTokenFromRequest, setAuthCookie, clearAuthCookie, ALLOW_PASSWORD_CHANGES } from '../middleware/auth.js';
 import userService from '../services/userService.js';
 import userRepository from '../repositories/userRepository.js';
 import snippetRepository from '../repositories/snippetRepository.js';
@@ -55,6 +55,7 @@ router.post('/register', async (req, res) => {
       TOKEN_EXPIRY ? { expiresIn: TOKEN_EXPIRY } : undefined
     );    
 
+    setAuthCookie(req, res, token);
     res.json({
       token,
       user: {
@@ -101,6 +102,7 @@ router.post('/login', async (req, res) => {
       is_admin: isAdmin(user.username)
     };
 
+    setAuthCookie(req, res, token);
     res.json({ token, user: userResponse });
   } catch (error) {
     Logger.error('Login error:', error);
@@ -109,8 +111,7 @@ router.post('/login', async (req, res) => {
 });
 
 router.get('/verify', async (req, res) => {
-  const authHeader = req.headers['bytestashauth'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const token = getTokenFromRequest(req);
 
   if (!token) {
     return res.status(401).json({ valid: false });
@@ -120,7 +121,12 @@ router.get('/verify', async (req, res) => {
     const user = await getUserFromToken(token);
 
     if (!user) {
+      clearAuthCookie(req, res);
       return res.status(401).json({ valid: false });
+    }
+
+    if (!req.headers['bytestashauth']) {
+      setAuthCookie(req, res, token);
     }
 
     res.status(200).json({
@@ -137,6 +143,11 @@ router.get('/verify', async (req, res) => {
   }
 });
 
+router.post('/logout', (req, res) => {
+  clearAuthCookie(req, res);
+  res.json({ success: true });
+});
+
 router.post('/anonymous', async (req, res) => {
   if (!DISABLE_ACCOUNTS) {
     return res.status(403).json({ error: 'Anonymous login not allowed' });
@@ -151,6 +162,7 @@ router.post('/anonymous', async (req, res) => {
       expiresIn: TOKEN_EXPIRY
     });
 
+    setAuthCookie(req, res, token);
     res.json({ token, user: anonymousUser });
   } catch (error) {
     Logger.error('Error in anonymous login:', error);

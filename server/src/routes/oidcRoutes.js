@@ -1,7 +1,7 @@
 import express from 'express';
 import { OIDCConfig } from '../oidc/oidcConfig.js';
 import userRepository from '../repositories/userRepository.js';
-import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS } from '../middleware/auth.js';
+import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS, getTokenFromRequest, setAuthCookie, clearAuthCookie } from '../middleware/auth.js';
 import jwt from 'jsonwebtoken';
 import Logger from '../logger.js';
 import snippetRepository from '../repositories/snippetRepository.js';
@@ -70,11 +70,9 @@ router.get('/logout', async (req, res) => {
       return res.redirect('/');
     }
 
-    const authHeader = req.headers.cookie;
-    const token = authHeader && authHeader.split('=')[1];
+    const token = getTokenFromRequest(req);
 
-    // Clear the auth cookie
-    res.clearCookie('bytestash_token', { path: '/' });
+    clearAuthCookie(req, res);
 
     // Reset logged_in state
     oidc.loggedIn = false;
@@ -97,7 +95,7 @@ router.get('/logout', async (req, res) => {
     }
   } catch (error) {
     Logger.error('OIDC logout error:', error);
-    res.clearCookie('bytestash_token', { path: '/' });
+    clearAuthCookie(req, res);
     res.redirect(`${process.env.BASE_PATH || ''}/auth/logout_callback`);
   }
 });
@@ -164,7 +162,8 @@ router.get('/callback', async (req, res) => {
     // Set OIDC login config
     oidc.loggedIn = true;
 
-    res.redirect(`${process.env.BASE_PATH || ''}/auth/callback?token=${token}`);
+    setAuthCookie(req, res, token);
+    res.redirect(`${process.env.BASE_PATH || ''}/auth/callback`);
   } catch (error) {
     Logger.error('OIDC callback error:', error);
     let errorType = 'auth_failed';
