@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    const result = getUserSettings(req.user.id);
+    const result = await getUserSettings(req.user.id);
     res.json(result);
   } catch (error) {
     Logger.error('Error fetching user settings:', error);
@@ -31,10 +31,10 @@ router.patch('/', async (req, res) => {
     }
 
     if (Object.keys(settings).length === 0) {
-      return res.json(getUserSettings(req.user.id));
+      return res.json(await getUserSettings(req.user.id));
     }
 
-    const result = mergeUserSettings(req.user.id, settings);
+    const result = await mergeUserSettings(req.user.id, settings);
     res.json(result);
   } catch (error) {
     Logger.error('Error updating user settings:', error);
@@ -44,7 +44,7 @@ router.patch('/', async (req, res) => {
 
 router.delete('/', async (req, res) => {
   try {
-    deleteUserSettings(req.user.id);
+    await deleteUserSettings(req.user.id);
     res.json({ settings: {}, updatedAt: null });
   } catch (error) {
     Logger.error('Error resetting user settings:', error);

@@ -68,7 +68,7 @@ class SnippetService {
   async getRecycledSnippets(userId) {
     try {
       // Ensure expired snippets are deleted before fetching recycled snippets
-      this.deleteExpiredSnippets();
+      await this.deleteExpiredSnippets();
 
       Logger.debug("Service: Getting recycled snippets for user:", userId);
       const result = await snippetRepository.findAllDeleted(userId);

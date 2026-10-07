@@ -4,8 +4,7 @@ import userRepository from '../repositories/userRepository.js';
 import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS } from '../middleware/auth.js';
 import jwt from 'jsonwebtoken';
 import Logger from '../logger.js';
-import { getDb } from '../config/database.js';
-import { up_v1_5_0_snippets } from '../config/migrations/20241117-migration.js';
+import snippetRepository from '../repositories/snippetRepository.js';
 import { isAdmin } from '../middleware/adminAuth.js';
 
 const router = express.Router();
@@ -110,8 +109,7 @@ router.get('/callback', async (req, res) => {
       return res.status(404).json({ error: 'OIDC not enabled' });
     }
 
-    const db = getDb();
-    const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
+    const userCount = await userRepository.count();
     const hasUsers = userCount > 0;
 
     const baseUrl = getBaseUrl(req);
@@ -130,8 +128,7 @@ router.get('/callback', async (req, res) => {
     );
 
     if (!hasUsers && !existingUser) {
-      const db = getDb();
-      const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
+      const userCount = await userRepository.count();
       const hasUsers = userCount > 0;
 
       if (hasUsers && !ALLOW_NEW_ACCOUNTS) {
@@ -153,7 +150,7 @@ router.get('/callback', async (req, res) => {
     await userRepository.updateLastLogin(user.id);
 
     if (!hasUsers) {
-      await up_v1_5_0_snippets(db, user.id);
+      await snippetRepository.assignOrphanedSnippets(user.id);
     }
 
     const token = jwt.sign({

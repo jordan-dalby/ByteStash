@@ -1,7 +1,7 @@
 import Logger from '../logger.js';
 import { validateApiKey } from '../repositories/apiKeyRepository.js';
 
-export function authenticateApiKey(req, res, next) {
+export async function authenticateApiKey(req, res, next) {
   const apiKey = req.headers['x-api-key'];
   
   if (!apiKey) {
@@ -9,7 +9,7 @@ export function authenticateApiKey(req, res, next) {
   }
   
   try {
-    const result = validateApiKey(apiKey);
+    const result = await validateApiKey(apiKey);
     
     if (result) {
       req.user = { id: result.userId };

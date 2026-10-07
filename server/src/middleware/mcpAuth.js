@@ -66,7 +66,7 @@ export async function authenticateMcp(req, res, next) {
   }
 
   try {
-    const result = validateApiKey(apiKey);
+    const result = await validateApiKey(apiKey);
 
     if (result) {
       req.user = { id: result.userId };

@@ -1,53 +1,25 @@
-import Database from "better-sqlite3";
-import { dirname, join } from "path";
-import fs from "fs";
-import { up_v1_4_0 } from "./migrations/20241111-migration.js";
-import { up_v1_5_0 } from "./migrations/20241117-migration.js";
 import Logger from "../logger.js";
-import { up_v1_5_0_public } from "./migrations/20241119-migration.js";
-import { up_v1_5_0_oidc } from "./migrations/20241120-migration.js";
-import { fileURLToPath } from "url";
-import { up_v1_5_0_usernames } from "./migrations/20241121-migration.js";
-import { up_v1_5_1_api_keys } from "./migrations/20241122-migration.js";
-import { up_v1_6_0_snippet_expiry } from "./migrations/20250601-migration.js";
-import { up_v1_7_0_snippet_pin_favorite } from "./migrations/20250905-migration.js";
-import { up_v1_8_0_pagination } from "./migrations/20260123-pagination.js";
-import { up_v1_9_0_admin_fields } from "./migrations/20260124-admin-fields.js";
-import { up_v1_9_0_cascade_delete } from "./migrations/20260124-cascade-delete.js";
-import { up_v1_9_0_user_settings } from "./migrations/20260729-user-settings.js";
-import path from "path";
+import {
+  openSqliteDatabase,
+  checkpointSqlite,
+  getDataDirectory,
+  sqliteDatabaseExists,
+} from "./sqlite.js";
+import { SqliteAdapter } from "./adapters/sqliteAdapter.js";
+import { getPostgresConfig } from "./postgresConfig.js";
+import { openPostgresDatabase } from "./postgres.js";
+import {
+  migrateSqliteToPostgres,
+  isPostgresPopulated,
+} from "./sqliteToPostgres.js";
+
 let db = null;
+let sqliteDb = null;
 let checkpointInterval = null;
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-function getDataDirectory() {
-  const dataDir = join(__dirname, "../../../data/snippets");
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-  return dataDir;
-}
-
-function getDatabasePath() {
-  return join(getDataDirectory(), "snippets.db");
-}
-
 function checkpointDatabase() {
-  if (!db) return;
-
-  try {
-    Logger.debug("Starting database checkpoint...");
-    const start = Date.now();
-
-    db.pragma("wal_checkpoint(PASSIVE)");
-
-    const duration = Date.now() - start;
-    Logger.debug(`Database checkpoint completed in ${duration}ms`);
-  } catch (error) {
-    Logger.error("Error during database checkpoint:", error);
-  }
+  if (!sqliteDb) return;
+  checkpointSqlite(sqliteDb);
 }
 
 function startCheckpointInterval() {
@@ -67,74 +39,49 @@ function stopCheckpointInterval() {
   }
 }
 
-function backupDatabase(dbPath) {
-  const baseBackupPath = `${dbPath}.backup`;
-  checkpointDatabase();
+function initializeSqlite() {
+  sqliteDb = openSqliteDatabase();
+  startCheckpointInterval();
+  return new SqliteAdapter(sqliteDb);
+}
+
+async function initializePostgres(config) {
+  const adapter = await openPostgresDatabase(config);
 
   try {
-    if (fs.existsSync(dbPath)) {
-      const dbBackupPath = `${baseBackupPath}.db`;
-      fs.copyFileSync(dbPath, dbBackupPath);
-      Logger.debug(`Database backed up to: ${dbBackupPath}`);
-    } else {
-      Logger.error(`Database file not found: ${dbPath}`);
-      return false;
+    if (process.env.MIGRATE_SQLITE_TO_POSTGRES === "true") {
+      if (await isPostgresPopulated(adapter)) {
+        Logger.info(
+          "MIGRATE_SQLITE_TO_POSTGRES is set but PostgreSQL already contains data, skipping the SQLite import"
+        );
+      } else if (!sqliteDatabaseExists()) {
+        Logger.info(
+          "MIGRATE_SQLITE_TO_POSTGRES is set but no SQLite database was found, skipping the import"
+        );
+      } else {
+        await migrateSqliteToPostgres(adapter);
+      }
+    } else if (sqliteDatabaseExists() && !(await isPostgresPopulated(adapter))) {
+      Logger.info(
+        "An existing SQLite database was found and PostgreSQL is empty. " +
+          "Set MIGRATE_SQLITE_TO_POSTGRES=true or run `node src/scripts/migrateToPostgres.js` to copy your data across."
+      );
     }
-    return true;
   } catch (error) {
-    Logger.error("Failed to create database backup:", error);
+    await adapter.close().catch(() => {});
     throw error;
   }
+
+  return adapter;
 }
 
-function createInitialSchema(db) {
-  const initSQL = fs.readFileSync(
-    path.join(__dirname, "schema/init.sql"),
-    "utf8"
-  );
-  Logger.debug("Init SQL Path:", path.join(__dirname, "schema/init.sql"));
-  db.exec(initSQL);
-  Logger.debug("✅ Initial schema executed");
-}
-
-function initializeDatabase() {
+async function initializeDatabase() {
   try {
-    const dbPath = getDatabasePath();
-    Logger.debug(`Initializing SQLite database at: ${dbPath}`);
+    const postgresConfig = getPostgresConfig();
 
-    const dbExists = fs.existsSync(dbPath);
-
-    db = new Database(dbPath, {
-      verbose: Logger.debug,
-      fileMustExist: false,
-    });
-
-    db.pragma("foreign_keys = ON");
-    db.pragma("journal_mode = WAL");
-
-    backupDatabase(dbPath);
-
-    if (!dbExists) {
-      Logger.debug("Creating new database with initial schema...");
-      createInitialSchema(db);
-    } else {
-      Logger.debug("Database file exists, checking for needed migrations...");
-      up_v1_4_0(db);
-      up_v1_5_0(db);
-      up_v1_5_0_public(db);
-      up_v1_5_0_oidc(db);
-      up_v1_5_0_usernames(db);
-      up_v1_5_1_api_keys(db);
-      up_v1_6_0_snippet_expiry(db);
-      up_v1_7_0_snippet_pin_favorite(db);
-      up_v1_8_0_pagination(db);
-      up_v1_9_0_admin_fields(db);
-      up_v1_9_0_cascade_delete(db);
-      up_v1_9_0_user_settings(db);
-      Logger.debug("All migrations applied successfully");
-    }
-
-    startCheckpointInterval();
+    db = postgresConfig
+      ? await initializePostgres(postgresConfig)
+      : initializeSqlite();
 
     Logger.debug("Database initialization completed successfully");
     return db;
@@ -153,22 +100,32 @@ function getDb() {
   return db;
 }
 
-function shutdownDatabase() {
-  if (db) {
-    try {
+async function shutdownDatabase() {
+  if (!db) return;
+
+  const current = db;
+  db = null;
+
+  try {
+    if (sqliteDb) {
       Logger.debug("Performing final database checkpoint...");
-      db.pragma("wal_checkpoint(TRUNCATE)");
-
+      current.checkpoint("TRUNCATE");
       stopCheckpointInterval();
-      db.close();
-      db = null;
-
-      Logger.debug("Database shutdown completed successfully");
-    } catch (error) {
-      Logger.error("Error during database shutdown:", error);
-      throw error;
+      sqliteDb = null;
     }
+
+    await current.close();
+    Logger.debug("Database shutdown completed successfully");
+  } catch (error) {
+    Logger.error("Error during database shutdown:", error);
+    throw error;
   }
 }
 
-export { initializeDatabase, getDb, shutdownDatabase, checkpointDatabase, getDataDirectory };
+export {
+  initializeDatabase,
+  getDb,
+  shutdownDatabase,
+  checkpointDatabase,
+  getDataDirectory,
+};
