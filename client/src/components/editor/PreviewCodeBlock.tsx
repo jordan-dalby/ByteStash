@@ -4,6 +4,7 @@ import Editor from "@monaco-editor/react";
 import {
   getLanguageLabel,
   getMonacoLanguage,
+  isPlaintextLanguage,
 } from "../../utils/language/languageUtils";
 import CopyButton from "../common/buttons/CopyButton";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -131,7 +132,7 @@ export const PreviewCodeBlock: React.FC<PreviewCodeBlockProps> = ({
                 readOnly: true,
                 minimap: { enabled: false },
                 scrollBeyondLastLine: false,
-                wordWrap: "off",
+                wordWrap: isPlaintextLanguage(language) ? "on" : "off",
                 padding: { top: 16, bottom: 16 },
                 lineNumbers: showLineNumbers ? "on" : "off",
                 renderLineHighlight: "none",

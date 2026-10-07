@@ -549,6 +549,9 @@ export const getMonacoLanguage = (lang: string): string => {
   return LANGUAGE_MAPPING[normalized]?.monacoAlias || lang;
 };
 
+export const isPlaintextLanguage = (lang: string): boolean =>
+  normalizeLanguage(lang) === "plaintext";
+
 export const getLanguageLabel = (lang: string): string => {
   const normalized = normalizeLanguage(lang);
   return LANGUAGE_MAPPING[normalized]?.label || lang;

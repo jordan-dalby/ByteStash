@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Editor, { OnMount } from '@monaco-editor/react';
 import * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import { getMonacoLanguage } from '../../utils/language/languageUtils';
+import { getMonacoLanguage, isPlaintextLanguage } from '../../utils/language/languageUtils';
 import { useTheme } from '../../contexts/ThemeContext';
 
 export interface CodeEditorProps {
@@ -125,7 +125,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           lineNumbers: showLineNumbers ? 'on' : 'off',
           renderLineHighlight: 'all',
           wordWrap: 'on',
-          wrappingIndent: 'indent',
+          wrappingIndent: isPlaintextLanguage(language) ? 'none' : 'indent',
           automaticLayout: true,
           folding: false,
           tabSize: 4,
