@@ -1,7 +1,7 @@
 import express from 'express';
 import { OIDCConfig } from '../oidc/oidcConfig.js';
 import userRepository from '../repositories/userRepository.js';
-import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS, getTokenFromRequest, setAuthCookie, clearAuthCookie } from '../middleware/auth.js';
+import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS, getIdTokenFromRequest, setAuthCookie, clearAuthCookie } from '../middleware/auth.js';
 import jwt from 'jsonwebtoken';
 import Logger from '../logger.js';
 import snippetRepository from '../repositories/snippetRepository.js';
@@ -70,19 +70,19 @@ router.get('/logout', async (req, res) => {
       return res.redirect('/');
     }
 
-    const token = getTokenFromRequest(req);
+    const idToken = getIdTokenFromRequest(req);
 
     clearAuthCookie(req, res);
 
     // Reset logged_in state
     oidc.loggedIn = false;
 
-    if (!token) {
+    if (!idToken) {
       return res.redirect(`${process.env.BASE_PATH || ''}/auth/logout_callback`);
     }
 
     const baseUrl = getBaseUrl(req);
-    const logoutUrl = await oidc.getLogoutUrl(baseUrl, token);
+    const logoutUrl = await oidc.getLogoutUrl(baseUrl, idToken);
 
     if (logoutUrl) {
       Logger.debug('Generated Logout URL:', logoutUrl);
@@ -153,8 +153,7 @@ router.get('/callback', async (req, res) => {
 
     const token = jwt.sign({
       id: user.id,
-      username: user.username,
-      id_token: tokens.id_token
+      username: user.username
     }, JWT_SECRET, {
       expiresIn: TOKEN_EXPIRY
     });
@@ -162,7 +161,7 @@ router.get('/callback', async (req, res) => {
     // Set OIDC login config
     oidc.loggedIn = true;
 
-    setAuthCookie(req, res, token);
+    setAuthCookie(req, res, token, tokens.id_token);
     res.redirect(`${process.env.BASE_PATH || ''}/auth/callback`);
   } catch (error) {
     Logger.error('OIDC callback error:', error);

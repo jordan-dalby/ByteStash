@@ -10,6 +10,7 @@ const KNOWN_DEFAULT_SECRETS = new Set(['your-secret', 'your-secret-key']);
 const MIN_SECRET_LENGTH = 32;
 const JWT_ALGORITHMS = ['HS256'];
 const AUTH_COOKIE = 'bytestash_token';
+const ID_TOKEN_COOKIE = 'bytestash_id_token';
 
 function readConfiguredSecret() {
   if (process.env.JWT_SECRET_FILE) {
@@ -135,13 +136,23 @@ function authCookieOptions(req) {
   };
 }
 
-function setAuthCookie(req, res, token) {
+function idTokenCookieOptions(req) {
+  return {
+    ...authCookieOptions(req),
+    path: `${process.env.BASE_PATH || ''}/api/auth/oidc`,
+  };
+}
+
+function setAuthCookie(req, res, token, idToken) {
   const options = authCookieOptions(req);
   const { exp } = jwt.decode(token) || {};
   if (exp) {
     options.expires = new Date(exp * 1000);
   }
   res.cookie(AUTH_COOKIE, token, options);
+  if (idToken) {
+    res.cookie(ID_TOKEN_COOKIE, idToken, { ...idTokenCookieOptions(req), expires: options.expires });
+  }
 }
 
 function clearAuthCookie(req, res) {
@@ -149,6 +160,20 @@ function clearAuthCookie(req, res) {
   res.clearCookie(AUTH_COOKIE, options);
   if (options.path !== '/') {
     res.clearCookie(AUTH_COOKIE, { ...options, path: '/' });
+  }
+  res.clearCookie(ID_TOKEN_COOKIE, idTokenCookieOptions(req));
+}
+
+function getIdTokenFromRequest(req) {
+  const idToken = req.cookies?.[ID_TOKEN_COOKIE];
+  if (idToken) {
+    return idToken;
+  }
+
+  try {
+    return jwt.verify(getTokenFromRequest(req), JWT_SECRET, { algorithms: JWT_ALGORITHMS }).id_token;
+  } catch (error) {
+    return undefined;
   }
 }
 
@@ -197,6 +222,7 @@ export {
   authenticateToken,
   getUserFromToken,
   getTokenFromRequest,
+  getIdTokenFromRequest,
   setAuthCookie,
   clearAuthCookie,
   JWT_SECRET,
