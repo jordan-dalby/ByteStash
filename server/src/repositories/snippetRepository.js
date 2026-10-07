@@ -1,270 +1,157 @@
 import { getDb } from "../config/database.js";
 import Logger from "../logger.js";
 
+const FRAGMENT_BATCH_SIZE = 500;
+
+function snippetSelect(dialect, { withExpiry = false } = {}) {
+  return `
+    SELECT
+      s.id,
+      s.title,
+      s.description,
+      ${dialect.utcString("s.updated_at")} as updated_at,
+      ${withExpiry ? `${dialect.utcString("s.expiry_date")} as expiry_date,` : ""}
+      s.user_id,
+      s.is_public,
+      s.is_pinned,
+      s.is_favorite,
+      u.username,
+      ${dialect.groupConcatDistinct("c.name")} as categories,
+      (SELECT COUNT(*) FROM shared_snippets WHERE snippet_id = s.id) as share_count
+    FROM snippets s
+    LEFT JOIN categories c ON s.id = c.snippet_id
+    LEFT JOIN users u ON s.user_id = u.id
+  `;
+}
+
+const INSERT_FRAGMENT_SQL = `
+  INSERT INTO fragments (
+    snippet_id,
+    file_name,
+    code,
+    language,
+    position
+  ) VALUES (?, ?, ?, ?, ?)
+`;
+
+const INSERT_CATEGORY_SQL = `
+  INSERT INTO categories (snippet_id, name) VALUES (?, ?)
+`;
+
 class SnippetRepository {
-  constructor() {
-    this.selectAllStmt = null;
-    this.selectPublicStmt = null;
-    this.insertSnippetStmt = null;
-    this.insertFragmentStmt = null;
-    this.insertCategoryStmt = null;
-    this.updateSnippetStmt = null;
-    this.deleteFragmentsStmt = null;
-    this.deleteCategoriesStmt = null;
-    this.selectByIdStmt = null;
-    this.selectPublicByIdStmt = null;
-    this.moveToRecycleBinStmt = null;
-    this.deleteSnippetStmt = null;
-    this.selectFragmentsStmt = null;
-    this.selectAllDeletedStmt = null;
-    this.deleteExpiredSnippetsStmt = null;
-    this.restoreSnippetStmt = null;
-    this.setPinnedStmt = null;
-    this.setFavoriteStmt = null;
+  async #processSnippets(queryable, snippets) {
+    if (snippets.length === 0) return [];
+
+    const fragmentsBySnippet = new Map();
+    const ids = snippets.map((snippet) => snippet.id);
+
+    for (let start = 0; start < ids.length; start += FRAGMENT_BATCH_SIZE) {
+      const batch = ids.slice(start, start + FRAGMENT_BATCH_SIZE);
+      const rows = await queryable.all(
+        `
+          SELECT id, snippet_id, file_name, code, language, position
+          FROM fragments
+          WHERE snippet_id IN (${batch.map(() => "?").join(",")})
+          ORDER BY position, id
+        `,
+        batch
+      );
+
+      for (const { snippet_id, ...fragment } of rows) {
+        if (!fragmentsBySnippet.has(snippet_id)) {
+          fragmentsBySnippet.set(snippet_id, []);
+        }
+        fragmentsBySnippet.get(snippet_id).push(fragment);
+      }
+    }
+
+    return snippets.map((snippet) => ({
+      ...snippet,
+      categories: snippet.categories ? snippet.categories.split(",") : [],
+      fragments: (fragmentsBySnippet.get(snippet.id) || []).sort(
+        (a, b) => a.position - b.position
+      ),
+      share_count: snippet.share_count || 0,
+    }));
   }
 
-  #initializeStatements() {
-    const db = getDb();
+  async #processSnippet(queryable, snippet) {
+    if (!snippet) return null;
+    const [processed] = await this.#processSnippets(queryable, [snippet]);
+    return processed;
+  }
 
-    if (!this.selectAllStmt) {
-      this.selectAllStmt = db.prepare(`
-        SELECT 
-          s.id,
-          s.title,
-          s.description,
-          datetime(s.updated_at) || 'Z' as updated_at,
-          s.user_id,
-          s.is_public,
-          s.is_pinned,
-          s.is_favorite,
-          u.username,
-          GROUP_CONCAT(DISTINCT c.name) as categories,
-          (SELECT COUNT(*) FROM shared_snippets WHERE snippet_id = s.id) as share_count
-        FROM snippets s
-        LEFT JOIN categories c ON s.id = c.snippet_id
-        LEFT JOIN users u ON s.user_id = u.id
-        WHERE s.user_id = ? AND s.expiry_date IS NULL
-        GROUP BY s.id
-        ORDER BY s.updated_at DESC
-      `);
-
-      this.selectPublicStmt = db.prepare(`
-        SELECT 
-          s.id,
-          s.title,
-          s.description,
-          datetime(s.updated_at) || 'Z' as updated_at,
-          s.user_id,
-          s.is_public,
-          s.is_pinned,
-          s.is_favorite,
-          u.username,
-          GROUP_CONCAT(DISTINCT c.name) as categories,
-          (SELECT COUNT(*) FROM shared_snippets WHERE snippet_id = s.id) as share_count
-        FROM snippets s
-        LEFT JOIN categories c ON s.id = c.snippet_id
-        LEFT JOIN users u ON s.user_id = u.id
-        WHERE s.is_public = 1 AND s.expiry_date IS NULL 
-        GROUP BY s.id
-        ORDER BY s.updated_at DESC
-      `);
-
-      this.insertSnippetStmt = db.prepare(`
-        INSERT INTO snippets (
-          title, 
-          description, 
-          updated_at,
-          expiry_date,
-          user_id,
-          is_public
-        ) VALUES (?, ?, datetime('now', 'utc'),NULL, ?, ?)
-      `);
-
-      this.insertFragmentStmt = db.prepare(`
-        INSERT INTO fragments (
-          snippet_id,
-          file_name,
-          code,
-          language,
-          position
-        ) VALUES (?, ?, ?, ?, ?)
-      `);
-
-      this.insertCategoryStmt = db.prepare(`
-        INSERT INTO categories (snippet_id, name) VALUES (?, ?)
-      `);
-
-      this.updateSnippetStmt = db.prepare(`
-        UPDATE snippets 
-        SET title = ?, 
-            description = ?,
-            updated_at = datetime('now', 'utc'),
-            is_public = ?
-        WHERE id = ? AND user_id = ?
-      `);
-
-      this.restoreSnippetStmt = db.prepare(`
-        UPDATE snippets
-        SET expiry_date = NULL
-        WHERE id = ? AND user_id = ?
-      `);
-
-      this.deleteFragmentsStmt = db.prepare(`
-        DELETE FROM fragments 
-        WHERE snippet_id = ? 
-        AND EXISTS (
-          SELECT 1 FROM snippets 
-          WHERE snippets.id = fragments.snippet_id 
-          AND snippets.user_id = ?
-        )
-      `);
-
-      this.deleteCategoriesStmt = db.prepare(`
-        DELETE FROM categories 
-        WHERE snippet_id = ?
-        AND EXISTS (
-          SELECT 1 FROM snippets 
-          WHERE snippets.id = categories.snippet_id 
-          AND snippets.user_id = ?
-        )
-      `);
-
-      this.selectAllDeletedStmt = db.prepare(`
-        SELECT 
-          s.id,
-          s.title,
-          s.description,
-          datetime(s.updated_at) || 'Z' as updated_at,
-          datetime(s.expiry_date) || 'Z' as expiry_date,
-          s.user_id,
-          s.is_public,
-          s.is_pinned,
-          s.is_favorite,
-          u.username,
-          GROUP_CONCAT(DISTINCT c.name) as categories,
-          (SELECT COUNT(*) FROM shared_snippets WHERE snippet_id = s.id) as share_count
-        FROM snippets s
-        LEFT JOIN categories c ON s.id = c.snippet_id
-        LEFT JOIN users u ON s.user_id = u.id
-        WHERE s.user_id = ? AND s.expiry_date IS NOT NULL
-        GROUP BY s.id
-        ORDER BY s.updated_at DESC
-      `);
-
-      this.deleteExpiredSnippetsStmt = db.prepare(`
-        DELETE FROM snippets
-        WHERE expiry_date IS NOT NULL AND datetime(expiry_date) <= datetime(?, 'utc')
-      `);
-
-      this.selectByIdStmt = db.prepare(`
-        SELECT 
-          s.id,
-          s.title,
-          s.description,
-          datetime(s.updated_at) || 'Z' as updated_at,
-          s.user_id,
-          s.is_public,
-          s.is_pinned,
-          s.is_favorite,
-          u.username,
-          GROUP_CONCAT(DISTINCT c.name) as categories,
-          (SELECT COUNT(*) FROM shared_snippets WHERE snippet_id = s.id) as share_count
-        FROM snippets s
-        LEFT JOIN categories c ON s.id = c.snippet_id
-        LEFT JOIN users u ON s.user_id = u.id
+  #selectById(queryable, id, userId) {
+    const { dialect } = queryable;
+    return queryable.get(
+      `
+        ${snippetSelect(dialect)}
         WHERE s.id = ? AND (s.user_id = ? OR s.is_public = 1) AND s.expiry_date IS NULL
-        GROUP BY s.id
-      `);
+        GROUP BY s.id, u.id
+      `,
+      [dialect.id(id), userId]
+    );
+  }
 
-      this.selectPublicByIdStmt = db.prepare(`
-        SELECT 
-          s.id,
-          s.title,
-          s.description,
-          datetime(s.updated_at) || 'Z' as updated_at,
-          s.user_id,
-          s.is_public,
-          s.is_pinned,
-          s.is_favorite,
-          u.username,
-          GROUP_CONCAT(DISTINCT c.name) as categories,
-          (SELECT COUNT(*) FROM shared_snippets WHERE snippet_id = s.id) as share_count
-        FROM snippets s
-        LEFT JOIN categories c ON s.id = c.snippet_id
-        LEFT JOIN users u ON s.user_id = u.id
-        WHERE s.id = ? AND s.is_public = TRUE AND s.expiry_date IS NULL
-        GROUP BY s.id
-      `);
-
-      this.moveToRecycleBinStmt = db.prepare(`
-        UPDATE snippets
-        SET expiry_date = datetime('now', '+30 days')
-        WHERE id = ? AND user_id = ?
-      `);
-
-      this.deleteSnippetStmt = db.prepare(`
-        DELETE FROM snippets 
-        WHERE id = ? AND user_id = ?
-        RETURNING *                            
-      `); // returns the deleted snippet
-
-      this.selectFragmentsStmt = db.prepare(`
-        SELECT id, file_name, code, language, position 
-        FROM fragments
-        WHERE snippet_id = ?
-        ORDER BY position
-      `);
-
-      this.setPinnedStmt = db.prepare(`
-        UPDATE snippets
-        SET is_pinned = ?
-        WHERE id = ? AND user_id = ?
-      `);
-
-      this.setFavoriteStmt = db.prepare(`
-        UPDATE snippets
-        SET is_favorite = ?
-        WHERE id = ? AND user_id = ?
-      `);
+  async #insertFragments(queryable, snippetId, fragments) {
+    for (const [index, fragment] of fragments.entries()) {
+      await queryable.run(INSERT_FRAGMENT_SQL, [
+        snippetId,
+        fragment.file_name || `file${index + 1}`,
+        fragment.code || "",
+        fragment.language || "plaintext",
+        fragment.position || index,
+      ]);
     }
   }
 
-  #processSnippet(snippet) {
-    if (!snippet) return null;
-
-    const fragments = this.selectFragmentsStmt.all(snippet.id);
-
-    return {
-      ...snippet,
-      categories: snippet.categories ? snippet.categories.split(",") : [],
-      fragments: fragments.sort((a, b) => a.position - b.position),
-      share_count: snippet.share_count || 0,
-    };
+  async #insertCategories(queryable, snippetId, categories) {
+    for (const category of categories) {
+      if (category.trim()) {
+        await queryable.run(INSERT_CATEGORY_SQL, [
+          snippetId,
+          category.trim().toLowerCase(),
+        ]);
+      }
+    }
   }
 
-  findAll(userId) {
-    this.#initializeStatements();
+  async findAll(userId) {
     try {
-      const snippets = this.selectAllStmt.all(userId);
-      return snippets.map(this.#processSnippet.bind(this));
+      const db = getDb();
+      const snippets = await db.all(
+        `
+          ${snippetSelect(db.dialect)}
+          WHERE s.user_id = ? AND s.expiry_date IS NULL
+          GROUP BY s.id, u.id
+          ORDER BY s.updated_at DESC, s.id ASC
+        `,
+        [userId]
+      );
+      return this.#processSnippets(db, snippets);
     } catch (error) {
       Logger.error("Error in findAll:", error);
       throw error;
     }
   }
 
-  findAllPublic() {
-    this.#initializeStatements();
+  async findAllPublic() {
     try {
-      const snippets = this.selectPublicStmt.all();
-      return snippets.map(this.#processSnippet.bind(this));
+      const db = getDb();
+      const snippets = await db.all(`
+        ${snippetSelect(db.dialect)}
+        WHERE s.is_public = 1 AND s.expiry_date IS NULL
+        GROUP BY s.id, u.id
+        ORDER BY s.updated_at DESC, s.id ASC
+      `);
+      return this.#processSnippets(db, snippets);
     } catch (error) {
       Logger.error("Error in findAllPublic:", error);
       throw error;
     }
   }
 
-  create({
+  async create({
     title,
     description,
     categories = [],
@@ -272,234 +159,274 @@ class SnippetRepository {
     userId,
     isPublic = 0,
   }) {
-    this.#initializeStatements();
     try {
-      const db = getDb();
-
-      return db.transaction(() => {
-        const insertResult = this.insertSnippetStmt.run(
-          title,
-          description,
-          userId,
-          isPublic ? 1 : 0
+      return await getDb().transaction(async (tx) => {
+        const inserted = await tx.get(
+          `
+            INSERT INTO snippets (
+              title,
+              description,
+              updated_at,
+              expiry_date,
+              user_id,
+              is_public
+            ) VALUES (?, ?, ${tx.dialect.nowUtc}, NULL, ?, ?)
+            RETURNING id
+          `,
+          [title, description, userId, isPublic ? 1 : 0]
         );
-        const snippetId = insertResult.lastInsertRowid;
+        const snippetId = inserted.id;
 
-        fragments.forEach((fragment, index) => {
-          this.insertFragmentStmt.run(
-            snippetId,
-            fragment.file_name || `file${index + 1}`,
-            fragment.code || "",
-            fragment.language || "plaintext",
-            fragment.position || index
-          );
-        });
+        await this.#insertFragments(tx, snippetId, fragments);
 
         if (categories.length > 0) {
-          for (const category of categories) {
-            if (category.trim()) {
-              this.insertCategoryStmt.run(
-                snippetId,
-                category.trim().toLowerCase()
-              );
-            }
-          }
+          await this.#insertCategories(tx, snippetId, categories);
         }
 
-        const created = this.selectByIdStmt.get(snippetId, userId);
-        return this.#processSnippet(created);
-      })();
+        const created = await this.#selectById(tx, snippetId, userId);
+        return this.#processSnippet(tx, created);
+      });
     } catch (error) {
       Logger.error("Error in create:", error);
       throw error;
     }
   }
 
-  update(
+  async update(
     id,
     { title, description, categories = [], fragments = [], isPublic = 0 },
     userId
   ) {
-    this.#initializeStatements();
     try {
-      const db = getDb();
+      return await getDb().transaction(async (tx) => {
+        const snippetId = tx.dialect.id(id);
 
-      return db.transaction(() => {
-        const result = this.updateSnippetStmt.run(
-          title,
-          description,
-          isPublic ? 1 : 0,
-          id,
-          userId
+        const result = await tx.run(
+          `
+            UPDATE snippets
+            SET title = ?,
+                description = ?,
+                updated_at = ${tx.dialect.nowUtc},
+                is_public = ?
+            WHERE id = ? AND user_id = ?
+          `,
+          [title, description, isPublic ? 1 : 0, snippetId, userId]
         );
         if (result.changes === 0) return null; // not found or not owned by this user
 
-        this.deleteFragmentsStmt.run(id, userId);
-        fragments.forEach((fragment, index) => {
-          this.insertFragmentStmt.run(
-            id,
-            fragment.file_name || `file${index + 1}`,
-            fragment.code || "",
-            fragment.language || "plaintext",
-            fragment.position || index
-          );
-        });
+        await tx.run(
+          `
+            DELETE FROM fragments
+            WHERE snippet_id = ?
+            AND EXISTS (
+              SELECT 1 FROM snippets
+              WHERE snippets.id = fragments.snippet_id
+              AND snippets.user_id = ?
+            )
+          `,
+          [snippetId, userId]
+        );
+        await this.#insertFragments(tx, snippetId, fragments);
 
-        this.deleteCategoriesStmt.run(id, userId);
-        for (const category of categories) {
-          if (category.trim()) {
-            this.insertCategoryStmt.run(id, category.trim().toLowerCase());
-          }
-        }
+        await tx.run(
+          `
+            DELETE FROM categories
+            WHERE snippet_id = ?
+            AND EXISTS (
+              SELECT 1 FROM snippets
+              WHERE snippets.id = categories.snippet_id
+              AND snippets.user_id = ?
+            )
+          `,
+          [snippetId, userId]
+        );
+        await this.#insertCategories(tx, snippetId, categories);
 
-        const updated = this.selectByIdStmt.get(id, userId);
-        return this.#processSnippet(updated);
-      })();
+        const updated = await this.#selectById(tx, snippetId, userId);
+        return this.#processSnippet(tx, updated);
+      });
     } catch (error) {
       Logger.error("Error in update:", error);
       throw error;
     }
   }
 
-  restore(id, userId) {
-    this.#initializeStatements();
+  async restore(id, userId) {
     try {
       const db = getDb();
-      return db.transaction(() => {
-        this.restoreSnippetStmt.run(id, userId);
-      })();
+      await db.run(
+        `
+          UPDATE snippets
+          SET expiry_date = NULL
+          WHERE id = ? AND user_id = ?
+        `,
+        [db.dialect.id(id), userId]
+      );
     } catch (error) {
       Logger.error("Error in restore:", error);
       throw error;
     }
   }
 
-  moveToRecycle(id, userId) {
-    this.#initializeStatements();
+  async moveToRecycle(id, userId) {
     try {
-      const db = getDb();
-      return db.transaction(() => {
-        const snippet = this.selectByIdStmt.get(id, userId);
+      return await getDb().transaction(async (tx) => {
+        const snippet = await this.#selectById(tx, id, userId);
         if (snippet) {
-          this.moveToRecycleBinStmt.run(id, userId);
-          return this.#processSnippet(snippet);
+          await tx.run(
+            `
+              UPDATE snippets
+              SET expiry_date = ${tx.dialect.nowPlusDays(30)}
+              WHERE id = ? AND user_id = ?
+            `,
+            [tx.dialect.id(id), userId]
+          );
+          return this.#processSnippet(tx, snippet);
         }
         return null;
-      })();
+      });
     } catch (error) {
       Logger.error("Error in moving to recycle:", error);
       throw error;
     }
   }
 
-  findAllDeleted(userId) {
-    this.#initializeStatements();
+  async findAllDeleted(userId) {
     try {
-      const deletedSnippets = this.selectAllDeletedStmt.all(userId);
-      return deletedSnippets.map(this.#processSnippet.bind(this));
+      const db = getDb();
+      const deletedSnippets = await db.all(
+        `
+          ${snippetSelect(db.dialect, { withExpiry: true })}
+          WHERE s.user_id = ? AND s.expiry_date IS NOT NULL
+          GROUP BY s.id, u.id
+          ORDER BY s.updated_at DESC, s.id ASC
+        `,
+        [userId]
+      );
+      return this.#processSnippets(db, deletedSnippets);
     } catch (error) {
       Logger.error("Error in findAllDeleted:", error);
       throw error;
     }
   }
 
-  delete(id, userId) {
-    this.#initializeStatements();
+  async delete(id, userId) {
     try {
       const db = getDb();
-
-      return db.transaction(() => {
-        const deletedSnippet = this.deleteSnippetStmt.get(id, userId); // get() will return deleted row
-        return deletedSnippet ? this.#processSnippet(deletedSnippet) : null;
-      })();
+      const deletedSnippet = await db.get(
+        `
+          DELETE FROM snippets
+          WHERE id = ? AND user_id = ?
+          RETURNING *
+        `,
+        [db.dialect.id(id), userId]
+      );
+      return deletedSnippet ? this.#processSnippet(db, deletedSnippet) : null;
     } catch (error) {
       Logger.error("Error in delete:", error);
       throw error;
     }
   }
 
-  deleteExpired() {
-    this.#initializeStatements();
+  async deleteExpired() {
     try {
       const db = getDb();
       const currentTime = new Date().toISOString();
-      db.transaction(() => {
-        this.deleteExpiredSnippetsStmt.run(currentTime);
-      })();
+      await db.run(
+        `
+          DELETE FROM snippets
+          WHERE expiry_date IS NOT NULL AND ${db.dialect.notAfterIsoParam("expiry_date")}
+        `,
+        [currentTime]
+      );
     } catch (error) {
       Logger.error("Error in deleteExpired:", error);
       throw error;
     }
   }
 
-  findById(id, userId = null) {
-    this.#initializeStatements();
+  async findById(id, userId = null) {
     try {
+      const db = getDb();
+
       if (userId != null) {
-        const snippet = this.selectByIdStmt.get(id, userId);
-        return this.#processSnippet(snippet);
+        const snippet = await this.#selectById(db, id, userId);
+        return this.#processSnippet(db, snippet);
       }
 
-      const snippet = this.selectPublicByIdStmt.get(id);
-      return this.#processSnippet(snippet);
+      const snippet = await db.get(
+        `
+          ${snippetSelect(db.dialect)}
+          WHERE s.id = ? AND s.is_public = 1 AND s.expiry_date IS NULL
+          GROUP BY s.id, u.id
+        `,
+        [db.dialect.id(id)]
+      );
+      return this.#processSnippet(db, snippet);
     } catch (error) {
       Logger.error("Error in findById:", error);
       throw error;
     }
   }
 
-  setPinned(id, value, userId) {
-    this.#initializeStatements();
+  async #setFlag(column, id, value, userId) {
+    const db = getDb();
+    const result = await db.run(
+      `
+        UPDATE snippets
+        SET ${column} = ?
+        WHERE id = ? AND user_id = ?
+      `,
+      [value ? 1 : 0, db.dialect.id(id), userId]
+    );
+    if (result.changes === 0) return null;
+    const updated = await this.#selectById(db, id, userId);
+    return this.#processSnippet(db, updated);
+  }
+
+  async setPinned(id, value, userId) {
     try {
-      const result = this.setPinnedStmt.run(value ? 1 : 0, id, userId);
-      if (result.changes === 0) return null;
-      const updated = this.selectByIdStmt.get(id, userId);
-      return this.#processSnippet(updated);
+      return await this.#setFlag("is_pinned", id, value, userId);
     } catch (error) {
       Logger.error("Error in setPinned:", error);
       throw error;
     }
   }
 
-  setFavorite(id, value, userId) {
-    this.#initializeStatements();
+  async setFavorite(id, value, userId) {
     try {
-      const result = this.setFavoriteStmt.run(value ? 1 : 0, id, userId);
-      if (result.changes === 0) {
-        return null;
-      }
-      const updated = this.selectByIdStmt.get(id, userId);
-      return this.#processSnippet(updated);
+      return await this.#setFlag("is_favorite", id, value, userId);
     } catch (error) {
       Logger.error("Error in setFavorite:", error);
       throw error;
     }
   }
 
-  findAllPaginated({
+  async findAllPaginated({
     userId = null,
     filters = {},
     sort = 'newest',
     limit = 50,
     offset = 0
   }) {
-    this.#initializeStatements();
-
     try {
+      const db = getDb();
+      const { dialect } = db;
+
       // Build base query
       let sql = `
         SELECT
           s.id,
           s.title,
           s.description,
-          datetime(s.updated_at) || 'Z' as updated_at,
-          CASE WHEN s.expiry_date IS NOT NULL THEN datetime(s.expiry_date) || 'Z' ELSE NULL END as expiry_date,
+          ${dialect.utcString("s.updated_at")} as updated_at,
+          CASE WHEN s.expiry_date IS NOT NULL THEN ${dialect.utcString("s.expiry_date")} ELSE NULL END as expiry_date,
           s.user_id,
           s.is_public,
           s.is_pinned,
           s.is_favorite,
           u.username,
-          GROUP_CONCAT(DISTINCT c.name) as categories,
+          ${dialect.groupConcatDistinct("c.name")} as categories,
           (SELECT COUNT(*) FROM shared_snippets WHERE snippet_id = s.id) as share_count,
           COUNT(*) OVER() as total_count
         FROM snippets s
@@ -533,13 +460,13 @@ class SnippetRepository {
       }
 
       if (filters.search) {
-        sql += ` AND (s.title LIKE ? OR s.description LIKE ?`;
+        sql += ` AND (${dialect.like("s.title")} OR ${dialect.like("s.description")}`;
         params.push(`%${filters.search}%`, `%${filters.search}%`);
 
         if (filters.searchCode) {
           sql += ` OR EXISTS (
             SELECT 1 FROM fragments f
-            WHERE f.snippet_id = s.id AND f.code LIKE ?
+            WHERE f.snippet_id = s.id AND ${dialect.like("f.code")}
           )`;
           params.push(`%${filters.search}%`);
         }
@@ -554,7 +481,7 @@ class SnippetRepository {
         params.push(filters.language);
       }
 
-      sql += ` GROUP BY s.id`;
+      sql += ` GROUP BY s.id, u.id`;
 
       // Category AND logic: must have ALL selected categories
       if (filters.categories && filters.categories.length > 0) {
@@ -579,15 +506,13 @@ class SnippetRepository {
           sql += `s.updated_at DESC`;
       }
 
-      sql += ` LIMIT ? OFFSET ?`;
+      sql += `, s.id ASC LIMIT ? OFFSET ?`;
       params.push(limit, offset);
 
-      const db = getDb();
-      const stmt = db.prepare(sql);
-      const rows = stmt.all(...params);
+      const rows = await db.all(sql, params);
 
       const total = rows.length > 0 ? rows[0].total_count : 0;
-      const snippets = rows.map(this.#processSnippet.bind(this));
+      const snippets = await this.#processSnippets(db, rows);
 
       return { snippets, total };
     } catch (error) {
@@ -596,11 +521,10 @@ class SnippetRepository {
     }
   }
 
-  getMetadata(userId = null) {
-    this.#initializeStatements();
-    const db = getDb();
-
+  async getMetadata(userId = null) {
     try {
+      const db = getDb();
+
       // Get unique categories
       let categorySql = `
         SELECT DISTINCT c.name
@@ -618,7 +542,7 @@ class SnippetRepository {
       }
       categorySql += ` ORDER BY c.name`;
 
-      const categories = db.prepare(categorySql).all(...categoryParams).map(r => r.name);
+      const categories = (await db.all(categorySql, categoryParams)).map(r => r.name);
 
       // Get unique languages
       let languageSql = `
@@ -637,7 +561,7 @@ class SnippetRepository {
       }
       languageSql += ` ORDER BY f.language`;
 
-      const languages = db.prepare(languageSql).all(...languageParams).map(r => r.language);
+      const languages = (await db.all(languageSql, languageParams)).map(r => r.language);
 
       // Get counts
       let countSql = `SELECT COUNT(*) as count FROM snippets WHERE expiry_date IS NULL`;
@@ -650,11 +574,27 @@ class SnippetRepository {
         countSql += ` AND is_public = 1`;
       }
 
-      const total = db.prepare(countSql).get(...countParams).count;
+      const total = (await db.get(countSql, countParams)).count;
 
       return { categories, languages, counts: { total } };
     } catch (error) {
       Logger.error("Error in getMetadata:", error);
+      throw error;
+    }
+  }
+
+  async assignOrphanedSnippets(userId) {
+    try {
+      const result = await getDb().run(
+        `UPDATE snippets SET user_id = ? WHERE user_id IS NULL`,
+        [userId]
+      );
+      Logger.debug(
+        `Assigned ${result.changes} orphaned snippets to user ${userId}`
+      );
+      return result.changes;
+    } catch (error) {
+      Logger.error("Error assigning orphaned snippets:", error);
       throw error;
     }
   }

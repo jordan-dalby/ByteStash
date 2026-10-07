@@ -15,7 +15,7 @@ Password: demodemo
 ## Features
 - Create and Edit Snippets: Easily add new code snippets or update existing ones with an intuitive interface.
 - Filter by Language and Content: Quickly find the right snippet by filtering based on programming language or keywords in the content.
-- Secure Storage: All snippets are securely stored in a sqlite database, ensuring your code remains safe and accessible only to you.
+- Secure Storage: All snippets are securely stored in a sqlite database (or optionally PostgreSQL), ensuring your code remains safe and accessible only to you.
 - AI Integration (MCP): Connect AI assistants such as Claude, OpenAI and Perplexity through a built-in [Model Context Protocol](https://modelcontextprotocol.io) endpoint to search and manage your snippets, authenticated with your existing API key. See [MCP (AI assistants)](#mcp-ai-assistants).
 
 ## Howto
@@ -55,9 +55,53 @@ services:
       OIDC_SCOPES: ""
 ```
 
+### PostgreSQL (optional)
+ByteStash stores everything in a SQLite database under `/data/snippets` by default. To use
+PostgreSQL instead, point ByteStash at an existing database with either a connection string or
+the individual settings. The tables are created automatically on first start.
+
+```yaml
+    environment:
+      DATABASE_URL: "postgres://bytestash:password@postgres:5432/bytestash"
+      # or
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: bytestash
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: bytestash
+```
+
+| Variable | Description |
+| --- | --- |
+| `DATABASE_URL` / `DATABASE_URL_FILE` | PostgreSQL connection string, or a file containing it (Docker secrets). |
+| `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` | Used when `DATABASE_URL` is not set. Port defaults to `5432`, user and database to `bytestash`. `POSTGRES_PASSWORD_FILE` is also supported. |
+| `POSTGRES_SSL` | `true` to require TLS, `no-verify` to skip certificate verification, `false` to disable. |
+| `MIGRATE_SQLITE_TO_POSTGRES` | `true` copies the existing SQLite data into PostgreSQL on startup. Only runs while PostgreSQL is empty, so it is safe to leave enabled. |
+
+If neither `DATABASE_URL` nor `POSTGRES_HOST` is set, ByteStash keeps using SQLite. Keep the
+`/data/snippets` volume mounted either way: it holds the generated JWT secret (unless
+`JWT_SECRET` is set) and the SQLite file used by the migration.
+
+#### Migrating from SQLite to PostgreSQL
+1. Take a backup of your `/data/snippets` volume.
+2. Add the PostgreSQL settings above together with `MIGRATE_SQLITE_TO_POSTGRES: "true"` and restart
+   the container. Users, snippets, shares, API keys and settings are copied across with their
+   existing IDs, so share links and API keys keep working.
+
+The migration can also be run by hand once PostgreSQL is configured:
+
+```bash
+docker compose exec bytestash node src/scripts/migrateToPostgres.js
+# replace whatever is already in PostgreSQL with the SQLite data
+docker compose exec bytestash node src/scripts/migrateToPostgres.js --force
+```
+
+Changes made while running on PostgreSQL are not copied back to SQLite.
+
 ## Tech Stack
 - Frontend: React, Tailwind CSS
 - Backend: Node.js, Express
+- Database: SQLite (default) or PostgreSQL
 - Containerisation: Docker
 
 ## API Documentation

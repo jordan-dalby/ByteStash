@@ -3,8 +3,7 @@ import jwt from 'jsonwebtoken';
 import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS, DISABLE_ACCOUNTS, DISABLE_INTERNAL_ACCOUNTS, getOrCreateAnonymousUser, authenticateToken, getUserFromToken, ALLOW_PASSWORD_CHANGES } from '../middleware/auth.js';
 import userService from '../services/userService.js';
 import userRepository from '../repositories/userRepository.js';
-import { getDb } from '../config/database.js';
-import { up_v1_5_0_snippets } from '../config/migrations/20241117-migration.js';
+import snippetRepository from '../repositories/snippetRepository.js';
 import { isAdmin } from '../middleware/adminAuth.js';
 import Logger from '../logger.js';
 
@@ -12,8 +11,7 @@ const router = express.Router();
 
 router.get('/config', async (req, res) => {
   try {
-    const db = getDb();
-    const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
+    const userCount = await userRepository.count();
     const hasUsers = userCount > 0;
     
     res.json({ 
@@ -36,8 +34,7 @@ router.post('/register', async (req, res) => {
       return res.status(403).json({ error: 'Internal account registration is disabled' });
     }
 
-    const db = getDb();
-    const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
+    const userCount = await userRepository.count();
     const hasUsers = userCount > 0;
     
     if (hasUsers && !ALLOW_NEW_ACCOUNTS) {
@@ -48,7 +45,7 @@ router.post('/register', async (req, res) => {
     const user = await userService.createUser(username, password);
     
     if (!hasUsers) {
-      await up_v1_5_0_snippets(db, user.id);
+      await snippetRepository.assignOrphanedSnippets(user.id);
     }
     
     const token = jwt.sign({ 

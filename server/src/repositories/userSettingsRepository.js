@@ -22,18 +22,16 @@ function parseSettings(raw) {
   }
 }
 
-export function getUserSettings(userId) {
+export async function getUserSettings(userId) {
   assertUserId(userId);
   const db = getDb();
 
   try {
-    const row = db
-      .prepare(`
-        SELECT settings, updated_at
-        FROM user_settings
-        WHERE user_id = ?
-      `)
-      .get(userId);
+    const row = await db.get(`
+      SELECT settings, updated_at
+      FROM user_settings
+      WHERE user_id = ?
+    `, [userId]);
 
     if (!row) {
       return { settings: {}, updatedAt: null };
@@ -46,32 +44,36 @@ export function getUserSettings(userId) {
   }
 }
 
-export function mergeUserSettings(userId, partial) {
+export async function mergeUserSettings(userId, partial) {
   assertUserId(userId);
   const db = getDb();
 
   try {
-    const selectStmt = db.prepare(`
-      SELECT settings FROM user_settings WHERE user_id = ?
-    `);
-    const upsertStmt = db.prepare(`
-      INSERT INTO user_settings (user_id, settings, updated_at)
-      VALUES (?, ?, CURRENT_TIMESTAMP)
-      ON CONFLICT(user_id) DO UPDATE SET
-        settings = excluded.settings,
-        updated_at = CURRENT_TIMESTAMP
-    `);
-    const readBackStmt = db.prepare(`
-      SELECT settings, updated_at FROM user_settings WHERE user_id = ?
-    `);
+    const row = await db.transaction(async (tx) => {
+      const { now, forUpdate } = tx.dialect;
 
-    const merge = db.transaction((id, incoming) => {
-      const existing = parseSettings(selectStmt.get(id)?.settings);
-      upsertStmt.run(id, JSON.stringify({ ...existing, ...incoming }));
-      return readBackStmt.get(id);
+      await tx.run(`
+        INSERT INTO user_settings (user_id, settings, updated_at)
+        VALUES (?, '{}', ${now})
+        ON CONFLICT(user_id) DO NOTHING
+      `, [userId]);
+
+      const current = await tx.get(`
+        SELECT settings FROM user_settings WHERE user_id = ?${forUpdate}
+      `, [userId]);
+      const existing = parseSettings(current?.settings);
+
+      await tx.run(`
+        UPDATE user_settings
+        SET settings = ?, updated_at = ${now}
+        WHERE user_id = ?
+      `, [JSON.stringify({ ...existing, ...partial }), userId]);
+
+      return tx.get(`
+        SELECT settings, updated_at FROM user_settings WHERE user_id = ?
+      `, [userId]);
     });
 
-    const row = merge(userId, partial);
     Logger.debug(`Updated settings for user ${userId}`);
 
     return { settings: parseSettings(row.settings), updatedAt: row.updated_at };
@@ -81,14 +83,15 @@ export function mergeUserSettings(userId, partial) {
   }
 }
 
-export function deleteUserSettings(userId) {
+export async function deleteUserSettings(userId) {
   assertUserId(userId);
   const db = getDb();
 
   try {
-    const result = db
-      .prepare('DELETE FROM user_settings WHERE user_id = ?')
-      .run(userId);
+    const result = await db.run(
+      'DELETE FROM user_settings WHERE user_id = ?',
+      [userId]
+    );
 
     return result.changes > 0;
   } catch (error) {

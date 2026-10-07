@@ -127,16 +127,29 @@ app.get(`${basePath}/*`, (req, res, next) => {
   });
 });
 
-function handleShutdown() {
+let shuttingDown = false;
+
+async function handleShutdown() {
+  if (shuttingDown) return;
+  shuttingDown = true;
+
   Logger.info("Received shutdown signal, starting graceful shutdown...");
 
-  shutdownDatabase();
+  try {
+    await shutdownDatabase();
+  } catch (error) {
+    process.exit(1);
+  }
 
   process.exit(0);
 }
 
 (async () => {
-  await initializeDatabase();
+  try {
+    await initializeDatabase();
+  } catch (error) {
+    process.exit(1);
+  }
 
   return new Promise((resolve) => {
     app.listen(PORT, () => {

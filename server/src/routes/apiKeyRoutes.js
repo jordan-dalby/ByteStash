@@ -7,7 +7,7 @@ const router = express.Router();
 // List all API keys for the authenticated user
 router.get('/', async (req, res) => {
   try {
-    const keys = getApiKeys(req.user.id);
+    const keys = await getApiKeys(req.user.id);
     res.json(keys);
   } catch (error) {
     Logger.error('Error fetching API keys:', error);
@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Name is required' });
     }
     
-    const apiKey = createApiKey(req.user.id, name);
+    const apiKey = await createApiKey(req.user.id, name);
     
     if (!apiKey) {
       return res.status(500).json({ error: 'Failed to create API key' });
@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
 // Delete an API key
 router.delete('/:id', async (req, res) => {
   try {
-    const success = deleteApiKey(req.user.id, req.params.id);
+    const success = await deleteApiKey(req.user.id, req.params.id);
     
     if (!success) {
       return res.status(404).json({ error: 'API key not found' });

@@ -43,6 +43,20 @@ services:
       # Optional: Comma-separated list of usernames that should have admin privileges
       # e.g. "admin,jordan" - these users will have access to the admin panel
       - ADMIN_USERNAMES=admin
+
+      # Optional: store data in PostgreSQL instead of SQLite, leave commented out to keep using SQLite
+      # Either provide DATABASE_URL (or DATABASE_URL_FILE for Docker secrets) or the individual POSTGRES_* values
+      #- DATABASE_URL=postgres://bytestash:password@postgres:5432/bytestash
+      #- POSTGRES_HOST=postgres
+      #- POSTGRES_PORT=5432
+      #- POSTGRES_USER=bytestash
+      #- POSTGRES_PASSWORD=password
+      #- POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      #- POSTGRES_DB=bytestash
+      # Optional: true to require TLS, no-verify to skip certificate verification
+      #- POSTGRES_SSL=false
+      # Optional: copy the existing SQLite data into PostgreSQL on startup, only runs while PostgreSQL is empty
+      #- MIGRATE_SQLITE_TO_POSTGRES=true
     volumes:
       - ./data:/data/snippets
 # Uncomment to use docker secrets

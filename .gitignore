@@ -1,6 +1,8 @@
 # db storage directory
 data
 
+.env
+
 node_modules
 dist
 

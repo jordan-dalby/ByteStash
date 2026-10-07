@@ -137,11 +137,11 @@ install_and_launch() {
     info "Installing server dependencies..."
     npm install --prefix server
 
-    info "Cleaning old containers and volumes..."
-    $COMPOSE -f docker-compose-dev.yaml down -v
+    info "Cleaning old containers..."
+    $COMPOSE -f docker-compose-dev.yaml down
 
     info "Starting dev containers..."
-    $COMPOSE -f docker-compose-dev.yaml up --build
+    $COMPOSE -f docker-compose-dev.yaml up --build --renew-anon-volumes
 }
 
 # ──────────────────────────────────────────────

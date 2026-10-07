@@ -3,109 +3,31 @@ import bcrypt from 'bcrypt';
 import Logger from '../logger.js';
 
 class UserRepository {
-  constructor() {
-    this.createUserStmt = null;
-    this.findByUsernameStmt = null;
-    this.findByIdStmt = null;
-    this.findByOIDCIdStmt = null;
-    this.createUserWithOIDCStmt = null;
-    this.updatePasswordStmt = null;
-    this.findByIdWithPasswordStmt = null;
-  }
-
-  #initializeStatements() {
-    if (!this.createUserStmt) {
-      const db = getDb();
-
-      this.createUserStmt = db.prepare(`
-        INSERT INTO users (username, username_normalized, password_hash)
-        VALUES (?, ?, ?)
-      `);
-
-      this.findByUsernameStmt = db.prepare(`
-        SELECT id, username, password_hash, created_at, email, name, oidc_id, oidc_provider, is_admin, is_active
-        FROM users
-        WHERE username_normalized = ? COLLATE NOCASE
-      `);
-
-      this.findByIdStmt = db.prepare(`
-        SELECT id, username, created_at, email, name, oidc_id, is_admin, is_active
-        FROM users
-        WHERE id = ?
-      `);
-
-      this.findByIdWithPasswordStmt = db.prepare(`
-        SELECT id, username, password_hash, created_at, email, name
-        FROM users
-        WHERE id = ?
-      `);
-
-      this.findByOIDCIdStmt = db.prepare(`
-        SELECT id, username, created_at, email, name, is_admin, is_active
-        FROM users
-        WHERE oidc_id = ? AND oidc_provider = ?
-      `);
-
-      this.createUserWithOIDCStmt = db.prepare(`
-        INSERT INTO users (
-          username, 
-          username_normalized,
-          password_hash, 
-          oidc_id, 
-          oidc_provider, 
-          email, 
-          name
-        ) VALUES (?, ?, '', ?, ?, ?, ?)
-      `);
-
-      this.findUsernameCountStmt = db.prepare(`
-        SELECT COUNT(*) as count 
-        FROM users 
-        WHERE username_normalized = ? COLLATE NOCASE
-      `);
-
-      this.createAnonymousUserStmt = db.prepare(`
-        INSERT INTO users (
-          id,
-          username, 
-          username_normalized,
-          password_hash,
-          created_at
-        ) VALUES (0, ?, ?, '', datetime('now'))
-        ON CONFLICT(id) DO NOTHING
-      `);
-
-      this.updatePasswordStmt = db.prepare(`
-        UPDATE users
-        SET password_hash = ?
-        WHERE id = ?
-      `);
-
-      this.updateLastLoginStmt = db.prepare(`
-        UPDATE users
-        SET last_login_at = CURRENT_TIMESTAMP
-        WHERE id = ?
-      `);
-    }
+  #findByOIDCId(db, oidcId, provider) {
+    return db.get(`
+      SELECT id, username, created_at, email, name, is_admin, is_active
+      FROM users
+      WHERE oidc_id = ? AND oidc_provider = ?
+    `, [oidcId, provider]);
   }
 
   async create(username, password) {
-    this.#initializeStatements();
-    
+    const db = getDb();
+
     try {
       const saltRounds = 10;
       const passwordHash = await bcrypt.hash(password, saltRounds);
       const normalizedUsername = username.toLowerCase();
 
-      const result = this.createUserStmt.run(
-        username,
-        normalizedUsername,
-        passwordHash
-      );
-      
-      return this.findById(result.lastInsertRowid);
+      const result = await db.get(`
+        INSERT INTO users (username, username_normalized, password_hash)
+        VALUES (?, ?, ?)
+        RETURNING id
+      `, [username, normalizedUsername, passwordHash]);
+
+      return this.findById(result.id);
     } catch (error) {
-      if (error.code === 'SQLITE_CONSTRAINT') {
+      if (db.dialect.isUniqueViolation(error)) {
         throw new Error('Username already exists');
       }
       throw error;
@@ -113,18 +35,28 @@ class UserRepository {
   }
 
   async findByUsername(username) {
-    this.#initializeStatements();
-    return this.findByUsernameStmt.get(username.toLowerCase());
+    const db = getDb();
+    return db.get(`
+      SELECT id, username, password_hash, created_at, email, name, oidc_id, oidc_provider, is_admin, is_active
+      FROM users
+      WHERE ${db.dialect.equalsIgnoreCase('username_normalized')}
+    `, [username.toLowerCase()]);
   }
 
   async findById(id) {
-    this.#initializeStatements();
-    return this.findByIdStmt.get(id);
+    return getDb().get(`
+      SELECT id, username, created_at, email, name, oidc_id, is_admin, is_active
+      FROM users
+      WHERE id = ?
+    `, [id]);
   }
 
   async findByIdWithPassword(id) {
-    this.#initializeStatements();
-    return this.findByIdWithPasswordStmt.get(id);
+    return getDb().get(`
+      SELECT id, username, password_hash, created_at, email, name
+      FROM users
+      WHERE id = ?
+    `, [id]);
   }
 
   async verifyPassword(user, password) {
@@ -135,23 +67,28 @@ class UserRepository {
   }
 
   async generateUniqueUsername(baseUsername) {
-    this.#initializeStatements();
+    const db = getDb();
+    const countSql = `
+      SELECT COUNT(*) as count
+      FROM users
+      WHERE ${db.dialect.equalsIgnoreCase('username_normalized')}
+    `;
     let username = baseUsername;
     let counter = 1;
-    
-    while (this.findUsernameCountStmt.get(username.toLowerCase()).count > 0) {
+
+    while ((await db.get(countSql, [username.toLowerCase()])).count > 0) {
       username = `${baseUsername}${counter}`;
       counter++;
     }
-    
+
     return username;
   }
 
   async findOrCreateOIDCUser(profile, provider) {
-    this.#initializeStatements();
-    
     try {
-      const user = this.findByOIDCIdStmt.get(profile.sub, provider);
+      const db = getDb();
+
+      const user = await this.#findByOIDCId(db, profile.sub, provider);
       if (user) return user;
 
       const sanitizeName = (name) => {
@@ -162,22 +99,33 @@ class UserRepository {
       };
 
       let baseUsername = profile.preferred_username ? sanitizeName(profile.preferred_username) :
-                        profile.email?.split('@')[0] || 
+                        profile.email?.split('@')[0] ||
                         profile.name ? sanitizeName(profile.name) :
                         profile.sub;
-                          
+
       const username = await this.generateUniqueUsername(baseUsername);
 
-      const result = this.createUserWithOIDCStmt.run(
+      const result = await db.get(`
+        INSERT INTO users (
+          username,
+          username_normalized,
+          password_hash,
+          oidc_id,
+          oidc_provider,
+          email,
+          name
+        ) VALUES (?, ?, '', ?, ?, ?, ?)
+        RETURNING id
+      `, [
         username,
         username.toLowerCase(),
         profile.sub,
         provider,
         profile.email,
         profile.name
-      );
-      
-      return this.findById(result.lastInsertRowid);
+      ]);
+
+      return this.findById(result.id);
     } catch (error) {
       Logger.error('Error in findOrCreateOIDCUser:', error);
       throw error;
@@ -185,19 +133,23 @@ class UserRepository {
   }
 
   async findByOIDCId(oidcId, provider) {
-    this.#initializeStatements();
-    return this.findByOIDCIdStmt.get(oidcId, provider);
+    return this.#findByOIDCId(getDb(), oidcId, provider);
   }
 
   async createAnonymousUser(username) {
-    this.#initializeStatements();
-    
     try {
-      this.createAnonymousUserStmt.run(
-        username,
-        username.toLowerCase()
-      );
-      
+      const db = getDb();
+      await db.run(`
+        INSERT INTO users (
+          id,
+          username,
+          username_normalized,
+          password_hash,
+          created_at
+        ) VALUES (0, ?, ?, '', ${db.dialect.now})
+        ON CONFLICT(id) DO NOTHING
+      `, [username, username.toLowerCase()]);
+
       return {
         id: 0,
         username,
@@ -210,13 +162,15 @@ class UserRepository {
   }
 
   async updatePassword(userId, newPassword) {
-    this.#initializeStatements();
-
     try {
       const saltRounds = 10;
       const passwordHash = await bcrypt.hash(newPassword, saltRounds);
 
-      const result = this.updatePasswordStmt.run(passwordHash, userId);
+      const result = await getDb().run(`
+        UPDATE users
+        SET password_hash = ?
+        WHERE id = ?
+      `, [passwordHash, userId]);
 
       if (result.changes === 0) {
         throw new Error('User not found or password not updated');
@@ -230,14 +184,21 @@ class UserRepository {
   }
 
   async updateLastLogin(userId) {
-    this.#initializeStatements();
-
     try {
-      this.updateLastLoginStmt.run(userId);
+      const db = getDb();
+      await db.run(`
+        UPDATE users
+        SET last_login_at = ${db.dialect.now}
+        WHERE id = ?
+      `, [userId]);
     } catch (error) {
       Logger.error('Error updating last login:', error);
       throw error;
     }
+  }
+
+  async count() {
+    return (await getDb().get('SELECT COUNT(*) as count FROM users')).count;
   }
 }
 

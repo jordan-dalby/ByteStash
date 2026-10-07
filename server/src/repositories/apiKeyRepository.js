@@ -6,22 +6,21 @@ function generateApiKey() {
   return crypto.randomBytes(32).toString('hex');
 }
 
-export function createApiKey(userId, name) {
+export async function createApiKey(userId, name) {
   const db = getDb();
   const key = generateApiKey();
-  
+
   try {
-    const stmt = db.prepare(`
+    const result = await db.get(`
       INSERT INTO api_keys (user_id, key, name)
       VALUES (?, ?, ?)
-    `);
-    
-    const result = stmt.run(userId, key, name);
-    
-    if (result.changes === 1) {
+      RETURNING id
+    `, [userId, key, name]);
+
+    if (result) {
       Logger.debug(`Created new API key for user ${userId}`);
       return {
-        id: result.lastInsertRowid,
+        id: result.id,
         key,
         name,
         created_at: new Date().toISOString(),
@@ -35,32 +34,29 @@ export function createApiKey(userId, name) {
   }
 }
 
-export function getApiKeys(userId) {
+export async function getApiKeys(userId) {
   const db = getDb();
   try {
-    const stmt = db.prepare(`
+    return await db.all(`
       SELECT id, name, created_at, last_used_at, is_active
       FROM api_keys
       WHERE user_id = ?
-      ORDER BY created_at DESC
-    `);
-    
-    return stmt.all(userId);
+      ORDER BY created_at DESC, id ASC
+    `, [userId]);
   } catch (error) {
     Logger.error('Error fetching API keys:', error);
     throw error;
   }
 }
 
-export function deleteApiKey(userId, keyId) {
+export async function deleteApiKey(userId, keyId) {
   const db = getDb();
   try {
-    const stmt = db.prepare(`
+    const result = await db.run(`
       DELETE FROM api_keys
       WHERE id = ? AND user_id = ?
-    `);
-    
-    const result = stmt.run(keyId, userId);
+    `, [db.dialect.id(keyId), userId]);
+
     if (result.changes === 1) {
       Logger.debug(`Deleted API key ${keyId} for user ${userId}`);
     }
@@ -71,33 +67,31 @@ export function deleteApiKey(userId, keyId) {
   }
 }
 
-export function validateApiKey(key) {
+export async function validateApiKey(key) {
   const db = getDb();
   try {
-    const stmt = db.prepare(`
-      SELECT ak.*, u.id as user_id
+    const apiKey = await db.get(`
+      SELECT ak.id, ak.user_id
       FROM api_keys ak
       JOIN users u ON ak.user_id = u.id
-      WHERE ak.key = ? AND ak.is_active = TRUE
-    `);
-    
-    const apiKey = stmt.get(key);
-    
+      WHERE ak.key = ? AND ak.is_active = 1
+    `, [key]);
+
     if (apiKey) {
       // Update last_used_at
-      db.prepare(`
+      await db.run(`
         UPDATE api_keys
-        SET last_used_at = CURRENT_TIMESTAMP
+        SET last_used_at = ${db.dialect.now}
         WHERE id = ?
-      `).run(apiKey.id);
-      
+      `, [apiKey.id]);
+
       Logger.debug(`Validated API key ${apiKey.id} for user ${apiKey.user_id}`);
       return {
         userId: apiKey.user_id,
         keyId: apiKey.id
       };
     }
-    
+
     return null;
   } catch (error) {
     Logger.error('Error validating API key:', error);
