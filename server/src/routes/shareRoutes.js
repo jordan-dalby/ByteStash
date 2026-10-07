@@ -1,5 +1,5 @@
 import express from 'express';
-import { authenticateToken, getUserFromToken } from '../middleware/auth.js';
+import { authenticateToken, getUserFromToken, getTokenFromRequest } from '../middleware/auth.js';
 import shareRepository from '../repositories/shareRepository.js';
 import Logger from '../logger.js';
 
@@ -36,8 +36,7 @@ router.get('/:id', async (req, res) => {
     }
 
     if (share.share?.requiresAuth) {
-      const authHeader = req.headers['bytestashauth'];
-      const token = authHeader && authHeader.split(' ')[1];
+      const token = getTokenFromRequest(req);
 
       if (!token) {
         return res.status(401).json({ error: 'Authentication required' });

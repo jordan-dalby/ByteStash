@@ -13,6 +13,11 @@ components:
       in: header
       name: bytestashauth
       description: JWT token obtained from /api/auth/login. Must be prefixed with "bearer TOKEN"
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: bytestash_token
+      description: HttpOnly session cookie set by /api/auth/login, used by the web UI
     ApiKeyAuth:
       type: apiKey
       in: header
@@ -263,6 +268,7 @@ paths:
         - Authentication
       security:
         - JwtAuth: []
+        - CookieAuth: []
       responses:
         '200':
           description: Token is valid
@@ -284,6 +290,21 @@ paths:
                         type: string
         '401':
           description: Invalid token
+  /api/auth/logout:
+    post:
+      summary: Clear the session cookie
+      tags:
+        - Authentication
+      responses:
+        '200':
+          description: Session cookie cleared
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
   /api/auth/anonymous:
     post:
       summary: Create an anonymous session

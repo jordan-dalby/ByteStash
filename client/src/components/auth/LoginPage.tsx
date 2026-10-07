@@ -59,8 +59,8 @@ export const LoginPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const { token, user } = await loginApi(username, password);
-      login(token, user);
+      const { user } = await loginApi(username, password);
+      login(user);
     } catch (err: any) {
       addToast(translate('login.error.invalidUsernameOrPassword'), 'error');
     } finally {

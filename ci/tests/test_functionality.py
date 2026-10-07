@@ -20,6 +20,10 @@ def test_login(creds):
                       verify=False, timeout=10)
     assert r.status_code == 200, f"login failed: {r.status_code} {r.text[:200]}"
     assert "token" in r.json()
+    cookie = r.headers.get("Set-Cookie", "")
+    assert cookie.startswith("bytestash_token=")
+    for flag in ("HttpOnly", "Secure", "SameSite=Lax"):
+        assert flag in cookie, f"session cookie missing {flag}: {cookie[:80]}"
 
 
 def test_snippet_roundtrip(auth_token):

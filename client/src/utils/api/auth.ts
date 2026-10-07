@@ -18,6 +18,10 @@ export const register = async (username: string, password: string): Promise<Auth
   return apiClient.post<AuthResponse>(`${API_ENDPOINTS.AUTH}/register`, { username, password });
 };
 
+export const logout = async () => {
+  return apiClient.post<{ success: boolean }>(`${API_ENDPOINTS.AUTH}/logout`, {});
+};
+
 export const anonymous = async (): Promise<AuthResponse> => {
   return apiClient.post<AuthResponse>(`${API_ENDPOINTS.AUTH}/anonymous`, {});
 }
