@@ -58,7 +58,11 @@
           "description": "Mostra numero linea nei blocchi codice",
           "label": "Mostra Numero Linee"
         },
-        "title": "Mostra"
+        "title": "Mostra",
+        "wordWrap": {
+          "description": "Manda a capo le righe lunghe nella vista completa dello snippet invece di scorrere orizzontalmente",
+          "label": "A capo automatico"
+        }
       }
     },
     "export": {

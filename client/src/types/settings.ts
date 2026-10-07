@@ -14,6 +14,7 @@ export interface UserSettings {
   showCategories: boolean;
   expandCategories: boolean;
   showLineNumbers: boolean;
+  wordWrap: boolean;
   showFavorites: boolean;
 }
 
@@ -28,6 +29,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   showCategories: true,
   expandCategories: false,
   showLineNumbers: false,
+  wordWrap: false,
   showFavorites: false,
 };
 
@@ -54,6 +56,7 @@ const validators: { [K in keyof UserSettings]: (value: unknown) => boolean } = {
   showCategories: isBoolean,
   expandCategories: isBoolean,
   showLineNumbers: isBoolean,
+  wordWrap: isBoolean,
   showFavorites: isBoolean,
 };
 

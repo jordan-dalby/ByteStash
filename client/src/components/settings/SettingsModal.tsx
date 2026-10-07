@@ -53,6 +53,7 @@ export interface SettingsModalProps {
     showCategories: boolean;
     expandCategories: boolean;
     showLineNumbers: boolean;
+    wordWrap: boolean;
     theme: "light" | "dark" | "system";
     locale: Locale;
   };
@@ -127,6 +128,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   const [showLineNumbers, setShowLineNumbers] = useState(
     settings.showLineNumbers
   );
+  const [wordWrap, setWordWrap] = useState(settings.wordWrap);
   const [themePreference, setThemePreference] = useState(settings.theme);
   const [localePreference, setLocalePreference] = useState(settings.locale);
   const [showChangelog, setShowChangelog] = useState(false);
@@ -168,6 +170,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
       showCategories,
       expandCategories,
       showLineNumbers,
+      wordWrap,
       theme: themePreference,
       locale: localePreference,
     });
@@ -548,6 +551,18 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 id="showLineNumbers"
                 checked={showLineNumbers}
                 onChange={setShowLineNumbers}
+              />
+            </SettingRow>
+
+            <SettingRow
+              label={translate('settingsModal.block.view.wordWrap.label')}
+              htmlFor="wordWrap"
+              description={translate('settingsModal.block.view.wordWrap.description')}
+            >
+              <Switch
+                id="wordWrap"
+                checked={wordWrap}
+                onChange={setWordWrap}
               />
             </SettingRow>
           </SettingsGroup>

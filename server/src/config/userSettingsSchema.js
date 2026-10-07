@@ -18,6 +18,7 @@ export const USER_SETTINGS_SCHEMA = {
   showCategories: isBoolean,
   expandCategories: isBoolean,
   showLineNumbers: isBoolean,
+  wordWrap: isBoolean,
   showFavorites: isBoolean,
 };
 

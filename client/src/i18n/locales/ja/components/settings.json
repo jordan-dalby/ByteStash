@@ -57,7 +57,11 @@
           "description": "コードブロックに行番号を表示",
           "label": "行番号を表示"
         },
-        "title": "表示"
+        "title": "表示",
+        "wordWrap": {
+          "description": "スニペットの全体表示で、横スクロールの代わりに長い行を折り返す",
+          "label": "行の折り返し"
+        }
       }
     },
     "export": {

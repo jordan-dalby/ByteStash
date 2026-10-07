@@ -32,6 +32,7 @@ const BaseSnippetStorage: React.FC = () => {
     showCategories,
     expandCategories,
     showLineNumbers,
+    wordWrap,
     theme,
     locale,
     showFavorites,
@@ -267,6 +268,7 @@ const BaseSnippetStorage: React.FC = () => {
           showCategories,
           expandCategories,
           showLineNumbers,
+          wordWrap,
           theme,
           locale,
         }}

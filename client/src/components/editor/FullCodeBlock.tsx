@@ -8,6 +8,7 @@ import {
 } from "../../utils/language/languageUtils";
 import CopyButton from "../common/buttons/CopyButton";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useSettings } from "../../hooks/useSettings";
 import RawButton from "../common/buttons/RawButton";
 import ExportImageButton from "./export/ExportImageButton";
 import ExportImageModal from "./export/ExportImageModal";
@@ -55,7 +56,8 @@ export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({
 
   const isDark = effectiveTheme === "dark";
   const isMarkdown = getLanguageLabel(language) === "markdown";
-  const isPlaintext = isPlaintextLanguage(language);
+  const { wordWrap } = useSettings();
+  const shouldWrap = wordWrap || isPlaintextLanguage(language);
   const [highlighterHeight, setHighlighterHeight] = useState<string>("100px");
   const containerRef = useRef<HTMLDivElement>(null);
   const LINE_HEIGHT = 19;
@@ -67,10 +69,10 @@ export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({
       resizeObserver.observe(containerRef.current);
     }
     return () => resizeObserver.disconnect();
-  }, [code, isPlaintext]);
+  }, [code, shouldWrap]);
 
   const updateHighlighterHeight = () => {
-    if (!containerRef.current || isPlaintext) return;
+    if (!containerRef.current || shouldWrap) return;
 
     const lineCount = code.split("\n").length;
     const contentHeight = lineCount * LINE_HEIGHT + 35;
@@ -137,7 +139,7 @@ export const FullCodeBlock: React.FC<FullCodeBlockProps> = ({
                 readOnly: true,
                 minimap: { enabled: false },
                 scrollBeyondLastLine: false,
-                wordWrap: isPlaintext ? "on" : "off",
+                wordWrap: shouldWrap ? "on" : "off",
                 padding: { top: 16, bottom: 16 },
                 lineNumbers: showLineNumbers ? "on" : "off",
                 renderLineHighlight: "none",

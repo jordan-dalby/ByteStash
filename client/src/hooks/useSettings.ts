@@ -37,6 +37,7 @@ export const useSettings = () => {
     showCategories: settings.showCategories,
     expandCategories: settings.expandCategories,
     showLineNumbers: settings.showLineNumbers,
+    wordWrap: settings.wordWrap,
     showFavorites: settings.showFavorites,
     setShowFavorites,
     theme: settings.theme,
