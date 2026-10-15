@@ -445,7 +445,7 @@ class SnippetRepository {
         sql += ` AND s.is_public = 1`;
       }
 
-      if (filters.recycled) {
+      if (filters.recycled && userId !== null) {
         sql += ` AND s.expiry_date IS NOT NULL`;
       } else {
         sql += ` AND s.expiry_date IS NULL`;
