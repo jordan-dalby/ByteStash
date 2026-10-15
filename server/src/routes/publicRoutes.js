@@ -30,7 +30,7 @@ function parseQueryParams(query) {
       categories,
       favorites: query.favorites === 'true',
       pinned: query.pinned === 'true',
-      recycled: query.recycled === 'true',
+      recycled: false,
     },
     sort: query.sort || 'newest',
   };
