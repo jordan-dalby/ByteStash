@@ -1,0 +1,26 @@
+{
+  "embedCopyButton": {
+    "title": "In die Zwischenablage kopieren"
+  },
+  "embedModal": {
+    "form": {
+      "embedCode": "Embed-Code",
+      "fragmentToShow": {
+        "all": "Alle Fragmente",
+        "label": "Anzuzeigendes Fragment (optional)"
+      },
+      "showDescription": "Beschreibung anzeigen",
+      "showFileHeaders": "Dateiköpfe anzeigen",
+      "showPoweredBy": "\"Powered by ByteStash\" anzeigen",
+      "showTitle": "Titel anzeigen",
+      "theme": "Theme"
+    },
+    "subTitle": "Embed anpassen",
+    "title": "Snippet einbetten"
+  },
+  "embedView": {
+    "error": {
+      "default": "Snippet konnte nicht geladen werden"
+    }
+  }
+}

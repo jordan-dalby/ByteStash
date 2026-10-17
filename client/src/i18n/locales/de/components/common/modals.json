@@ -1,0 +1,7 @@
+{
+  "changelogModal": {
+    "error": {
+      "default": "Changelog konnte nicht geladen werden. Bitte versuch es später erneut."
+    }
+  }
+}

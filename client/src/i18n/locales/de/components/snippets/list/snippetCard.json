@@ -1,0 +1,37 @@
+{
+  "confirmationModalDelete": {
+    "confirmLabel": {
+      "isRecycleView": {
+        "false": "In den Papierkorb verschieben",
+        "true": "Endgültig löschen"
+      }
+    },
+    "message": {
+      "isRecycleView": {
+        "false": "Möchtest du \"{{title}}\" wirklich in den Papierkorb verschieben?",
+        "true": "Möchtest du \"{{title}}\" wirklich endgültig löschen? Diese Aktion kann nicht rückgängig gemacht werden."
+      }
+    },
+    "title": {
+      "isRecycleView": {
+        "false": "In den Papierkorb verschieben",
+        "true": "Löschen bestätigen"
+      }
+    }
+  },
+  "confirmationModalRestore": {
+    "message": "Möchtest du \"{{title}}\" wirklich wiederherstellen?",
+    "title": "Wiederherstellen bestätigen"
+  },
+  "date": {
+    "ago": "vor {{date}}",
+    "expiringSoon": "Läuft bald ab",
+    "left": "noch {{date}}"
+  },
+  "defaultDescription": "Keine Beschreibung vorhanden",
+  "defaultUpdateTime": "Unbekannt",
+  "favorite": "Favorit",
+  "pinned": "Angeheftet",
+  "public": "Öffentlich",
+  "shared": "Geteilt"
+}

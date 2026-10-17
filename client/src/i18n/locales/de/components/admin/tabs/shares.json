@@ -1,0 +1,49 @@
+{
+  "action": {
+    "copyShareLink": "Share-Link kopieren",
+    "delete": "Share löschen",
+    "viewSnippet": "Snippet anzeigen"
+  },
+  "columns": {
+    "labels": {
+      "actions": "Aktionen",
+      "auth": "Anmeldung erforderlich",
+      "created": "Erstellt",
+      "expires": "Läuft ab",
+      "id": "Share-ID",
+      "owner": "Besitzer",
+      "title": "Titel"
+    }
+  },
+  "confirmationModal": {
+    "message": "Möchtest du diesen Share-Link wirklich löschen? Niemand kann über den Link mehr auf das Snippet zugreifen. Diese Aktion kann nicht rückgängig gemacht werden.",
+    "title": "Share löschen"
+  },
+  "entityName_one": "Share",
+  "entityName_other": "Shares",
+  "error": {
+    "delete": {
+      "default": "Share konnte nicht gelöscht werden"
+    }
+  },
+  "filters": {
+    "authType": {
+      "all": "Alle Anmeldetypen",
+      "public": "Öffentlich",
+      "requiresAuth": "Anmeldung erforderlich"
+    },
+    "userId": "Nach Benutzer-ID filtern"
+  },
+  "success": {
+    "copied": {
+      "default": "Share-Link in die Zwischenablage kopiert"
+    },
+    "delete": {
+      "default": "Share gelöscht"
+    }
+  },
+  "table": {
+    "emptyMessage": "Keine Shares gefunden",
+    "loadingMessage": "Shares werden geladen..."
+  }
+}

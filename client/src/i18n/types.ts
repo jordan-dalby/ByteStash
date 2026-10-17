@@ -5,5 +5,6 @@ export enum Locale {
   ja = 'ja',
   zh = 'zh',
   it = 'it',
-  id = 'id'
+  id = 'id',
+  de = 'de'
 }

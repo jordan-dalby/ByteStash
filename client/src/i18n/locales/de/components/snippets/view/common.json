@@ -1,0 +1,56 @@
+{
+  "authAwareSnippetView": {
+    "error": {
+      "snippetLoad": "Snippet konnte nicht geladen werden",
+      "snippetRequireAuth": "Für dieses Snippet ist eine Anmeldung erforderlich"
+    }
+  },
+  "baseSnippetStorage": {
+    "error": {
+      "sessionExpired": "Sitzung abgelaufen. Bitte melde dich erneut an.",
+      "snippetCreated": "Snippet konnte nicht erstellt werden",
+      "snippetUpdated": "Snippet konnte nicht aktualisiert werden"
+    },
+    "success": {
+      "displayAll": "Alle Snippets werden angezeigt",
+      "displayFavorites": "Favoriten werden angezeigt",
+      "snippetCreated": "Neues Snippet erstellt",
+      "snippetUpdated": "Snippet aktualisiert"
+    }
+  },
+  "browsePublicSnippets": "Öffentliche Snippets durchsuchen",
+  "filter": {
+    "filteredByCategories": "Nach Kategorien gefiltert"
+  },
+  "loadingSnippets": "Snippets werden geladen...",
+  "signIn": "Anmelden",
+  "sippetNotFound": "Snippet nicht gefunden",
+  "snippetContentArea": {
+    "error": {
+      "duplicateSnippet": "Snippet konnte nicht dupliziert werden",
+      "loadSnippets": "Snippets konnten nicht geladen werden",
+      "moveSnippetToRecycleBin": "Snippet konnte nicht in den Papierkorb verschoben werden. Bitte versuch es erneut.",
+      "sessionExpired": "Sitzung abgelaufen. Bitte melde dich erneut an.",
+      "updateFavoriteStatusAdded": "Favoritenstatus konnte nicht geändert werden. Bitte versuch es erneut.",
+      "updateFavoriteStatusDeleted": "Favoritenstatus konnte nicht geändert werden. Bitte versuch es erneut.",
+      "updatePinStatusAdded": "Anheften fehlgeschlagen. Bitte versuch es erneut.",
+      "updatePinStatusDeleted": "Lösen fehlgeschlagen. Bitte versuch es erneut."
+    },
+    "success": {
+      "duplicateSnippet": "Snippet dupliziert",
+      "moveSnippetToRecycleBin": "Snippet in den Papierkorb verschoben",
+      "updateFavoriteStatusAdded": "Snippet zu Favoriten hinzugefügt",
+      "updateFavoriteStatusDeleted": "Snippet aus Favoriten entfernt",
+      "updatePinStatusAdded": "Snippet angeheftet",
+      "updatePinStatusDeleted": "Snippet gelöst"
+    }
+  },
+  "storageHeader": {
+    "private": "Du siehst deine privaten Snippets. Nur du kannst sie sehen und bearbeiten.",
+    "public": "Du siehst öffentlich geteilte Snippets. Sie sind schreibgeschützt und für alle sichtbar."
+  },
+  "viewSwitch": {
+    "private": "Privat",
+    "public": "Öffentlich"
+  }
+}

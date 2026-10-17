@@ -1,0 +1,37 @@
+{
+  "recycleSnippetContentArea": {
+    "error": {
+      "deleteSnippet": "Snippet konnte nicht gelöscht werden",
+      "loadSnippets": "Snippets konnten nicht geladen werden",
+      "restoreSnippet": "Snippet konnte nicht wiederhergestellt werden",
+      "sessionExpired": "Sitzung abgelaufen. Bitte melde dich erneut an."
+    },
+    "filter": {
+      "byCategories": "Nach Kategorien gefiltert"
+    },
+    "loadingSnippets": "Snippets werden geladen...",
+    "success": {
+      "deleteSnippet": "Snippet gelöscht",
+      "restoreSnippet": "Snippet wiederhergestellt"
+    }
+  },
+  "recycleSnippetStorage": {
+    "backToSnippets": "Zurück zu den Snippets",
+    "confirmationModal": {
+      "message": "Möchtest du wirklich alle Snippets im Papierkorb endgültig löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "title": "Löschen bestätigen"
+    },
+    "description": "Snippets im Papierkorb werden nach 30 Tagen endgültig gelöscht",
+    "error": {
+      "clear": "Papierkorb konnte nicht geleert werden. Bitte versuch es erneut.",
+      "sessionExpired": "Sitzung abgelaufen. Bitte melde dich erneut an."
+    },
+    "info": {
+      "noSnippets": "Keine Snippets im Papierkorb"
+    },
+    "recycleBin": "Papierkorb",
+    "success": {
+      "clear": "Papierkorb geleert"
+    }
+  }
+}

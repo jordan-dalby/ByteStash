@@ -1,0 +1,71 @@
+{
+  "copyButton": {
+    "title": "In die Zwischenablage kopieren"
+  },
+  "downloadArchiveButton": {
+    "error": {
+      "failedDownload": "Archiv konnte nicht heruntergeladen werden"
+    },
+    "fileLabel_one": "{{count, number}} Datei",
+    "fileLabel_other": "{{count, number}} Dateien",
+    "label": "Alle herunterladen",
+    "success": {
+      "downloadedAll": "Alle Code-Fragmente heruntergeladen"
+    },
+    "title": "Alle Dateien als ZIP-Archiv herunterladen"
+  },
+  "downloadButton": {
+    "error": {
+      "failedDownload": "Datei konnte nicht heruntergeladen werden"
+    },
+    "success": {
+      "downloaded": "\"{{fileName}}\" heruntergeladen"
+    },
+    "title": "{{fileName}} herunterladen",
+    "warning": {
+      "nothing": "Nichts zum Herunterladen"
+    }
+  },
+  "exportButton": {
+    "title": "Als Bild exportieren",
+    "tooltip": "Exportieren"
+  },
+  "exportModal": {
+    "copyClipboard": "Kopieren",
+    "downloadPng": "PNG herunterladen",
+    "downloadSvg": "SVG herunterladen",
+    "errorCopy": "Bild konnte nicht kopiert werden",
+    "errorGenerate": "Bild konnte nicht erstellt werden",
+    "shareLinkedIn": "Auf LinkedIn teilen",
+    "shareTwitter": "Auf X teilen",
+    "successCopy": "Bild in die Zwischenablage kopiert!",
+    "title": "Code exportieren"
+  },
+  "fileUploadButton": {
+    "error": {
+      "unknown": "Unbekannter Fehler"
+    },
+    "info": {
+      "duplicateDetected": "Doppelte Datei erkannt",
+      "duplicatesDetected_one": "{{count, number}} doppelte Datei erkannt",
+      "duplicatesDetected_other": "{{count, number}} doppelte Dateien erkannt"
+    },
+    "label": "Code-Datei(en) hochladen",
+    "loadFromUrl": {
+      "contentMaxSizeError": "Der Inhalt muss kleiner als {{max}} sein",
+      "invalidUrl": "Bitte gib eine gültige URL ein",
+      "label": "Von URL laden",
+      "title": "Code von einer URL laden (z. B. Raw-Link von GitHub)"
+    },
+    "success": {
+      "filesUploaded_one": "{{count, number}} Datei hochgeladen",
+      "filesUploaded_other": "{{count, number}} Dateien hochgeladen",
+      "fileUploaded": "\"{{fileName}}\" hochgeladen",
+      "someFilesUploaded": "{{successCount}} von {{total}} Dateien hochgeladen"
+    },
+    "title": "Code-Dateien hochladen, um automatisch Fragmente zu erstellen"
+  },
+  "rawButton": {
+    "title": "Raw öffnen"
+  }
+}

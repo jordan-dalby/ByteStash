@@ -1,0 +1,18 @@
+{
+  "publicSnippetContentArea": {
+    "error": {
+      "addSnippetToCollection": "Snippet konnte nicht zu deiner Sammlung hinzugefügt werden",
+      "failedLoadSnippets": "Öffentliche Snippets konnten nicht geladen werden"
+    },
+    "filter": {
+      "byCategories": "Nach Kategorien gefiltert"
+    },
+    "info": {
+      "requireAuth": "Bitte melde dich an, um dieses Snippet zu deiner Sammlung hinzuzufügen"
+    },
+    "loadingSnippets": "Snippets werden geladen...",
+    "success": {
+      "addSnippetToCollection": "Snippet zu deiner Sammlung hinzugefügt"
+    }
+  }
+}
