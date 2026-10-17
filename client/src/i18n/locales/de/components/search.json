@@ -1,0 +1,30 @@
+{
+  "action": {
+    "clear": "Suche leeren",
+    "newSnippet": "Neues Snippet",
+    "openSettings": "Einstellungen öffnen",
+    "recycleBin": "Papierkorb",
+    "showAll": "Alle anzeigen",
+    "showFavorites": "Favoriten anzeigen"
+  },
+  "categories": {
+    "addNew": "Neu hinzufügen",
+    "title": "Kategorien"
+  },
+  "defaultPlaceholder": "Snippets durchsuchen... (# eingeben, um alle Kategorien zu sehen)",
+  "filter": {
+    "language": {
+      "all": "Alle Sprachen"
+    }
+  },
+  "sort": {
+    "alphaAsc": "Alphabetisch A–Z",
+    "alphaDesc": "Alphabetisch Z–A",
+    "newestFirst": "Neueste zuerst",
+    "oldestFirst": "Älteste zuerst"
+  },
+  "view": {
+    "grid": "Rasteransicht",
+    "list": "Listenansicht"
+  }
+}

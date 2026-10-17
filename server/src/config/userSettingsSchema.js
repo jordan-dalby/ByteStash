@@ -1,5 +1,5 @@
 const THEMES = ['light', 'dark', 'system'];
-const LOCALES = ['en', 'ru', 'es', 'ja', 'zh', 'it'];
+const LOCALES = ['en', 'ru', 'es', 'ja', 'zh', 'it', 'de'];
 const VIEW_MODES = ['grid', 'list'];
 
 const isBoolean = (value) => typeof value === 'boolean';

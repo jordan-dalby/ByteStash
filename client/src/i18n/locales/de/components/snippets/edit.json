@@ -1,0 +1,57 @@
+{
+  "editSnippetModal": {
+    "addSnippet": "Neues Snippet hinzufügen",
+    "editSnippet": "Snippet bearbeiten",
+    "error": {
+      "savingFailed": "Beim Speichern des Snippets ist ein Fehler aufgetreten. Bitte versuch es erneut."
+    },
+    "form": {
+      "categories": {
+        "counter": "{{categories}}/{{max}} Kategorien",
+        "label": "Kategorien (max. {{max}})",
+        "placeholder": "Kategorie eingeben und mit Enter oder Komma bestätigen"
+      },
+      "codeFragments": {
+        "add": "Neues Fragment hinzufügen",
+        "label": "Code-Fragmente ({{fragments}})"
+      },
+      "description": {
+        "label": "Beschreibung",
+        "placeholder": "Kurze Beschreibung des Snippets"
+      },
+      "isPublic": {
+        "description": "Öffentliche Snippets kann jeder ohne Anmeldung sehen",
+        "label": "Snippet öffentlich machen"
+      },
+      "title": {
+        "counter": "{{characters}}/{{max}} Zeichen",
+        "label": "Titel",
+        "placeholder": "Titel des Snippets eingeben (max. {{max}} Zeichen)"
+      }
+    },
+    "fragmentRequired": "Mindestens ein Code-Fragment ist erforderlich",
+    "mustHaveFileNames": "Alle Fragmente brauchen einen Dateinamen",
+    "unsavedChanges": "Du hast ungespeicherte Änderungen. Möchtest du wirklich schließen?"
+  },
+  "fragmentEditor": {
+    "action": {
+      "collapse": "Einklappen",
+      "delete": "Löschen",
+      "expand": "Aufklappen"
+    },
+    "form": {
+      "fileName": {
+        "placeholder": "Dateiname"
+      },
+      "language": {
+        "placeholder": "Sprache auswählen",
+        "sections": {
+          "other": "Weitere",
+          "used": "Verwendet"
+        }
+      }
+    },
+    "moveDown": "Nach unten",
+    "moveUp": "Nach oben"
+  }
+}

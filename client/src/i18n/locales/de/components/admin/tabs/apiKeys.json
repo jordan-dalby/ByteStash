@@ -1,0 +1,33 @@
+{
+  "apiKeyDeletedSuccessfully": "API Key gelöscht",
+  "columns": {
+    "labels": {
+      "actions": "Aktionen",
+      "created": "Erstellt",
+      "lastUsed": "Zuletzt verwendet",
+      "name": "Name",
+      "owner": "Besitzer",
+      "status": "Status"
+    }
+  },
+  "confirmationModal": {
+    "message": "Möchtest du diesen API Key wirklich löschen? Der Besitzer kann damit nicht mehr auf die API zugreifen. Diese Aktion kann nicht rückgängig gemacht werden.",
+    "title": "API Key löschen"
+  },
+  "entityName_one": "API Key",
+  "entityName_other": "API Keys",
+  "error": {
+    "default": "API Key konnte nicht gelöscht werden"
+  },
+  "filters": {
+    "userId": "Nach Benutzer-ID filtern"
+  },
+  "status": {
+    "active": "Aktiv",
+    "inactive": "Inaktiv"
+  },
+  "table": {
+    "emptyMessage": "Keine API Keys gefunden",
+    "loadingMessage": "API Keys werden geladen..."
+  }
+}

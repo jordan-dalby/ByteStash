@@ -5,6 +5,7 @@ import { resources as jaResources } from './ja';
 import { resources as zhResources } from './zh';
 import { resources as itResources } from './it';
 import { resources as idResources } from './id';
+import { resources as deResources } from './de';
 
 export const resources = {
   en: enResources,
@@ -13,5 +14,6 @@ export const resources = {
   ja: jaResources,
   zh: zhResources,
   it: itResources,
-  id: idResources
+  id: idResources,
+  de: deResources
 };

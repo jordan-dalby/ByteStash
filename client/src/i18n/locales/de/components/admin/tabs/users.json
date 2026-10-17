@@ -1,0 +1,63 @@
+{
+  "action": {
+    "activate": "Benutzer aktivieren",
+    "deactivate": "Benutzer deaktivieren",
+    "delete": "Benutzer löschen"
+  },
+  "columns": {
+    "labels": {
+      "actions": "Aktionen",
+      "apiKeysCount": "API Keys",
+      "authType": "Anmeldetyp",
+      "created": "Erstellt",
+      "email": "E-Mail",
+      "lastLogin": "Letzte Anmeldung",
+      "snippetsCount": "Snippets",
+      "status": "Status",
+      "username": "Benutzername"
+    }
+  },
+  "confirmationModal": {
+    "message": "Möchtest du diesen Benutzer wirklich löschen? Dabei werden alle Snippets, API Keys und Shares des Benutzers endgültig gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.",
+    "title": "Benutzer löschen"
+  },
+  "entityName_one": "Benutzer",
+  "entityName_other": "Benutzer",
+  "error": {
+    "delete": {
+      "default": "Benutzer konnte nicht gelöscht werden"
+    },
+    "update": {
+      "default": "Benutzer konnte nicht aktualisiert werden"
+    }
+  },
+  "filters": {
+    "authType": {
+      "all": "Alle Anmeldetypen",
+      "internal": "Intern",
+      "oidc": "OIDC"
+    },
+    "search": "Benutzer suchen...",
+    "status": {
+      "active": "Aktiv",
+      "all": "Alle Status",
+      "inactive": "Inaktiv"
+    }
+  },
+  "status": {
+    "active": "Aktiv",
+    "inactive": "Inaktiv"
+  },
+  "success": {
+    "delete": {
+      "default": "Benutzer gelöscht"
+    },
+    "update": {
+      "default": "Benutzerstatus aktualisiert"
+    }
+  },
+  "table": {
+    "emptyMessage": "Keine Benutzer gefunden",
+    "loadingMessage": "Benutzer werden geladen..."
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "action": {
+    "delete": "Snippet löschen",
+    "makePrivate": "Privat machen",
+    "makePublic": "Öffentlich machen",
+    "scanForOffensiveContent": "Nach anstößigen Inhalten suchen",
+    "showAllSnippets": "Alle Snippets anzeigen",
+    "viewSnippet": "Snippet anzeigen"
+  },
+  "columns": {
+    "labels": {
+      "actions": "Aktionen",
+      "fragments": "Fragmente",
+      "owner": "Besitzer",
+      "title": "Titel",
+      "updated": "Aktualisiert",
+      "visibility": "Sichtbarkeit"
+    }
+  },
+  "confirmationModal": {
+    "message": "Möchtest du dieses Snippet wirklich endgültig löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "title": "Snippet löschen"
+  },
+  "containsOffensiveWords": "Enthält anstößige Wörter: {{words}}",
+  "entityName_one": "Snippet",
+  "entityName_other": "Snippets",
+  "error": {
+    "delete": {
+      "default": "Snippet konnte nicht gelöscht werden"
+    },
+    "update": {
+      "default": "Sichtbarkeit des Snippets konnte nicht geändert werden"
+    }
+  },
+  "filters": {
+    "search": "Snippets durchsuchen...",
+    "userId": "Benutzer-ID",
+    "visibility": {
+      "all": "Alle Sichtbarkeiten",
+      "private": "Privat",
+      "public": "Öffentlich"
+    }
+  },
+  "offensiveContentMessage": "{{total}} {{entityName}} mit anstößigen Inhalten gefunden",
+  "success": {
+    "delete": {
+      "default": "Snippet gelöscht"
+    },
+    "update": {
+      "default": "Sichtbarkeit des Snippets geändert"
+    }
+  },
+  "table": {
+    "emptyMessage": "Keine Snippets gefunden",
+    "loadingMessage": "Snippets werden geladen..."
+  }
+}

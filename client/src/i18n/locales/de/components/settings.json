@@ -1,0 +1,97 @@
+{
+  "settingsModal": {
+    "block": {
+      "category": {
+        "expandCategories": {
+          "description": "Kategoriegruppen automatisch aufklappen",
+          "label": "Kategorien aufklappen"
+        },
+        "showCategories": {
+          "description": "Kategorien bei Snippets anzeigen",
+          "label": "Kategorien anzeigen"
+        },
+        "title": "Kategorien"
+      },
+      "dataManagement": {
+        "export": {
+          "label": "Snippets exportieren"
+        },
+        "import": {
+          "errors": {
+            "failed": "Import von \"{{title}}\" fehlgeschlagen: {{error}}",
+            "occurred_one": "{{count, number}} Fehler aufgetreten",
+            "occurred_other": "{{count, number}} Fehler aufgetreten"
+          },
+          "label": "Snippets importieren",
+          "progress": "Snippets werden importiert..."
+        },
+        "title": "Datenverwaltung"
+      },
+      "locale": {
+        "title": "Sprache"
+      },
+      "search": {
+        "includeCodeInSearch": {
+          "description": "Auch im Code suchen, nicht nur in Titeln",
+          "label": "Code in Suche einbeziehen"
+        },
+        "title": "Suche"
+      },
+      "theme": {
+        "title": "Theme"
+      },
+      "view": {
+        "compactView": {
+          "description": "Snippets kompakter darstellen",
+          "label": "Kompakte Ansicht"
+        },
+        "previewLines": {
+          "description": "Code-Vorschau in der Snippet-Liste anzeigen",
+          "label": "Code-Vorschau anzeigen"
+        },
+        "showCodePreview": {
+          "description": "Maximale Anzahl Zeilen in der Vorschau (1–20)",
+          "label": "Anzahl Vorschauzeilen"
+        },
+        "showLineNumbers": {
+          "description": "Zeilennummern in Codeblöcken anzeigen",
+          "label": "Zeilennummern anzeigen"
+        },
+        "title": "Ansicht",
+        "wordWrap": {
+          "description": "Lange Zeilen in der vollständigen Snippet-Ansicht umbrechen statt horizontal zu scrollen",
+          "label": "Zeilenumbruch"
+        }
+      }
+    },
+    "export": {
+      "error": {
+        "default": "Snippets konnten nicht exportiert werden",
+        "noSnippets": "Keine Snippets zum Exportieren vorhanden"
+      },
+      "markdown": {
+        "error": {
+          "default": "Markdown-Export fehlgeschlagen"
+        },
+        "success": {
+          "default": "Markdown exportiert"
+        },
+        "warning": {
+          "default": "Keine Snippets zum Exportieren vorhanden"
+        }
+      },
+      "success": {
+        "default": "{{total}} Snippets exportiert"
+      }
+    },
+    "import": {
+      "error": {
+        "default": "Snippets konnten nicht importiert werden"
+      },
+      "hasFailed": "{{succeeded}} Snippets importiert, {{failed}} fehlgeschlagen. Details in der Konsole.",
+      "successOnly_one": "{{succeeded}} Snippet importiert. Schließe die Einstellungen, um es zu sehen.",
+      "successOnly_other": "{{succeeded}} Snippets importiert. Schließe die Einstellungen, um sie zu sehen."
+    },
+    "title": "Einstellungen"
+  }
+}

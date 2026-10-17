@@ -1,0 +1,48 @@
+{
+  "sharedSnippetView": {
+    "browsePublicSnippets": "Öffentliche Snippets durchsuchen",
+    "loadingSnippet": "Snippet wird geladen...",
+    "snippetExpired": "Dieses geteilte Snippet ist abgelaufen",
+    "snippetNotFound": "Snippet nicht gefunden"
+  },
+  "shareMenu": {
+    "activeShareLinks": {
+      "buttons": {
+        "copy": "Link kopieren",
+        "delete": "Share-Link löschen",
+        "requiresAuth": {
+          "false": "Snippet einbetten",
+          "true": "Nur Snippets ohne Anmeldung können eingebettet werden"
+        }
+      },
+      "date": {
+        "expired": "Abgelaufen",
+        "neverExpires": "Läuft nie ab"
+      },
+      "noLinks": "Keine aktiven Share-Links",
+      "relativeExpiryTime": "Läuft ab in {{date}}",
+      "requiresAuth": {
+        "false": "Öffentlicher Zugriff",
+        "true": "Geschützt – Anmeldung erforderlich"
+      },
+      "title": "Aktive Share-Links"
+    },
+    "createButtonText": "Share-Link erstellen",
+    "error": {
+      "created": "Share-Link konnte nicht erstellt werden",
+      "deleted": "Share-Link konnte nicht gelöscht werden",
+      "invalidDuration": "Ungültiges Format. Verwende z. B. 1h, 2d, 30m.",
+      "load": "Shares konnten nicht geladen werden",
+      "unknownExpiryTime": "Unbekannte Ablaufzeit"
+    },
+    "expiresIn": "Läuft ab in (z. B. 1h, 2d, 30m)",
+    "expiresInPlaceholder": "Nie",
+    "requiresAuth": "Anmeldung erforderlich",
+    "subTitle": "Neuen Share-Link erstellen",
+    "success": {
+      "created": "Share-Link erstellt",
+      "deleted": "Share-Link gelöscht"
+    },
+    "title": "Snippet teilen"
+  }
+}
