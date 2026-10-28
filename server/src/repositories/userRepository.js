@@ -92,16 +92,18 @@ class UserRepository {
       if (user) return user;
 
       const sanitizeName = (name) => {
-        return name
+        return (typeof name === 'string' ? name : '')
           .toLowerCase()
           .replace(/[^a-z0-9]/g, '')
           .slice(0, 30);
       };
 
-      let baseUsername = profile.preferred_username ? sanitizeName(profile.preferred_username) :
-                        profile.email?.split('@')[0] ||
-                        profile.name ? sanitizeName(profile.name) :
-                        profile.sub;
+      const baseUsername = [
+        profile.preferred_username,
+        profile.email?.split('@')[0],
+        profile.name,
+        profile.sub,
+      ].map(sanitizeName).find(Boolean) || 'user';
 
       const username = await this.generateUniqueUsername(baseUsername);
 

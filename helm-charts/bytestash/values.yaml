@@ -58,6 +58,8 @@ oidc:
   clientId: ""
   clientSecret: ""
   scopes: ""
+  # The address ByteStash is reached at, e.g. https://bytestash.example.com, used to build the redirect URLs
+  publicUrl: ""
 
 imagePullSecrets: []
 image:

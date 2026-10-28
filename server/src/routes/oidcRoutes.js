@@ -9,8 +9,19 @@ import { isAdmin } from '../middleware/adminAuth.js';
 
 const router = express.Router();
 
-function getBaseUrl(req) {
-  const forwardedProto = req.get('X-Forwarded-Proto');
+const basePath = process.env.BASE_PATH || '';
+
+function firstHeaderValue(req, name) {
+  return req.get(name)?.split(',')[0].trim() || undefined;
+}
+
+function getBaseUrl(req, oidc) {
+  const publicUrl = oidc.getPublicUrl();
+  if (publicUrl) {
+    return publicUrl;
+  }
+
+  const forwardedProto = firstHeaderValue(req, 'X-Forwarded-Proto');
 
   const isSecure = req.secure ||
     forwardedProto === 'https' ||
@@ -18,7 +29,14 @@ function getBaseUrl(req) {
 
   const protocol = isSecure ? 'https' : 'http';
 
-  const host = req.get('X-Forwarded-Host') || req.get('Host');
+  if (!isSecure && req.get('X-Forwarded-For') && !forwardedProto) {
+    Logger.warn(
+      'ByteStash is behind a reverse proxy that does not send X-Forwarded-Proto, so OIDC redirect URLs use http. ' +
+      'If you open ByteStash over https, set PUBLIC_URL (e.g. https://bytestash.example.com) or forward the header.'
+    );
+  }
+
+  const host = firstHeaderValue(req, 'X-Forwarded-Host') || req.get('Host');
 
   Logger.debug('Protocol detection:', {
     secure: req.secure,
@@ -27,39 +45,36 @@ function getBaseUrl(req) {
     host
   });
 
-  const baseUrl = `${protocol}://${host}${process.env.BASE_PATH || ''}`;
+  const baseUrl = `${protocol}://${host}${basePath}`;
   return baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
 }
 
+function redirectToLogin(res, error, message) {
+  const messageParam = message ? `&message=${encodeURIComponent(message)}` : '';
+  res.redirect(`${basePath}/login?error=${error}${messageParam}`);
+}
+
 router.get('/config', async (req, res) => {
-  try {
-    const oidc = await OIDCConfig.getInstance();
-    res.json(oidc.getConfig());
-  } catch (error) {
-    Logger.error('OIDC config fetch error:', error);
-    res.status(500).json({ error: 'Failed to fetch OIDC configuration' });
-  }
+  const oidc = OIDCConfig.instance || new OIDCConfig();
+  res.json(oidc.getConfig(Boolean(getIdTokenFromRequest(req))));
 });
 
 router.get('/auth', async (req, res) => {
   try {
     const oidc = await OIDCConfig.getInstance();
     if (!oidc.isEnabled()) {
-      return res.redirect('/login?error=config_error');
+      return redirectToLogin(res, 'config_error');
     }
 
-    const baseUrl = getBaseUrl(req);
-    const authUrl = await oidc.getAuthorizationUrl(
-      baseUrl,
-      oidc.getScopes().join(' ')
-    );
+    const authUrl = await oidc.getAuthorizationUrl(getBaseUrl(req, oidc));
 
-    Logger.debug('Generated auth URL:', authUrl);
-    res.redirect(authUrl);
+    Logger.debug('Generated auth URL:', authUrl.href);
+    res.redirect(authUrl.href);
   } catch (error) {
-    Logger.error('OIDC auth error:', error);
-    const errorMessage = encodeURIComponent(error.message || 'Unknown error');
-    res.redirect(`/login?error=provider_error&message=${errorMessage}`);
+    const oidc = OIDCConfig.instance;
+    const message = oidc ? oidc.describeError(error) : error.message;
+    Logger.error(`OIDC login could not start: ${message}`);
+    redirectToLogin(res, 'provider_error', message);
   }
 });
 
@@ -74,29 +89,23 @@ router.get('/logout', async (req, res) => {
 
     clearAuthCookie(req, res);
 
-    // Reset logged_in state
-    oidc.loggedIn = false;
-
     if (!idToken) {
-      return res.redirect(`${process.env.BASE_PATH || ''}/auth/logout_callback`);
+      return res.redirect(`${basePath}/auth/logout_callback`);
     }
 
-    const baseUrl = getBaseUrl(req);
-    const logoutUrl = await oidc.getLogoutUrl(baseUrl, idToken);
+    const logoutUrl = await oidc.getLogoutUrl(getBaseUrl(req, oidc), idToken);
 
     if (logoutUrl) {
-      Logger.debug('Generated Logout URL:', logoutUrl);
-      res.redirect(logoutUrl);
+      res.redirect(logoutUrl.href);
     } else {
       // Provider doesn't support end_session_endpoint (e.g., Google)
       // Perform local-only logout
-      const logoutCallbackUrl = `${process.env.BASE_PATH || ''}/auth/logout_callback`;
-      res.redirect(logoutCallbackUrl);
+      res.redirect(`${basePath}/auth/logout_callback`);
     }
   } catch (error) {
-    Logger.error('OIDC logout error:', error);
+    Logger.error(`OIDC logout error: ${OIDCConfig.instance?.describeError(error) || error.message}`);
     clearAuthCookie(req, res);
-    res.redirect(`${process.env.BASE_PATH || ''}/auth/logout_callback`);
+    res.redirect(`${basePath}/auth/logout_callback`);
   }
 });
 
@@ -110,14 +119,10 @@ router.get('/callback', async (req, res) => {
     const userCount = await userRepository.count();
     const hasUsers = userCount > 0;
 
-    const baseUrl = getBaseUrl(req);
-    const callbackUrl = oidc.getCallbackUrl(baseUrl);
-    const queryString = new URLSearchParams(req.query).toString();
-    const currentUrl = queryString ? `${callbackUrl}?${queryString}` : callbackUrl;
+    const callbackUrl = oidc.getCallbackUrl(getBaseUrl(req, oidc));
+    const currentUrl = new URL(req.originalUrl, callbackUrl).href;
 
-    Logger.debug('Full callback URL:', currentUrl);
-
-    const { tokens, userInfo } = await oidc.handleCallback(currentUrl, callbackUrl);
+    const { tokens, userInfo } = await oidc.handleCallback(currentUrl);
     Logger.debug('Authentication successful');
 
     const existingUser = await userRepository.findByOIDCId(
@@ -131,7 +136,7 @@ router.get('/callback', async (req, res) => {
 
       if (hasUsers && !ALLOW_NEW_ACCOUNTS) {
         Logger.error('OIDC registration blocked: New accounts not allowed');
-        return res.redirect('/login?error=registration_disabled');
+        return redirectToLogin(res, 'registration_disabled');
       }
     }
 
@@ -142,7 +147,7 @@ router.get('/callback', async (req, res) => {
 
     if (user.is_active === 0 || user.is_active === false) {
       Logger.error('OIDC login blocked: Account deactivated');
-      return res.redirect('/login?error=account_deactivated&message=Your account has been deactivated');
+      return redirectToLogin(res, 'account_deactivated', 'Your account has been deactivated');
     }
 
     await userRepository.updateLastLogin(user.id);
@@ -158,30 +163,14 @@ router.get('/callback', async (req, res) => {
       expiresIn: TOKEN_EXPIRY
     });
 
-    // Set OIDC login config
-    oidc.loggedIn = true;
-
     setAuthCookie(req, res, token, tokens.id_token);
-    res.redirect(`${process.env.BASE_PATH || ''}/auth/callback`);
+    res.redirect(`${basePath}/auth/callback`);
   } catch (error) {
-    Logger.error('OIDC callback error:', error);
-    let errorType = 'auth_failed';
-    let errorDetails = '';
-
-    if (error.message?.includes('state parameter')) {
-      errorType = 'auth_failed';
-      errorDetails = 'Your authentication session has expired';
-    } else if (error.message?.includes('accounts disabled')) {
-      errorType = 'registration_disabled';
-    } else if (error.message?.includes('OIDC configuration')) {
-      errorType = 'config_error';
-    } else if (error.response?.status === 401 || error.response?.status === 403) {
-      errorType = 'provider_error';
-      errorDetails = 'Authorization denied by identity provider';
-    }
-
-    const messageParam = errorDetails ? `&message=${encodeURIComponent(errorDetails)}` : '';
-    res.redirect(`/login?error=${errorType}${messageParam}`);
+    const oidc = OIDCConfig.instance;
+    const message = oidc?.describeError(error) || error.message;
+    Logger.error(`OIDC login failed: ${message}`);
+    Logger.debug('OIDC callback error:', error);
+    redirectToLogin(res, oidc?.isExpiredLogin(error) ? 'auth_failed' : 'provider_error', message);
   }
 });
 

@@ -1,3 +1,5 @@
+import { useEffect, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ToastType } from "../contexts/ToastContext";
 import { useToast } from "./useToast";
@@ -65,4 +67,27 @@ export const useOidcErrorHandler = () => {
 
     addToast(message, config.type, config.duration);
   };
+};
+
+export const useOidcErrorFromUrl = (ready: boolean, providerName?: string) => {
+  const handleOIDCError = useOidcErrorHandler();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const handledSearch = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!ready || handledSearch.current === location.search) return;
+
+    const params = new URLSearchParams(location.search);
+    const error = params.get('error');
+    if (!error) return;
+
+    handledSearch.current = location.search;
+    handleOIDCError(error, providerName, params.get('message') || undefined);
+
+    params.delete('error');
+    params.delete('message');
+    const search = params.toString();
+    navigate({ pathname: location.pathname, search: search ? `?${search}` : '' }, { replace: true });
+  }, [ready, location.search]);
 };

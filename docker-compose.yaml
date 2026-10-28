@@ -38,8 +38,10 @@ services:
       - OIDC_CLIENT_ID=
       # Your OIDC client secret, again, found in the app provider
       - OIDC_CLIENT_SECRET=
-      # The OIDC scopes to request, e.g. "openid profile email groups"
+      # The OIDC scopes to request, defaults to "openid profile email"
       - OIDC_SCOPES=
+      # The address you open ByteStash at, e.g. https://bytestash.example.com, used to build the OIDC redirect URLs
+      - PUBLIC_URL=
       # Optional: Comma-separated list of usernames that should have admin privileges
       # e.g. "admin,jordan" - these users will have access to the admin panel
       - ADMIN_USERNAMES=admin

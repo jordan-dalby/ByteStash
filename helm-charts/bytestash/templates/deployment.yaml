@@ -93,6 +93,10 @@ spec:
             value: {{ .Values.oidc.clientSecret | quote }}
           - name: OIDC_SCOPES
             value: {{ .Values.oidc.scopes | quote }}
+          {{- if .Values.oidc.publicUrl }}
+          - name: PUBLIC_URL
+            value: {{ .Values.oidc.publicUrl | quote }}
+          {{- end }}
           {{- end }}
           ports:
             - name: http
