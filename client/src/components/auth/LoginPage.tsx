@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeClosed } from 'lucide-react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { PageContainer } from '../common/layout/PageContainer';
 import { login as loginApi } from '../../utils/api/auth';
 import { useToast } from '../../hooks/useToast';
-import { useOidcErrorHandler } from '../../hooks/useOidcErrorHandler';
+import { useOidcErrorFromUrl } from '../../hooks/useOidcErrorHandler';
 import { ROUTES } from '../../constants/routes';
 import { OIDCConfig } from '../../types/auth';
 import { apiClient } from '../../utils/api/apiClient';
@@ -18,20 +18,10 @@ export const LoginPage: React.FC = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [oidcConfig, setOIDCConfig] = useState<OIDCConfig | null>(null);
   const { login, isAuthenticated, authConfig } = useAuth();
+  const location = useLocation();
   const { addToast } = useToast();
-  const handleOIDCError = useOidcErrorHandler();
   const { t } = useTranslation();
   const { t: translate } = useTranslation('components/auth');
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const error = params.get('error');
-    const message = params.get('message');
-    
-    if (error) {
-      handleOIDCError(error, oidcConfig?.displayName, message || undefined);
-    }
-  }, [oidcConfig]);
 
   useEffect(() => {
     const fetchOIDCConfig = async () => {
@@ -40,18 +30,21 @@ export const LoginPage: React.FC = () => {
         setOIDCConfig(response);
       } catch (error) {
         console.error('Failed to fetch OIDC config:', error);
+        setOIDCConfig({ enabled: false, logged_in: false, displayName: '' });
       }
     };
     
     fetchOIDCConfig();
   }, []);
 
+  useOidcErrorFromUrl(oidcConfig !== null, oidcConfig?.displayName);
+
   if (isAuthenticated) {
     return <Navigate to="/" replace />;
   }
 
   if (authConfig && !authConfig.hasUsers) {
-    return <Navigate to="/register" replace />;
+    return <Navigate to={{ pathname: '/register', search: location.search }} replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

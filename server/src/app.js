@@ -21,6 +21,7 @@ import fs from "fs";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yaml";
 import Logger from "./logger.js";
+import { OIDCConfig } from "./oidc/oidcConfig.js";
 
 const app = express();
 const PORT = 5000;
@@ -154,6 +155,7 @@ async function handleShutdown() {
   return new Promise((resolve) => {
     app.listen(PORT, () => {
       Logger.info(`Server running on port ${PORT}`);
+      OIDCConfig.getInstance().catch(() => {});
       resolve();
     });
   });

@@ -5,7 +5,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { register } from '../../utils/api/auth';
 import { PageContainer } from '../common/layout/PageContainer';
 import { useToast } from '../../hooks/useToast';
-import { useOidcErrorHandler } from '../../hooks/useOidcErrorHandler';
+import { useOidcErrorFromUrl } from '../../hooks/useOidcErrorHandler';
 import { AlertCircle } from 'lucide-react';
 import { ROUTES } from '../../constants/routes';
 import { OIDCConfig } from '../../types/auth';
@@ -20,7 +20,6 @@ export const RegisterPage: React.FC = () => {
   const [oidcConfig, setOIDCConfig] = useState<OIDCConfig | null>(null);
   const { login, authConfig, isAuthenticated, refreshAuthConfig } = useAuth();
   const { addToast } = useToast();
-  const handleOIDCError = useOidcErrorHandler();
   const { t } = useTranslation();
   const { t: translate } = useTranslation('components/auth');
 
@@ -31,21 +30,14 @@ export const RegisterPage: React.FC = () => {
         setOIDCConfig(response);
       } catch (error) {
         console.error('Failed to fetch OIDC config:', error);
+        setOIDCConfig({ enabled: false, logged_in: false, displayName: '' });
       }
     };
     
     fetchOIDCConfig();
   }, []);
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const error = params.get('error');
-    const message = params.get('message');
-    
-    if (error) {
-      handleOIDCError(error, oidcConfig?.displayName, message || undefined);
-    }
-  }, [oidcConfig]);
+  useOidcErrorFromUrl(oidcConfig !== null, oidcConfig?.displayName);
 
   if (isAuthenticated) {
     return <Navigate to="/" replace />;

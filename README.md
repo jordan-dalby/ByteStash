@@ -53,7 +53,30 @@ services:
       OIDC_CLIENT_ID: ""
       OIDC_CLIENT_SECRET: ""
       OIDC_SCOPES: ""
+      # The address you open ByteStash at, e.g. https://bytestash.example.com
+      PUBLIC_URL: ""
 ```
+
+### Single sign-on (optional)
+ByteStash supports any OpenID Connect provider (Authentik, Authelia, Keycloak, Pocket ID, ...).
+Register these two URLs in your provider, replacing `https://bytestash.example.com` with your
+`PUBLIC_URL` (including `BASE_PATH` if you use one):
+
+- Redirect / callback URL: `https://bytestash.example.com/api/auth/oidc/callback`
+- Post-logout redirect URL: `https://bytestash.example.com/auth/logout_callback`
+
+| Variable | Description |
+| --- | --- |
+| `OIDC_ISSUER_URL` | The issuer URL of your provider, e.g. `https://auth.example.com/application/o/bytestash/` for Authentik or `https://id.example.com` for Pocket ID. |
+| `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET` | The client credentials from your provider. Leave the secret empty for a public client. |
+| `OIDC_SCOPES` | Defaults to `openid profile email`. `openid` is always requested. |
+| `PUBLIC_URL` | The URL users open ByteStash at. When set, the redirect URLs are built from it instead of the `X-Forwarded-*` headers of your reverse proxy. |
+| `OIDC_TOKEN_ENDPOINT_AUTH_METHOD` | `client_secret_post`, `client_secret_basic` or `none`. Detected automatically, only set it if your provider insists on one. |
+
+On startup ByteStash logs whether it could reach the provider, and failed logins log the reason
+(and show it on the login page). If your provider uses a certificate from your own CA, mount the CA
+certificate into the container and point `NODE_EXTRA_CA_CERTS` at it, e.g.
+`NODE_EXTRA_CA_CERTS: /certs/my-ca.crt`.
 
 ### PostgreSQL (optional)
 ByteStash stores everything in a SQLite database under `/data/snippets` by default. To use

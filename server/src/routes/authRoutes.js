@@ -135,7 +135,8 @@ router.get('/verify', async (req, res) => {
         id: user.id,
         username: user.username,
         created_at: user.created_at,
-        is_admin: isAdmin(user.username)
+        is_admin: isAdmin(user.username),
+        oidc_id: user.oidc_id || undefined
       }
     });
   } catch (err) {
