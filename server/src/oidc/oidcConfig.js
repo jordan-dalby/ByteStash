@@ -1,6 +1,7 @@
 import * as client from 'openid-client';
 import Logger from '../logger.js';
 import { URL } from 'url';
+import crypto from 'crypto';
 
 const DEFAULT_SCOPES = ['openid', 'profile', 'email'];
 const STATE_TTL_MS = 10 * 60 * 1000;
@@ -320,13 +321,20 @@ class OIDCConfig {
     return client.buildEndSessionUrl(this.config, parameters);
   }
 
-  async handleCallback(currentUrl) {
+  async handleCallback(currentUrl, browserState) {
     const urlParams = new URL(currentUrl).searchParams;
     const state = urlParams.get('state');
 
-    if (!state || !this.#stateMap.has(state)) {
+    const startedInThisBrowser = Boolean(state && browserState) &&
+      state.length === browserState.length &&
+      crypto.timingSafeEqual(Buffer.from(state), Buffer.from(browserState));
+
+    if (!startedInThisBrowser || !this.#stateMap.has(state)) {
+      if (state) {
+        this.#stateMap.delete(state);
+      }
       throw new OIDCSetupError(
-        'The login session expired or was started on a different address. Start the login again from the ByteStash login page.',
+        'The login session expired or was started on a different address or in another browser. Start the login again from the ByteStash login page.',
         'login_expired'
       );
     }
@@ -462,4 +470,4 @@ class OIDCConfig {
   }
 }
 
-export { OIDCConfig };
+export { OIDCConfig, STATE_TTL_MS };

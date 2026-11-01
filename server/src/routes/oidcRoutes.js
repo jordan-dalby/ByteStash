@@ -1,7 +1,7 @@
 import express from 'express';
-import { OIDCConfig } from '../oidc/oidcConfig.js';
+import { OIDCConfig, STATE_TTL_MS } from '../oidc/oidcConfig.js';
 import userRepository from '../repositories/userRepository.js';
-import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS, getIdTokenFromRequest, setAuthCookie, clearAuthCookie } from '../middleware/auth.js';
+import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS, getIdTokenFromRequest, setAuthCookie, clearAuthCookie, setOidcStateCookie, takeOidcStateCookie } from '../middleware/auth.js';
 import jwt from 'jsonwebtoken';
 import Logger from '../logger.js';
 import snippetRepository from '../repositories/snippetRepository.js';
@@ -67,6 +67,7 @@ router.get('/auth', async (req, res) => {
     }
 
     const authUrl = await oidc.getAuthorizationUrl(getBaseUrl(req, oidc));
+    setOidcStateCookie(req, res, authUrl.searchParams.get('state'), STATE_TTL_MS);
 
     Logger.debug('Generated auth URL:', authUrl.href);
     res.redirect(authUrl.href);
@@ -110,6 +111,7 @@ router.get('/logout', async (req, res) => {
 });
 
 router.get('/callback', async (req, res) => {
+  const browserState = takeOidcStateCookie(req, res);
   try {
     const oidc = await OIDCConfig.getInstance();
     if (!oidc.isEnabled()) {
@@ -122,7 +124,7 @@ router.get('/callback', async (req, res) => {
     const callbackUrl = oidc.getCallbackUrl(getBaseUrl(req, oidc));
     const currentUrl = new URL(req.originalUrl, callbackUrl).href;
 
-    const { tokens, userInfo } = await oidc.handleCallback(currentUrl);
+    const { tokens, userInfo } = await oidc.handleCallback(currentUrl, browserState);
     Logger.debug('Authentication successful');
 
     const existingUser = await userRepository.findByOIDCId(
