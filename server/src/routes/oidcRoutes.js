@@ -132,14 +132,9 @@ router.get('/callback', async (req, res) => {
       oidc.config.serverMetadata().issuer
     );
 
-    if (!hasUsers && !existingUser) {
-      const userCount = await userRepository.count();
-      const hasUsers = userCount > 0;
-
-      if (hasUsers && !ALLOW_NEW_ACCOUNTS) {
-        Logger.error('OIDC registration blocked: New accounts not allowed');
-        return redirectToLogin(res, 'registration_disabled');
-      }
+    if (hasUsers && !existingUser && !ALLOW_NEW_ACCOUNTS) {
+      Logger.error('OIDC registration blocked: New accounts not allowed');
+      return redirectToLogin(res, 'registration_disabled');
     }
 
     const user = await userRepository.findOrCreateOIDCUser(
