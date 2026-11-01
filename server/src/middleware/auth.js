@@ -11,6 +11,7 @@ const MIN_SECRET_LENGTH = 32;
 const JWT_ALGORITHMS = ['HS256'];
 const AUTH_COOKIE = 'bytestash_token';
 const ID_TOKEN_COOKIE = 'bytestash_id_token';
+const OIDC_STATE_COOKIE = 'bytestash_oidc_state';
 
 function readConfiguredSecret() {
   if (process.env.JWT_SECRET_FILE) {
@@ -143,6 +144,23 @@ function idTokenCookieOptions(req) {
   };
 }
 
+function oidcStateCookieOptions(req) {
+  return {
+    ...authCookieOptions(req),
+    path: `${process.env.BASE_PATH || ''}/api/auth/oidc/callback`,
+  };
+}
+
+function setOidcStateCookie(req, res, state, maxAge) {
+  res.cookie(OIDC_STATE_COOKIE, state, { ...oidcStateCookieOptions(req), maxAge });
+}
+
+function takeOidcStateCookie(req, res) {
+  const state = req.cookies?.[OIDC_STATE_COOKIE];
+  res.clearCookie(OIDC_STATE_COOKIE, oidcStateCookieOptions(req));
+  return typeof state === 'string' ? state : undefined;
+}
+
 function setAuthCookie(req, res, token, idToken) {
   const options = authCookieOptions(req);
   const { exp } = jwt.decode(token) || {};
@@ -225,6 +243,8 @@ export {
   getIdTokenFromRequest,
   setAuthCookie,
   clearAuthCookie,
+  setOidcStateCookie,
+  takeOidcStateCookie,
   JWT_SECRET,
   TOKEN_EXPIRY,
   ALLOW_NEW_ACCOUNTS,
