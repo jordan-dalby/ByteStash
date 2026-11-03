@@ -25,6 +25,12 @@ ByteStash is now on the Unraid App Store! Install it from [there](https://unraid
 ### PikaPods
 Also available on [PikaPods](https://www.pikapods.com/) for [1-click install](https://www.pikapods.com/pods?run=bytestash) from $1/month.
 
+### RepoCloud
+Also available on [RepoCloud](https://repocloud.io/details/ByteStash/) for 1-click deploy.
+
+### Railway
+Also available on [Railway](https://railway.com/deploy/bytestash) for 1-click deploy.
+
 ### Docker
 ByteStash can also be hosted manually via the docker-compose file:
 ```yaml
