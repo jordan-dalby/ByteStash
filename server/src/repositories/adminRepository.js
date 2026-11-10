@@ -135,14 +135,21 @@ class AdminRepository {
   async toggleUserActive(userId) {
     try {
       const db = getDb();
-      const result = await db.run(`
-        UPDATE users
-        SET is_active = CASE WHEN is_active = 0 THEN 1 ELSE 0 END
-        WHERE id = ? AND id != 0
-      `, [db.dialect.id(userId)]);
-      if (result.changes === 0) {
-        throw new Error('User not found or cannot be modified');
-      }
+      const id = db.dialect.id(userId);
+      await db.transaction(async (tx) => {
+        const user = await tx.get(`
+          UPDATE users
+          SET is_active = CASE WHEN is_active = 0 THEN 1 ELSE 0 END
+          WHERE id = ? AND id != 0
+          RETURNING is_active
+        `, [id]);
+        if (!user) {
+          throw new Error('User not found or cannot be modified');
+        }
+        if (user.is_active === 0 || user.is_active === false) {
+          await tx.run(`DELETE FROM api_keys WHERE user_id = ?`, [id]);
+        }
+      });
       return this.getUserDetails(userId);
     } catch (error) {
       Logger.error('Error toggling user active status:', error);

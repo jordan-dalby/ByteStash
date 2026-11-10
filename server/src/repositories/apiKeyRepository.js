@@ -74,7 +74,7 @@ export async function validateApiKey(key) {
       SELECT ak.id, ak.user_id
       FROM api_keys ak
       JOIN users u ON ak.user_id = u.id
-      WHERE ak.key = ? AND ak.is_active = 1
+      WHERE ak.key = ? AND ak.is_active = 1 AND COALESCE(u.is_active, 1) = 1
     `, [key]);
 
     if (apiKey) {
