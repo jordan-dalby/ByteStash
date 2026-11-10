@@ -1,5 +1,6 @@
 import express from 'express';
 import adminRepository from '../repositories/adminRepository.js';
+import userRepository from '../repositories/userRepository.js';
 import badWordsChecker from '../utils/badWords.js';
 import Logger from '../logger.js';
 
@@ -88,6 +89,38 @@ router.patch('/users/:id/toggle-active', async (req, res) => {
   } catch (error) {
     Logger.error('Error toggling user active status:', error);
     res.status(500).json({ message: 'Failed to update user status' });
+  }
+});
+
+router.patch('/users/:id/admin', async (req, res) => {
+  try {
+    const userId = parseInt(req.params.id);
+    const { isAdmin: makeAdmin } = req.body || {};
+
+    if (typeof makeAdmin !== 'boolean') {
+      return res.status(400).json({ message: 'isAdmin must be true or false' });
+    }
+
+    if (userId === req.user.id) {
+      return res.status(400).json({ message: 'Cannot change your own admin access' });
+    }
+
+    if (userId === 0) {
+      return res.status(400).json({ message: 'Cannot modify anonymous user' });
+    }
+
+    const user = await adminRepository.getUserDetails(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    await userRepository.setAdmin(userId, makeAdmin);
+    Logger.info(`Admin access ${makeAdmin ? 'granted to' : 'revoked from'} "${user.username}" by "${req.user.username}"`);
+
+    res.json(await adminRepository.getUserDetails(userId));
+  } catch (error) {
+    Logger.error('Error updating user admin access:', error);
+    res.status(500).json({ message: 'Failed to update admin access' });
   }
 });
 

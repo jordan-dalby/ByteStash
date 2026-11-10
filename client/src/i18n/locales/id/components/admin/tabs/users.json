@@ -1,8 +1,24 @@
 {
   "action": {
     "activate": "Aktifkan pengguna",
+    "adminSelf": "Anda tidak dapat mengubah akses admin Anda sendiri",
     "deactivate": "Nonaktifkan pengguna",
-    "delete": "Hapus pengguna"
+    "delete": "Hapus pengguna",
+    "grantAdmin": "Jadikan admin",
+    "revokeAdmin": "Hapus admin"
+  },
+  "adminModal": {
+    "grant": {
+      "message": "Berikan akses admin kepada {{username}}? Admin dapat membaca snippet semua pengguna, termasuk yang privat, dan mengelola semua pengguna.",
+      "title": "Jadikan admin"
+    },
+    "revoke": {
+      "message": "Cabut akses admin dari {{username}}?",
+      "title": "Hapus admin"
+    }
+  },
+  "badge": {
+    "admin": "Admin"
   },
   "columns": {
     "labels": {
@@ -49,6 +65,10 @@
     "inactive": "Tidak aktif"
   },
   "success": {
+    "admin": {
+      "granted": "Akses admin diberikan",
+      "revoked": "Akses admin dicabut"
+    },
     "delete": {
       "default": "Pengguna berhasil dihapus"
     },

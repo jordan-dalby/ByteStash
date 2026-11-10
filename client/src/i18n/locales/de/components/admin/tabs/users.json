@@ -1,8 +1,24 @@
 {
   "action": {
     "activate": "Benutzer aktivieren",
+    "adminSelf": "Du kannst deine eigenen Admin-Rechte nicht ändern",
     "deactivate": "Benutzer deaktivieren",
-    "delete": "Benutzer löschen"
+    "delete": "Benutzer löschen",
+    "grantAdmin": "Zum Admin machen",
+    "revokeAdmin": "Admin entfernen"
+  },
+  "adminModal": {
+    "grant": {
+      "message": "{{username}} Admin-Rechte geben? Admins können die Snippets aller Benutzer lesen, auch private, und alle Benutzer verwalten.",
+      "title": "Zum Admin machen"
+    },
+    "revoke": {
+      "message": "{{username}} die Admin-Rechte entziehen?",
+      "title": "Admin entfernen"
+    }
+  },
+  "badge": {
+    "admin": "Admin"
   },
   "columns": {
     "labels": {
@@ -49,6 +65,10 @@
     "inactive": "Inaktiv"
   },
   "success": {
+    "admin": {
+      "granted": "Admin-Rechte vergeben",
+      "revoked": "Admin-Rechte entzogen"
+    },
     "delete": {
       "default": "Benutzer gelöscht"
     },

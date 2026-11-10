@@ -52,9 +52,8 @@ services:
       - OIDC_CLIENT_SECRET=
       # The OIDC scopes to request, e.g. "openid profile email groups"
       - OIDC_SCOPES=
-      # Optional: Comma-separated list of usernames that should have admin privileges
-      # e.g. "admin,jordan" - these users will have access to the admin panel
-      - ADMIN_USERNAMES=admin
+      # To make an account an admin, run (see "Admin access" in the README):
+      #   docker compose exec server node src/scripts/admin.js grant <username>
 
       # Optional: store data in PostgreSQL instead of SQLite, leave blank to keep using SQLite
       # e.g. postgres://bytestash:bytestash@postgres:5432/bytestash when using the postgres service below

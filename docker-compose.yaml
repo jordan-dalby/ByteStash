@@ -42,9 +42,8 @@ services:
       - OIDC_SCOPES=
       # The address you open ByteStash at, e.g. https://bytestash.example.com, used to build the OIDC redirect URLs
       - PUBLIC_URL=
-      # Optional: Comma-separated list of usernames that should have admin privileges
-      # e.g. "admin,jordan" - these users will have access to the admin panel
-      - ADMIN_USERNAMES=admin
+      # To make an account an admin, run (see "Admin access" in the README):
+      #   docker compose exec server node src/scripts/admin.js grant <username>
 
       # Optional: store data in PostgreSQL instead of SQLite, leave commented out to keep using SQLite
       # Either provide DATABASE_URL (or DATABASE_URL_FILE for Docker secrets) or the individual POSTGRES_* values

@@ -37,6 +37,9 @@ export const adminApi = {
   toggleUserActive: (id: number) =>
     apiClient.patch<any>(`${BASE_URL}/users/${id}/toggle-active`, {}, { requiresAuth: true }),
 
+  setUserAdmin: (id: number, isAdmin: boolean) =>
+    apiClient.patch<any>(`${BASE_URL}/users/${id}/admin`, { isAdmin }, { requiresAuth: true }),
+
   // Snippets
   getSnippets: (params: {
     offset?: number;
