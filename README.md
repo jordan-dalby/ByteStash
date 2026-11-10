@@ -62,8 +62,9 @@ New accounts are never admins. To make your first admin, sign up (or sign in wit
 as usual, then run this inside the container:
 
 ```bash
-# Docker Compose (the service is called "server" in the bundled docker-compose.yaml)
-docker compose exec server node src/scripts/admin.js grant <username>
+# Docker Compose, using the service name from your compose file
+# ("bytestash" in the example above, "server" in the repo's docker-compose.yaml)
+docker compose exec bytestash node src/scripts/admin.js grant <username>
 
 # Plain Docker
 docker exec -it <container-name> node src/scripts/admin.js grant <username>
