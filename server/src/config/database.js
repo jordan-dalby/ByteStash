@@ -39,8 +39,8 @@ function stopCheckpointInterval() {
   }
 }
 
-function initializeSqlite() {
-  sqliteDb = openSqliteDatabase();
+function initializeSqlite(options) {
+  sqliteDb = openSqliteDatabase(options);
   startCheckpointInterval();
   return new SqliteAdapter(sqliteDb);
 }
@@ -75,13 +75,15 @@ async function initializePostgres(config) {
   return adapter;
 }
 
-async function initializeDatabase() {
+// options.backup: set to false to skip the SQLite backup copy taken on startup, so one-off
+// tools (e.g. the admin CLI) don't overwrite the backup made before the last upgrade.
+async function initializeDatabase(options = {}) {
   try {
     const postgresConfig = getPostgresConfig();
 
     db = postgresConfig
       ? await initializePostgres(postgresConfig)
-      : initializeSqlite();
+      : initializeSqlite(options);
 
     Logger.debug("Database initialization completed successfully");
     return db;
