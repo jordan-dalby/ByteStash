@@ -50,18 +50,17 @@ function checkpointSqlite(db) {
 }
 
 function backupDatabase(db, dbPath) {
-  const baseBackupPath = `${dbPath}.backup`;
-  checkpointSqlite(db);
+  const dbBackupPath = `${dbPath}.backup.db`;
 
+  // Let SQLite write the backup instead of copying the file. Opening and closing another
+  // file descriptor for the database releases every POSIX lock this process holds on it,
+  // including SQLite's own. Another process opening the database (e.g. the admin CLI) would
+  // then think it is the last connection and delete the WAL file while we still write to it,
+  // silently losing those writes.
   try {
-    if (fs.existsSync(dbPath)) {
-      const dbBackupPath = `${baseBackupPath}.db`;
-      fs.copyFileSync(dbPath, dbBackupPath);
-      Logger.debug(`Database backed up to: ${dbBackupPath}`);
-    } else {
-      Logger.error(`Database file not found: ${dbPath}`);
-      return false;
-    }
+    fs.rmSync(dbBackupPath, { force: true });
+    db.prepare("VACUUM INTO ?").run(dbBackupPath);
+    Logger.debug(`Database backed up to: ${dbBackupPath}`);
     return true;
   } catch (error) {
     Logger.error("Failed to create database backup:", error);
@@ -76,7 +75,7 @@ function createInitialSchema(db) {
   Logger.debug("✅ Initial schema executed");
 }
 
-function openSqliteDatabase() {
+function openSqliteDatabase({ backup = true } = {}) {
   const dbPath = getDatabasePath();
   Logger.debug(`Initializing SQLite database at: ${dbPath}`);
 
@@ -91,7 +90,9 @@ function openSqliteDatabase() {
     db.pragma("foreign_keys = ON");
     db.pragma("journal_mode = WAL");
 
-    backupDatabase(db, dbPath);
+    if (backup) {
+      backupDatabase(db, dbPath);
+    }
 
     if (!dbExists) {
       Logger.debug("Creating new database with initial schema...");
