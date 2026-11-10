@@ -62,7 +62,7 @@ router.post('/register', async (req, res) => {
         id: user.id,
         username: user.username,
         created_at: user.created_at,
-        is_admin: isAdmin(user.username)
+        is_admin: isAdmin(user)
       }
     });
   } catch (error) {
@@ -99,7 +99,7 @@ router.post('/login', async (req, res) => {
 
     const userResponse = {
       ...user,
-      is_admin: isAdmin(user.username)
+      is_admin: isAdmin(user)
     };
 
     setAuthCookie(req, res, token);
@@ -135,7 +135,7 @@ router.get('/verify', async (req, res) => {
         id: user.id,
         username: user.username,
         created_at: user.created_at,
-        is_admin: isAdmin(user.username),
+        is_admin: isAdmin(user),
         oidc_id: user.oidc_id || undefined
       }
     });

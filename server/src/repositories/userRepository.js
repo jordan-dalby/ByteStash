@@ -202,6 +202,24 @@ class UserRepository {
   async count() {
     return (await getDb().get('SELECT COUNT(*) as count FROM users')).count;
   }
+
+  async setAdmin(userId, isAdmin) {
+    const db = getDb();
+    const result = await db.run(
+      `UPDATE users SET is_admin = ? WHERE id = ? AND id != 0`,
+      [isAdmin ? 1 : 0, db.dialect.id(userId)]
+    );
+    return result.changes > 0;
+  }
+
+  async listAdmins() {
+    return getDb().all(`
+      SELECT id, username, oidc_id, is_active
+      FROM users
+      WHERE is_admin = 1 AND id != 0
+      ORDER BY username_normalized
+    `);
+  }
 }
 
 export default new UserRepository();

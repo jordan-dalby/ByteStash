@@ -1,3 +1,4 @@
+import subprocess
 import warnings
 import urllib3
 import pytest
@@ -59,5 +60,12 @@ def user_b():
 
 @pytest.fixture(scope="session")
 def admin_user():
-    # ADMIN_USERNAMES=ciadmin in the CI compose → this account is admin.
-    return {"username": "ciadmin", "token": _register("ciadmin", "CiAdminPassw0rd!")}
+    """Register an account and make it an admin with the admin CLI, the same way an
+    operator would. Admin is read from the database on every request, so the token
+    issued at registration works for admin routes straight away."""
+    token = _register("ciadmin", "CiAdminPassw0rd!")
+    subprocess.run(
+        ["docker", "exec", "bytestash-app", "node", "src/scripts/admin.js", "grant", "ciadmin"],
+        check=True, capture_output=True, text=True, timeout=60,
+    )
+    return {"username": "ciadmin", "token": token}

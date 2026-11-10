@@ -142,10 +142,10 @@ def test_elevation_nonadmin_denied_admin_route(user_a, admin_user):
 
 
 def test_spoofing_forged_admin_token_rejected(user_a):
-    """A token forged to claim an admin username must
-    not grant admin access. Admin is decided by the username claim, so this
-    tests that the claim can't be spoofed without the real signing secret.
-    Combines the weak-secret forge (VP-1) with the username-based admin model."""
+    """A token forged to claim the admin account must
+    not grant admin access. Admin is a flag on the account in the database, so
+    this tests that the account's id can't be claimed without the real signing
+    secret. Exercises the weak-secret forge (VP-1) against an admin route."""
     # forge a token claiming to be the admin, signed with the known-weak default
     forged_admin = jwt.encode(
         {"id": 1, "username": "ciadmin", "iat": int(time.time()),

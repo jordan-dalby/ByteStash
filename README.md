@@ -57,6 +57,37 @@ services:
       PUBLIC_URL: ""
 ```
 
+### Admin access
+New accounts are never admins. To make your first admin, sign up (or sign in with single sign-on)
+as usual, then run this inside the container:
+
+```bash
+# Docker Compose (the service is called "server" in the bundled docker-compose.yaml)
+docker compose exec server node src/scripts/admin.js grant <username>
+
+# Plain Docker
+docker exec -it <container-name> node src/scripts/admin.js grant <username>
+
+# Kubernetes / Helm
+kubectl exec -it deploy/<deployment-name> -- node src/scripts/admin.js grant <username>
+```
+
+The change applies straight away, no restart needed. Sign out and back in to see the admin panel.
+After that you can add or remove admins from **Admin > Users** in the web UI, or with the same script:
+
+```bash
+node src/scripts/admin.js list               # show all admins
+node src/scripts/admin.js revoke <username>  # remove admin access
+```
+
+If you don't need open sign-ups, set `ALLOW_NEW_ACCOUNTS` to `false` once your accounts exist.
+
+> **Upgrading from an older version?** The `ADMIN_USERNAMES` environment variable has been removed
+> and is ignored, so accounts listed in it are no longer admins. Run the `grant` command above for each
+> account that should be an admin, then delete `ADMIN_USERNAMES` from your configuration. If your
+> config had `ADMIN_USERNAMES=admin` (the old default) and sign-ups were open, check that you created
+> the `admin` account yourself before you grant it anything.
+
 ### Single sign-on (optional)
 ByteStash supports any OpenID Connect provider (Authentik, Authelia, Keycloak, Pocket ID, ...).
 Register these two URLs in your provider, replacing `https://bytestash.example.com` with your

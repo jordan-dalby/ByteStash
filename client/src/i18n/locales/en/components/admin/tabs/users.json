@@ -1,8 +1,24 @@
 {
   "action": {
     "activate": "Activate user",
+    "adminSelf": "You can't change your own admin access",
     "deactivate": "Deactivate user",
-    "delete": "Delete user"
+    "delete": "Delete user",
+    "grantAdmin": "Make admin",
+    "revokeAdmin": "Remove admin"
+  },
+  "adminModal": {
+    "grant": {
+      "message": "Give {{username}} admin access? Admins can read every user's snippets, including private ones, and manage all users.",
+      "title": "Make admin"
+    },
+    "revoke": {
+      "message": "Remove admin access from {{username}}?",
+      "title": "Remove admin"
+    }
+  },
+  "badge": {
+    "admin": "Admin"
   },
   "columns": {
     "labels": {
@@ -49,6 +65,10 @@
     "inactive": "Inactive"
   },
   "success": {
+    "admin": {
+      "granted": "Admin access granted",
+      "revoked": "Admin access removed"
+    },
     "delete": {
       "default": "User deleted successfully"
     },

@@ -5,7 +5,6 @@ import { JWT_SECRET, TOKEN_EXPIRY, ALLOW_NEW_ACCOUNTS, getIdTokenFromRequest, se
 import jwt from 'jsonwebtoken';
 import Logger from '../logger.js';
 import snippetRepository from '../repositories/snippetRepository.js';
-import { isAdmin } from '../middleware/adminAuth.js';
 
 const router = express.Router();
 

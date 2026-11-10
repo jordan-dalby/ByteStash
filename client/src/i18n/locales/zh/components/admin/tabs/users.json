@@ -1,8 +1,24 @@
 {
   "action": {
     "activate": "启用用户",
+    "adminSelf": "无法更改你自己的管理员权限",
     "deactivate": "停用用户",
-    "delete": "删除用户"
+    "delete": "删除用户",
+    "grantAdmin": "设为管理员",
+    "revokeAdmin": "取消管理员"
+  },
+  "adminModal": {
+    "grant": {
+      "message": "授予 {{username}} 管理员权限？管理员可以查看所有用户的代码片段（包括私有片段）并管理所有用户。",
+      "title": "设为管理员"
+    },
+    "revoke": {
+      "message": "撤销 {{username}} 的管理员权限？",
+      "title": "取消管理员"
+    }
+  },
+  "badge": {
+    "admin": "管理员"
   },
   "columns": {
     "labels": {
@@ -49,6 +65,10 @@
     "inactive": "停用"
   },
   "success": {
+    "admin": {
+      "granted": "已授予管理员权限",
+      "revoked": "已撤销管理员权限"
+    },
     "delete": {
       "default": "用户删除成功"
     },

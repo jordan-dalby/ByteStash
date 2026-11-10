@@ -1,8 +1,24 @@
 {
   "action": {
     "activate": "Habilitar usuario",
+    "adminSelf": "No puedes cambiar tu propio acceso de administrador",
     "deactivate": "Inhabilitar usuario",
-    "delete": "Borrar usuario"
+    "delete": "Borrar usuario",
+    "grantAdmin": "Hacer administrador",
+    "revokeAdmin": "Quitar administrador"
+  },
+  "adminModal": {
+    "grant": {
+      "message": "¿Dar acceso de administrador a {{username}}? Los administradores pueden leer los snippets de todos los usuarios, incluidos los privados, y gestionar a todos los usuarios.",
+      "title": "Hacer administrador"
+    },
+    "revoke": {
+      "message": "¿Quitar el acceso de administrador a {{username}}?",
+      "title": "Quitar administrador"
+    }
+  },
+  "badge": {
+    "admin": "Admin"
   },
   "columns": {
     "labels": {
@@ -50,6 +66,10 @@
     "inactive": "Inactivo"
   },
   "success": {
+    "admin": {
+      "granted": "Acceso de administrador concedido",
+      "revoked": "Acceso de administrador retirado"
+    },
     "delete": {
       "default": "El usuario ya no existe"
     },

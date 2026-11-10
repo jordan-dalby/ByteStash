@@ -1,8 +1,24 @@
 {
   "action": {
     "activate": "Attiva Utente",
+    "adminSelf": "Non puoi modificare il tuo accesso da amministratore",
     "deactivate": "Disattiva Utente",
-    "delete": "Cancella Utente"
+    "delete": "Cancella Utente",
+    "grantAdmin": "Rendi amministratore",
+    "revokeAdmin": "Rimuovi amministratore"
+  },
+  "adminModal": {
+    "grant": {
+      "message": "Dare a {{username}} l'accesso da amministratore? Gli amministratori possono leggere gli snippet di tutti gli utenti, compresi quelli privati, e gestire tutti gli utenti.",
+      "title": "Rendi amministratore"
+    },
+    "revoke": {
+      "message": "Rimuovere l'accesso da amministratore a {{username}}?",
+      "title": "Rimuovi amministratore"
+    }
+  },
+  "badge": {
+    "admin": "Admin"
   },
   "columns": {
     "labels": {
@@ -50,6 +66,10 @@
     "inactive": "Disattivo"
   },
   "success": {
+    "admin": {
+      "granted": "Accesso da amministratore concesso",
+      "revoked": "Accesso da amministratore rimosso"
+    },
     "delete": {
       "default": "Utente cancellato con successo"
     },

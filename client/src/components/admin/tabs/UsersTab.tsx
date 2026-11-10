@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Trash2, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Trash2, ToggleLeft, ToggleRight, ShieldCheck, ShieldOff } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { adminApi } from '../../../utils/api/admin';
 import { useToast } from '../../../hooks/useToast';
 import { ConfirmationModal } from '../../common/modals/ConfirmationModal';
 import { useDebounce } from '../../../hooks/useDebounce';
+import { useAuth } from '../../../hooks/useAuth';
 import {
   FilterInput,
   FilterSelect,
@@ -25,6 +26,8 @@ export const UsersTab: React.FC = () => {
   const [isActive, setIsActive] = useState('');
   const [offset, setOffset] = useState(0);
   const [deleteUserId, setDeleteUserId] = useState<number | null>(null);
+  const [adminChange, setAdminChange] = useState<{ id: number; username: string; makeAdmin: boolean } | null>(null);
+  const { user: currentUser } = useAuth();
   const limit = 50;
 
   const debouncedSearch = useDebounce(search, 300);
@@ -67,6 +70,23 @@ export const UsersTab: React.FC = () => {
     },
   });
 
+  const adminMutation = useMutation({
+    mutationFn: ({ id, makeAdmin }: { id: number; makeAdmin: boolean }) =>
+      adminApi.setUserAdmin(id, makeAdmin),
+    onSuccess: (_data, { makeAdmin }) => {
+      addToast(
+        makeAdmin ? translate('success.admin.granted') : translate('success.admin.revoked'),
+        'success'
+      );
+      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
+      setAdminChange(null);
+    },
+    onError: (error: any) => {
+      addToast(error.message || translate('error.update.default'), 'error');
+      setAdminChange(null);
+    },
+  });
+
   const users = data?.users || [];
   const total = data?.total || 0;
 
@@ -90,7 +110,7 @@ export const UsersTab: React.FC = () => {
             user.is_admin
               ? (
                   <span className="ml-2 px-2 py-0.5 text-xs bg-light-primary dark:bg-dark-primary text-white rounded">
-                    Admin
+                    {translate('badge.admin')}
                   </span>
                 )
               : null
@@ -167,28 +187,50 @@ export const UsersTab: React.FC = () => {
     {
       key: 'actions',
       label: translate('columns.labels.actions'),
-      render: (user) => (
-        <div className="flex items-center gap-2 whitespace-nowrap">
-          <button
-            onClick={() => toggleActiveMutation.mutate(user.id)}
-            className="p-1 hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary rounded"
-            title={user.is_active ? translate('action.deactivate') : translate('action.activate')}
-          >
-            {user.is_active ? (
-              <ToggleRight className="w-4 h-4 text-green-600" />
-            ) : (
-              <ToggleLeft className="w-4 h-4 text-gray-400" />
-            )}
-          </button>
-          <button
-            onClick={() => setDeleteUserId(user.id)}
-            className="p-1 hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary rounded text-red-600 dark:text-red-400"
-            title={translate('action.delete')}
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-        </div>
-      ),
+      render: (user) => {
+        const isSelf = user.id === currentUser?.id;
+        const adminTitle = isSelf
+          ? translate('action.adminSelf')
+          : user.is_admin
+            ? translate('action.revokeAdmin')
+            : translate('action.grantAdmin');
+
+        return (
+          <div className="flex items-center gap-2 whitespace-nowrap">
+            <button
+              onClick={() => setAdminChange({ id: user.id, username: user.username, makeAdmin: !user.is_admin })}
+              disabled={isSelf}
+              className="p-1 hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary rounded disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+              title={adminTitle}
+              aria-label={adminTitle}
+            >
+              {user.is_admin ? (
+                <ShieldCheck className="w-4 h-4 text-light-primary dark:text-dark-primary" />
+              ) : (
+                <ShieldOff className="w-4 h-4 text-gray-400" />
+              )}
+            </button>
+            <button
+              onClick={() => toggleActiveMutation.mutate(user.id)}
+              className="p-1 hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary rounded"
+              title={user.is_active ? translate('action.deactivate') : translate('action.activate')}
+            >
+              {user.is_active ? (
+                <ToggleRight className="w-4 h-4 text-green-600" />
+              ) : (
+                <ToggleLeft className="w-4 h-4 text-gray-400" />
+              )}
+            </button>
+            <button
+              onClick={() => setDeleteUserId(user.id)}
+              className="p-1 hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary rounded text-red-600 dark:text-red-400"
+              title={translate('action.delete')}
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        );
+      },
     },
   ];
 
@@ -261,6 +303,22 @@ export const UsersTab: React.FC = () => {
         confirmLabel={t('action.delete')}
         cancelLabel={t('action.cancel')}
         variant="danger"
+      />
+
+      {/* Admin access Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={adminChange !== null}
+        onClose={() => setAdminChange(null)}
+        onConfirm={() => adminChange && adminMutation.mutate({ id: adminChange.id, makeAdmin: adminChange.makeAdmin })}
+        title={adminChange?.makeAdmin ? translate('adminModal.grant.title') : translate('adminModal.revoke.title')}
+        message={
+          adminChange?.makeAdmin
+            ? translate('adminModal.grant.message', { username: adminChange?.username })
+            : translate('adminModal.revoke.message', { username: adminChange?.username })
+        }
+        confirmLabel={adminChange?.makeAdmin ? translate('action.grantAdmin') : translate('action.revokeAdmin')}
+        cancelLabel={t('action.cancel')}
+        variant="warning"
       />
     </div>
   );

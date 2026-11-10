@@ -11,10 +11,10 @@ import apiKeyRoutes from "./routes/apiKeyRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import settingsRoutes from "./routes/settingsRoutes.js";
 import mcpRoutes from "./routes/mcpRoutes.js";
-import { authenticateToken } from "./middleware/auth.js";
+import { authenticateToken, DISABLE_ACCOUNTS } from "./middleware/auth.js";
 import { authenticateApiKey } from "./middleware/apiKeyAuth.js";
 import { authenticateMcp } from "./middleware/mcpAuth.js";
-import { requireAdmin } from "./middleware/adminAuth.js";
+import { requireAdmin, checkAdminConfiguration } from "./middleware/adminAuth.js";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import fs from "fs";
@@ -150,6 +150,12 @@ async function handleShutdown() {
     await initializeDatabase();
   } catch (error) {
     process.exit(1);
+  }
+
+  try {
+    await checkAdminConfiguration({ disableAccounts: DISABLE_ACCOUNTS });
+  } catch (error) {
+    Logger.error("Could not check admin configuration:", error);
   }
 
   return new Promise((resolve) => {

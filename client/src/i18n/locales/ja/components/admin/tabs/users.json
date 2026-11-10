@@ -1,8 +1,24 @@
 {
   "action": {
     "activate": "ユーザーを有効化",
+    "adminSelf": "自分の管理者権限は変更できません",
     "deactivate": "ユーザーを無効化",
-    "delete": "ユーザーを削除"
+    "delete": "ユーザーを削除",
+    "grantAdmin": "管理者にする",
+    "revokeAdmin": "管理者を解除"
+  },
+  "adminModal": {
+    "grant": {
+      "message": "{{username}} に管理者権限を付与しますか？管理者は非公開を含むすべてのユーザーのスニペットを閲覧でき、すべてのユーザーを管理できます。",
+      "title": "管理者にする"
+    },
+    "revoke": {
+      "message": "{{username}} の管理者権限を解除しますか？",
+      "title": "管理者を解除"
+    }
+  },
+  "badge": {
+    "admin": "管理者"
   },
   "columns": {
     "labels": {
@@ -49,6 +65,10 @@
     "inactive": "無効"
   },
   "success": {
+    "admin": {
+      "granted": "管理者権限を付与しました",
+      "revoked": "管理者権限を解除しました"
+    },
     "delete": {
       "default": "ユーザーを削除しました"
     },

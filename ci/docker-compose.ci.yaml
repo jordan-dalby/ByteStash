@@ -28,7 +28,6 @@ services:
       - DEBUG=false                                # debug logs SQL, user IDs, traces
       - TOKEN_EXPIRY=15m                           # bounds stale-session window
       - ALLOW_NEW_ACCOUNTS=true                    # CI needs registration for tests
-      - ADMIN_USERNAMES=ciadmin
       - DISABLE_ACCOUNTS=false
       - DISABLE_INTERNAL_ACCOUNTS=false
       - ALLOW_PASSWORD_CHANGES=true
