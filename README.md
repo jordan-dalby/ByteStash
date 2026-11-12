@@ -25,6 +25,11 @@ ByteStash is now on the Unraid App Store! Install it from [there](https://unraid
 ### PikaPods
 Also available on [PikaPods](https://www.pikapods.com/) for [1-click install](https://www.pikapods.com/pods?run=bytestash) from $1/month.
 
+### ZopDay
+Deploy with [ZopDay](https://zop.dev/zopday) to ZopCloud or to your own AWS, GCP or Azure account. The link pre-fills the `ghcr.io/jordan-dalby/bytestash:latest` image and port 5000.
+
+[![Deploy to ZopDay](https://zop.dev/deploytozopday-inkhard.svg)](https://zop.dev/zopday/app/deploy?image=ghcr.io/jordan-dalby/bytestash:latest&port=5000&name=bytestash&utm_source=github&utm_medium=one_click&utm_content=bytestash)
+
 ### Docker
 ByteStash can also be hosted manually via the docker-compose file:
 ```yaml
